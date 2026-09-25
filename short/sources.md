@@ -343,4 +343,23 @@ Rules for the edit:
 
 ## Asset licenses
 
-- _Placeholder: fill in music, SFX, fonts and any footage or icons with licence and URL once chosen._
+Checked 2026-09-25. No footage, stock clips or icon packs are used: every picture element is drawn in the project.
+
+### Music: `short/audio/music.wav` (built from `short/audio/src/music_take2.mp3`)
+- **What:** an original instrumental generated on 2026-09-25 with **ElevenLabs Music** (`POST /v1/music`, model `music_v1`, song id `R0XHKgtY3yX9Y5QcYYgg`) on the account owner's **paid plan**. The prompt was a composition plan (`short/audio/src/music_take2.plan.json`: "instrumental lo-fi electronic underscore, 116 BPM, tense and curious, ticking clock woodblock, muted synth plucks, soft sub bass…") with no artist names, song titles or lyrics, as the Music Terms require. `build_music.py` rearranged it by whole bars and time-stretched it by 0.26% to the video's grid. One other take (`BtbuMGM6VfJ0EH4SArx9`) was generated and not used.
+- **Licence (commercial use on a paid plan):** ElevenLabs Help Center, "Can I publish the content I generate on the platform?", https://help.elevenlabs.io/hc/en-us/articles/13313564601361-Can-I-publish-the-content-I-generate-on-the-platform (article updated 2026-08-11; read 2026-09-25 through the Help Center API because the page is behind a browser check):
+  > "All paid plans include a commercial license, provided you're not using Beta Services."
+  > "Content generated during a paid subscription can be used commercially, and indefinitely, subject to our Service-Specific Terms. Attribution requirement is subject to the agreement you have with ElevenLabs."
+- **Music-specific terms:** Eleven Music Model-Specific Terms, https://elevenlabs.io/eleven-music-model-specific-terms (last updated 2026-05-26; read 2026-09-25). They cover models v1 and v2. In the "Music Commercial Rights" table, every self-serve paid plan (Starter to Business) lists **Media Rights:** "All online and offline commercial use permitted, except film, TV, radio, & Studio Games", **Attribution:** "No Attribution Required", and **Music Libraries & Repositories:** "Prohibited". A YouTube Short is online use. No credit is required, but "Music: generated with ElevenLabs Music" in the description is harmless. The Music Terms (https://elevenlabs.io/music-terms, 2026-05-26) add: "Output you generate using Music may not be unique", so the track isn't exclusive.
+
+### Sound effects: `short/audio/sfx/*.wav` (prompts in `short/audio/sfx/library.json`)
+- **What:** 38 sounds generated on 2026-09-25 with **ElevenLabs Sound Effects** (`POST /v1/sound-generation`) on the same paid plan. They were trimmed and level-matched, and `tick` is cut from `tick_tock`. Mixed into `short/audio/mix.m4a` by `mix.py` from `cues.json`.
+- **Licence:** the same Help Center commercial-use statement as above. Sound Effects Terms, https://elevenlabs.io/sound-effects-terms (last updated 2026-02-12): "You may opt out of the sublicensing of your SFX Outputs to third parties (including making SFX Outputs available to other ElevenLabs users) at any time by using the "Disable" functionality on the Sound Effects product page." In other words, these sounds may also be offered to other users unless the owner disables that.
+- **Restriction:** Prohibited Use Policy, https://elevenlabs.io/use-policy (last updated 2026-08-17), section (c) prohibits "distributing … any Output (or any portion thereof) generated using our Sound Effects product on a standalone basis for any purpose, including as isolated files, audio samples, music or sound, libraries, or other collections of sounds". The SFX may only be used inside the video. `short/audio/.gitignore` therefore keeps `sfx/*.wav` out of git. Don't publish the SFX folder.
+
+### Narration: `short/voice/voice.wav`
+- ElevenLabs text-to-speech ("James H – Tech Explainer", see STORYBOARD.md) on the same paid plan. It uses the same Help Center commercial-use statement as above.
+
+### Fonts: `short/fonts/`
+- **Lilita One** (Juan Montoreano), `lilita-one-latin-400-normal.woff2` from `@fontsource/lilita-one` 5.3.0. **SIL Open Font License 1.1**, full text in `short/fonts/LICENSE-lilita-one.txt` ("Copyright (c) 2011 Juan Montoreano (juan@remolacha.biz), with Reserved Font Names "Lilita One""). OFL allows use in videos and embedding. Only selling the font file on its own is restricted. https://fontsource.org/fonts/lilita-one · https://openfontlicense.org
+- **Permanent Marker** (Font Diner), `permanent-marker-latin-400-normal.woff2` from `@fontsource/permanent-marker` 5.3.0. **Apache License 2.0**, full text in `short/fonts/LICENSE-permanent-marker.txt`. https://fontsource.org/fonts/permanent-marker · https://www.apache.org/licenses/LICENSE-2.0

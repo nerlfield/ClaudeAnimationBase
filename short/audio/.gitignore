@@ -1,0 +1,14 @@
+# The generated SFX stay out of git: ElevenLabs' Prohibited Use Policy (17 Aug 2026) bars distributing
+# Sound Effects output "on a standalone basis ... as isolated files, audio samples, ... libraries, or
+# other collections of sounds". They live on disk for mix.py; the finished soundtrack (mix.m4a/mix.wav),
+# cues.json, sfx/library.json (prompts) and the scripts are tracked. See short/sources.md, "Asset licenses".
+# Delete this rule only if the repo stays private to the account owner.
+sfx/*.wav
+__pycache__/
+# The music is licensed for use in the video, but the Eleven Music terms prohibit putting it in "Music Libraries &
+# Repositories", and this repo is public. So the standalone music and the soundtrack stems stay out of git too;
+# the published video carries them. The plan, cues and scripts are tracked.
+music.wav
+src/*.mp3
+mix.wav
+mix.m4a

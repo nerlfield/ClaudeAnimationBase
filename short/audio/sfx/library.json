@@ -1,0 +1,344 @@
+{
+ "boing": {
+  "file": "boing.wav",
+  "dur": 1.0,
+  "pre": 0.0,
+  "peak_at": 0.01,
+  "prompt": "dizzy cartoon boing spring wobble, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "card_flip": {
+  "file": "card_flip.wav",
+  "dur": 0.217,
+  "pre": 0.0,
+  "peak_at": 0.117,
+  "prompt": "crisp playing card flip, quick paper flick, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.5
+ },
+ "chime": {
+  "file": "chime.wav",
+  "dur": 1.48,
+  "pre": 0.0,
+  "peak_at": 0.091,
+  "prompt": "soft bright bell chime, one gentle ding with a clear shimmering tail, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.5
+ },
+ "chip_clack": {
+  "file": "chip_clack.wav",
+  "dur": 0.162,
+  "pre": 0.0,
+  "peak_at": 0.008,
+  "prompt": "one clay poker chip placed firmly on a felt table, clack, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.5
+ },
+ "chomp": {
+  "file": "chomp.wav",
+  "dur": 0.537,
+  "pre": 0.0,
+  "peak_at": 0.223,
+  "prompt": "big cartoon bite chomp, teeth snapping into a cookie, crunchy, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.6
+ },
+ "click": {
+  "file": "click.wav",
+  "dur": 0.48,
+  "pre": 0.0,
+  "peak_at": 0.01,
+  "prompt": "one crisp button click, a finger tapping a big plastic button, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.5
+ },
+ "clock_ticks_fast": {
+  "file": "clock_ticks_fast.wav",
+  "dur": 1.568,
+  "pre": 0.0,
+  "peak_at": 0.07,
+  "prompt": "fast ticking stopwatch, rapid even mechanical ticks, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.6
+ },
+ "coin_ding": {
+  "file": "coin_ding.wav",
+  "dur": 0.462,
+  "pre": 0.0,
+  "peak_at": 0.016,
+  "prompt": "one bright gold coin ding with a clean short ring, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "coins_fuse": {
+  "file": "coins_fuse.wav",
+  "dur": 1.0,
+  "pre": 0.698,
+  "peak_at": 0.698,
+  "prompt": "two coins clinking together and fusing into one with a bright metallic clink, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "creak": {
+  "file": "creak.wav",
+  "dur": 0.477,
+  "pre": 0.0,
+  "peak_at": 0.231,
+  "prompt": "old brass balance scale beam creaking as it tips, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.8
+ },
+ "crumble": {
+  "file": "crumble.wav",
+  "dur": 1.109,
+  "pre": 0.0,
+  "peak_at": 0.493,
+  "prompt": "dry clay crumbling to dust and ash, gritty crumble falling apart, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.2
+ },
+ "dash_scratch": {
+  "file": "dash_scratch.wav",
+  "dur": 0.8,
+  "pre": 0.0,
+  "peak_at": 0.588,
+  "prompt": "marker pen quickly drawing a dashed line on a whiteboard, scratchy strokes, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.8
+ },
+ "dull_thud": {
+  "file": "dull_thud.wav",
+  "dur": 0.6,
+  "pre": 0.0,
+  "peak_at": 0.006,
+  "prompt": "dull muffled thud, anticlimactic soft thump, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.6
+ },
+ "flame_whoomp": {
+  "file": "flame_whoomp.wav",
+  "dur": 1.001,
+  "pre": 0.0,
+  "peak_at": 0.068,
+  "prompt": "fire bursting into flame, big whoomp ignition, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.2
+ },
+ "gate_clunk": {
+  "file": "gate_clunk.wav",
+  "dur": 0.796,
+  "pre": 0.0,
+  "peak_at": 0.023,
+  "prompt": "heavy metal toll gate barrier clunking shut, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.8
+ },
+ "hourglass_tick": {
+  "file": "hourglass_tick.wav",
+  "dur": 0.6,
+  "pre": 0.0,
+  "peak_at": 0.007,
+  "prompt": "glass hourglass being flipped onto a table with a glassy tick and a trickle of sand, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.6
+ },
+ "low_hit": {
+  "file": "low_hit.wav",
+  "dur": 1.0,
+  "pre": 0.0,
+  "peak_at": 0.029,
+  "prompt": "deep punchy low boom hit, sub impact with short tail, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "magnet_snap": {
+  "file": "magnet_snap.wav",
+  "dur": 0.6,
+  "pre": 0.0,
+  "peak_at": 0.058,
+  "prompt": "strong magnetic snap, two metal halves clicking together with a thunk, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.6
+ },
+ "paper_unroll": {
+  "file": "paper_unroll.wav",
+  "dur": 0.8,
+  "pre": 0.0,
+  "peak_at": 0.135,
+  "prompt": "paper scroll unrolling quickly across a desk, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.8
+ },
+ "pop": {
+  "file": "pop.wav",
+  "dur": 0.07,
+  "pre": 0.0,
+  "peak_at": 0.014,
+  "prompt": "one single short cartoon bubble pop, isolated, dry",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.5
+ },
+ "rise_soft": {
+  "file": "rise_soft.wav",
+  "dur": 0.717,
+  "pre": 0.0,
+  "peak_at": 0.247,
+  "prompt": "soft gentle rising synth tone sweeping upward, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.8
+ },
+ "riser": {
+  "file": "riser.wav",
+  "dur": 0.619,
+  "pre": 0.409,
+  "peak_at": 0.409,
+  "prompt": "short tense whoosh riser building up quickly to a peak, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.2
+ },
+ "running_feet": {
+  "file": "running_feet.wav",
+  "dur": 0.951,
+  "pre": 0.0,
+  "peak_at": 0.331,
+  "prompt": "fast cartoon running footsteps scampering, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "sizzle": {
+  "file": "sizzle.wav",
+  "dur": 1.48,
+  "pre": 0.0,
+  "peak_at": 0.07,
+  "prompt": "sizzle and crackle of something burning to ash, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.5
+ },
+ "slide": {
+  "file": "slide.wav",
+  "dur": 0.48,
+  "pre": 0.0,
+  "peak_at": 0.091,
+  "prompt": "short smooth slide of a heavy coin sliding across a table, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.5
+ },
+ "snore": {
+  "file": "snore.wav",
+  "dur": 1.109,
+  "pre": 0.0,
+  "peak_at": 0.242,
+  "prompt": "short cartoon snore, one relaxed sleepy zzz breath, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.2
+ },
+ "soft_ping": {
+  "file": "soft_ping.wav",
+  "dur": 0.8,
+  "pre": 0.0,
+  "peak_at": 0.007,
+  "prompt": "soft UI notification ping, gentle round tone, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.8
+ },
+ "sparkle": {
+  "file": "sparkle.wav",
+  "dur": 1.0,
+  "pre": 0.0,
+  "peak_at": 0.125,
+  "prompt": "magical glittering shimmer sparkle, tiny bells twinkling, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "stamp": {
+  "file": "stamp.wav",
+  "dur": 1.007,
+  "pre": 0.0,
+  "peak_at": 0.042,
+  "prompt": "one massive heavy stamp press slamming down onto a metal desk, deep boom impact followed by a ringing metallic clang, cartoon, isolated",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.5
+ },
+ "tick": {
+  "file": "tick.wav",
+  "dur": 0.255,
+  "pre": 0.0,
+  "peak_at": 0.011,
+  "prompt": "one clock tick-tock, two ticks, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "cut from tick_tock 0.2-0.5 s",
+  "requested_s": 1.0
+ },
+ "tick_tock": {
+  "file": "tick_tock.wav",
+  "dur": 0.759,
+  "pre": 0.0,
+  "peak_at": 0.437,
+  "prompt": "one clock tick-tock, two ticks, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "ticks_rise": {
+  "file": "ticks_rise.wav",
+  "dur": 0.974,
+  "pre": 0.0,
+  "peak_at": 0.266,
+  "prompt": "rapid mechanical counter ticks accelerating and rising in pitch like a price ticker spinning up, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "weights_clunk": {
+  "file": "weights_clunk.wav",
+  "dur": 0.8,
+  "pre": 0.0,
+  "peak_at": 0.007,
+  "prompt": "heavy metal weights dropping onto a brass scale pan, clunk, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.8
+ },
+ "whoosh_push": {
+  "file": "whoosh_push.wav",
+  "dur": 0.833,
+  "pre": 0.237,
+  "peak_at": 0.237,
+  "prompt": "deep airy whoosh swooping forward into the camera, fast swell then quick tail, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 1.0
+ },
+ "whoosh_soft": {
+  "file": "whoosh_soft.wav",
+  "dur": 0.48,
+  "pre": 0.015,
+  "peak_at": 0.015,
+  "prompt": "short soft light swish of a small object flying past, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.5
+ },
+ "whoosh_whip": {
+  "file": "whoosh_whip.wav",
+  "dur": 0.494,
+  "pre": 0.055,
+  "peak_at": 0.055,
+  "prompt": "very fast whip-pan swish, sharp air swipe, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.6
+ },
+ "wind_tumbleweed": {
+  "file": "wind_tumbleweed.wav",
+  "dur": 2.0,
+  "pre": 0.0,
+  "peak_at": 1.052,
+  "prompt": "lonely desert wind gust with a dry tumbleweed rolling and rattling past, comedic empty silence, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 2.5
+ },
+ "zip": {
+  "file": "zip.wav",
+  "dur": 0.48,
+  "pre": 0.0,
+  "peak_at": 0.055,
+  "prompt": "fast cartoon zip, something zooming in with speed lines, clean dry close-miked cartoon foley, single sound, no music, no voice",
+  "source": "ElevenLabs sound-generation",
+  "requested_s": 0.5
+ }
+}

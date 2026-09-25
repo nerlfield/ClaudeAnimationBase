@@ -7,7 +7,9 @@
 (() => {
   const tGo = 1.95, tLand = 2.69, tPop = wt('A2', 'buyers') - .1, tLook = wt('A2', 'another'), tPush = 4.93;
   const btc = HOOK0.btc;   // the fast screen moves first
-  const upAt = t => t < 1.55 ? 50 : t < tGo ? lerp(50, 49, ease(seg(t, 1.55, tGo))) : lerp(49, 80, backOut(seg(t, tGo, tLand)));
+  // Up: holds 50, dips to 49 (anticipation), accelerates like a rocket, lands on 80 at tLand, then a small spring settle
+  const upAt = t => t < 1.55 ? 50 : t < tGo ? lerp(50, 49, ease(seg(t, 1.55, tGo))) : t < tLand ? lerp(49, 80, Math.pow(seg(t, tGo, tLand), 1.8))
+                  : 80 + 2.4 * spring(t, tLand, 9, 22);
   // camera: push in (already moving at frame 0) → hold → pull back to show you → push through the Up button
   const LZ = Math.log;
   function camera(t) {
@@ -17,7 +19,8 @@
                         : Math.exp(lerp(LZ(1), LZ(9), easeIn(seg(t, tPush, CUT.B))));
     // during the push, pan towards the button faster than the zoom so it stays centred
     const k = easeOut(seg(t, tPush, CUT.B));
-    const x = t < tPush ? cx : lerp(FRAME.WIDE[0] - 10, UPBTN.cx, k), y = t < tPush ? cy : lerp(FRAME.WIDE[1], UPBTN.cy, k);
+    // cam() centres on the stage; at the end of the push the button must sit at the FRAME centre to fill it
+    const x = t < tPush ? cx : lerp(FRAME.WIDE[0] - 10, UPBTN.cx - (W / 2 - STAGE.x) / z, k), y = t < tPush ? cy : lerp(FRAME.WIDE[1], UPBTN.cy - (H / 2 - STAGE.y) / z, k);
     const land = t > tLand ? shakeXY(t, 5 * Math.exp(-(t - tLand) * 9)) : [0, 0];
     cam(t, x + land[0], y + land[1], z);
   }
@@ -48,8 +51,8 @@
     }
     camEnd();
     // out: the Up button's green fills the frame (B opens from this green)
-    const cover = seg(lt, dur - .12, dur);
-    if (cover > 0) paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.up, washOp: 255 * cover, ink: null });
+    const cover = seg(lt, dur - .07, dur - .01);
+    if (cover > 0) { flushLetters(); paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.up, washOp: 255 * cover, ink: null }); }
   }
   shots([[CUT.A, shotA]]);
 })();

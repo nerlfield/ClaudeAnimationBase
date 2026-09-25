@@ -1,0 +1,11 @@
+{
+  "positive_global_styles": ["instrumental lo-fi electronic underscore", "116 BPM", "steady 4/4 at constant tempo", "tense and curious", "ticking clock woodblock on eighth notes", "muted palm-muted synth plucks", "soft warm sub bass", "light closed hi-hats", "dry soft kick", "subtle vinyl crackle", "minor key", "sparse midrange, leaves room for a narrator"],
+  "negative_global_styles": ["vocals", "singing", "choir", "vocal chops", "lead melody", "loud lead synth", "guitar solo", "big cinematic drums", "tempo change", "fade-in intro", "silence"],
+  "sections": [
+    {"section_name": "Ticking groove", "positive_local_styles": ["starts immediately on the downbeat with the full groove", "clock ticks, muted plucks, sub bass, light hats", "curious, suspenseful"], "negative_local_styles": ["intro build", "fade in", "melody"], "duration_ms": 20690, "lines": []},
+    {"section_name": "Build to the stamp", "positive_local_styles": ["energy rises", "claps added", "opening low-pass filter", "short tension riser", "ends on a punchy accent"], "negative_local_styles": ["drop", "melody"], "duration_ms": 6207, "lines": []},
+    {"section_name": "Lighter groove", "positive_local_styles": ["back to the ticking groove, slightly lighter", "plucks and ticks", "steady"], "negative_local_styles": ["big drums", "melody"], "duration_ms": 16552, "lines": []},
+    {"section_name": "Reveal build", "positive_local_styles": ["brighter plucks", "extra percussion", "rising tension", "slow riser toward the end", "most energy of the track"], "negative_local_styles": ["melody", "vocals"], "duration_ms": 14483, "lines": []},
+    {"section_name": "Burnt breakdown", "positive_local_styles": ["sudden drop to sparse ticks and soft sub bass only", "calm, suspended", "ends on a clean bar that loops back to the start"], "negative_local_styles": ["drums", "long fade", "melody"], "duration_ms": 12414, "lines": []}
+  ]
+}

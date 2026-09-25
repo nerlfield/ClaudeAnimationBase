@@ -4,3 +4,4 @@ short/voice/seg/*.wav
 short/voice/audition/
 short/plates/raw_*/
 short/style/*/
+__pycache__/

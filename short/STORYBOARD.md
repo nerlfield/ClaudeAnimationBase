@@ -17,9 +17,9 @@ Motif:   The $1 coin that splits into an Up half and a Down half. It appears in 
          Second motif: the "?" tag on the other screen, which flips to BINANCE in G.
 Cast:    YOU, a periwinkle block with headphones (the kit's character, recoloured). THE STRANGER, orchid,
          with a beanie (D–E only).
-Music:   Generated with ElevenLabs Music (royalty-cleared on this plan): a tense, ticking lo-fi pulse,
-         ~100 bpm, no vocals, ducked ≥ 6 dB under the voice. bpm/offset get set to the track so the
-         cuts at 5.3, 14.7, 33.0, 42.4 and 51.2 land on beats.
+Music:   Generated with ElevenLabs Music (commercial licence on the paid plan): a tense, ticking lo-fi pulse,
+         116.3 bpm (offset 0.11 s), no vocals, ducked ≥ 6 dB under the voice. The tempo was solved so the
+         cuts (5.269, 14.555, 18.683, 27.969, 37.255, 42.414, 51.185, 58.923) all land on beats.
 ```
 
 ## Shots
