@@ -11,6 +11,8 @@
   const tWeigh = wt('F1', 'weigh'), tBids = wt('F2', 'bids'), tAsks = wt('F2', 'asks'), tOver = wt('F2', 'over'), tBoth = wte('F2', 'both');
   const tMore = wt('F3', 'bids'), tHeavy = wt('F3', 'heavier'), tPrice = wt('F3', 'price'), tTends = wt('F3', 'tends'), tUpW = wt('F3', 'up');
   const tPush = CUT.G - .31;
+  // strokes cost even off-screen at high zoom, so what's out of view isn't painted (see BUGS.md, from B/C)
+  const onScreen = (x, y, r) => { if (!CAM) return true; const [sx, sy] = toScreen(x, y), rr = r * CAM.zoom; return sx > -rr && sx < W + rr && sy > -rr && sy < H + rr; };
 
   // ---------- the scale: the flattened hill's slab is the beam ----------
   const PX = 470, PY = HILL.y + 20;   // pivot: the middle of the slab (HILL.y .. HILL.y + 40)
@@ -31,7 +33,7 @@
     for (const b of POUR) a += (b.side === 'bid' ? -1 : 1) * (b.more ? .045 : .032) * spring(t, b.t1, 6, 15);
     for (const b of POUR) if (b.more) a -= .014 * ease(seg(t, b.t1, b.t1 + .12));   // the extra bids strain it
     a += .014 * Math.sin(Math.PI * seg(t, tHeavy - .2, tHeavy - .02));   // a creak: it lifts a hair first
-    a -= .15 * ease(seg(t, tHeavy - .04, tHeavy + .3));                  // then tips, heavily
+    a -= .18 * ease(seg(t, tHeavy - .04, tHeavy + .3));                  // then tips, heavily
     a -= .03 * spring(t, tHeavy + .26, 4.5, 11);                          // a small overshoot, no bounce
     return a;
   }
@@ -88,9 +90,9 @@
   }
 
   // ---------- the Up price tag and the dotted arrow it drifts up ----------
-  const AR = { y0: 872, y1: 292 };
+  const AR = { y0: 872, y1: 330 };
   const pathX = y => PX + 20 * Math.sin((AR.y0 - y) / 68);
-  const TAG = { w: 196, h: 172, y0: 612, y1: 414 };
+  const TAG = { w: 196, h: 172, y0: 612, y1: 462 };
   const tagK = t => seg(t, tPrice - .04, tPrice + .16);
   const tagDrift = t => ease(seg(t, tTends + .08, tUpW));
   const tagPos = t => { const y = lerp(TAG.y0, TAG.y1, tagDrift(t)) - 3 * wob(t, .9); return [pathX(y), y]; };
@@ -101,7 +103,7 @@
     for (let i = 0; i < n; i++) {
       const q = i / (n - 1); if (q > d) break;
       const y = lerp(AR.y0, AR.y1 + 30, q), r = 5.5 * clamp((d - q) * 12);
-      paint(ellPts(pathX(y) + jit(1.5), y, r, r, 8), { wash: C.cream, washOp: 200, ink: null });
+      if (onScreen(pathX(y), y, 8)) paint(ellPts(pathX(y) + jit(1.5), y, r, r, 8), { wash: C.cream, washOp: 200, ink: null });
     }
     const hk = seg(d, .85, 1);
     if (hk > 0) {
@@ -119,7 +121,7 @@
 
   // ---------- camera: settle, a slow push, tilt up with the tag, then push into it ----------
   function camera(t) {
-    const y = kf(t, [[CUT.F, 700], [38.15, 700], [38.95, 772], [40.9, 766], [tUpW, 738]], ease) + 5 * spring(t, tHeavy + .28, 6, 13);
+    const y = kf(t, [[CUT.F, 700], [38.15, 700], [38.95, 772], [40.9, 766], [tUpW, 712]], ease) + 5 * spring(t, tHeavy + .28, 6, 13);
     const z = kf(t, [[CUT.F, 1], [38.15, 1.0], [38.95, 1.1], [40.9, 1.12], [tUpW, 1.15]], ease);
     const p = seg(t, tPush, CUT.G);
     if (p <= 0) return cam(t, 470, y, z);
@@ -130,11 +132,11 @@
   function shotF(t, lt, dur) {
     // out: the Up tag's green fills the frame; F's last frame is all green, and G opens on this green, pulling back out
     // of the market screen's Up button
-    const cover = seg(lt, dur - .13, dur - .02);
+    const cover = seg(lt, dur - .16, dur - .05);   // the last two frames are all green: deep zooms are the costliest frames
     if (cover >= 1) { paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.up, ink: null }); return; }
     const pushing = t > tPush + .06;   // diving into the tag: skip the side lights (glows are the costly primitive)
-    room(t, { plate: 'stage', bloom: 0 });
     camera(t);
+    room(t, { plate: 'stage', bloom: 0 });   // inside the camera, as E draws it, so the plate doesn't jump at the seam
     // light: the pans glow as the formula names them (bids, asks, then both)
     const env = (a, b, c, d) => Math.min(seg(t, a, b), 1 - seg(t, c, d));
     const gBoth = env(tOver - .05, tOver + .12, tBoth + .05, tBoth + .3);
@@ -143,16 +145,17 @@
     const [lx, ly] = panAt(t, 'bid'), [rx, ry] = panAt(t, 'ask');
     if (gBid > 0 && !pushing) glow(lx, ly - 110, 250, '#6BE08E', .75 * gBid);
     if (gAsk > 0 && !pushing) glow(rx, ry - 110, 250, '#E9E3D0', .5 * gAsk);
-    if (!pushing) glow(PX, 560, 520, '#1F6B45', .35 + .1 * wob(t, .2));   // the stage's own breathing light
+    if (!pushing) glow(PX, 560, 520, '#1F6B45', (.35 + .1 * wob(t, .2)) * ease(seg(t, CUT.F, CUT.F + .6)));   // the stage's breathing light, faded in (E has none)
 
     // the hill flattens into the beam (with a sag), a fulcrum grows under it, the pans pop onto its ends
     const k = 1 - ease(seg(t, CUT.F, 37.6)) - .07 * Math.sin(Math.PI * seg(t, 37.45, 37.78));
     const kFul = seg(t, 37.4, 37.62), kPan = [seg(t, 37.48, 37.68), seg(t, 37.53, 37.73)];
-    fulcrum(kFul);
+    const beamIn = !pushing || onScreen(PX, PY, 200);   // during the push only the middle of the scale can still show
+    if (beamIn) fulcrum(kFul);
     push(); translate(PX, PY); rotate(ang(t)); translate(-PX, -PY);
-    feeHill(t, k);
+    if (beamIn) feeHill(t, k);
     pop();
-    if (kFul > .5) { boilSeed('bolt'); paint(ellPts(PX, PY, 13, 13, 12, .4), { wash: C.creamDim, ink: C.ink, sw: .8 }); }
+    if (kFul > .5 && beamIn) { boilSeed('bolt'); paint(ellPts(PX, PY, 13, 13, 12, .4), { wash: C.creamDim, ink: C.ink, sw: .8 }); }
 
     // the book, then its blocks: in the book, in flight, or in a pan
     const by = bookY(t);
@@ -164,6 +167,7 @@
     }
     for (const side of ['bid', 'ask']) {
       const [ax, ay] = panAt(t, side), pk = kPan[side === 'bid' ? 0 : 1];
+      if (pushing && !onScreen(ax, ay - 120, 170)) continue;
       panBack(ax, ay, pk, side);
       for (const b of landed[side]) {
         const [x, y] = slot(t, side, b.j), age = t - b.t1;

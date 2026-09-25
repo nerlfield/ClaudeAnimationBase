@@ -67,13 +67,11 @@
     const x = kf(t, [[CUT.E, x0], [28.9, 285], [30.2, 292], [30.9, 640], [32.9, 652]], ease);
     const y = kf(t, [[CUT.E, y0], [28.9, 948], [30.2, 944], [30.9, 930], [32.9, 924]], ease);
     const z = kf(t, [[CUT.E, z0], [28.9, 1.22], [30.2, 1.24], [30.9, 1.22], [32.9, 1.26]], ease);
-    const wx = 800 * easeIn(seg(t, 32.95, TWHIP));                                         // whip: pan right, fast
+    const wx = 200 * easeIn(seg(t, 32.95, TWHIP));                  // whip: pan right, fast (kept inside the plate's margin)
     const sh = t > TCHOMP ? shakeXY(t, 7 * Math.exp(-(t - TCHOMP) * 9)) : [0, 0];
     cam(t, x + wx + sh[0], y + sh[1], z);
   }
-  const backdrop = () => paint(rectPts(-60, -60, W + 120, H + 120), { wash: C.night, ink: null });   // whip frames only
   function shotE1(t) {
-    if (t > 33.0) backdrop();
     camE1(t);
     room(t, { plate: 'stage', bloom: 0 });
     books(t, { bidK: 1, askK: 0, askOp: .35, spread: 0 });
@@ -176,12 +174,11 @@
     const x = kf(t, [[TWHIP, 300], [34.5, 440], [35.3, 452], [35.75, 468], [36.86, 472], [37.13, 470]], ease);
     const y = kf(t, [[TWHIP, 772], [34.5, 610], [35.3, 590], [35.75, 500], [36.86, 494], [37.13, 700]], ease);
     const z = kf(t, [[TWHIP, 1.05], [34.5, 1.08], [35.3, 1.12], [35.75, 1.38], [36.86, 1.42], [37.13, 1]], ease);
-    const wx = -800 * (1 - easeOut(seg(t, TWHIP, 33.42)));
+    const wx = -110 * (1 - easeOut(seg(t, TWHIP, 33.42)));
     const sh = CH.reduce((s, c) => s + (t > c && t < c + .3 ? 5 * Math.exp(-(t - c) * 12) : 0), 0), d = t > CH[0] ? shakeXY(t, sh) : [0, 0];
     cam(t, x + wx + d[0], y + d[1], z);
   }
   function shotE2(t) {
-    if (t < 33.3) backdrop();
     camE2(t);
     room(t, { plate: 'stage', bloom: 0 });
     const Y = youE2(t), tip = armTip(Y.x, Y.y, UY, Y.o), gone = t > 37.15;

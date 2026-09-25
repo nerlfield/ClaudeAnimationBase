@@ -31,8 +31,8 @@
   // ---------- times (video seconds), all on or just before their words ----------
   const T = {
     reveal: CUT.H, win: wt('H1', 'this') + .1, bracket: wt('H1', 'sixty-second') - .2, ribbon: wt('H1', 'sixty-second') - .03,
-    ribbonEnd: wte('H1', 'average') + .05, labelOut: wt('H2', 'A'), dip: wt('H2', 'spike') - .32, spike: wt('H2', 'spike') - .17,
-    peak: wt('H2', 'spike') - .03, nudge: wt('H2', 'barely') - .22, thud: wt('H2', 'barely') - .02,
+    ribbonEnd: wte('H1', 'average') + .05, labelOut: wt('H2', 'A'), dip: wt('H2', 'spike') - .4, spike: wt('H2', 'spike') - .25,
+    peak: wt('H2', 'spike') + .03, nudge: wt('H2', 'barely') - .22, thud: wt('H2', 'barely') - .02,
     run: wt('H2', 'so') - .13, leap: wt('H2', 'candle') + .01, cling: wt('H2', 'candle') + .31, burn: 57.89,   // beat 112
     land: 58.34, cry: 58.62,
   };
@@ -45,10 +45,25 @@
     flushBrush(); push(); noStroke(); const c = color(col); c.setAlpha(a); fill(c);
     beginShape(); for (const p of pts) vertex(p[0], p[1]); endShape(CLOSE); pop();
   }
+  // paint(pts, { wash, ink }) at a fraction of the cost: a flat native fill with the brush's ink outline over it.
+  // curv smooths the outline first (so fill and ink agree). Every wash polygon costs ~15 ms here; strokes are ~free.
+  function fillInk(pts, col, ink = null, sw = 1, a = 255, curv = false) {
+    const P = curv ? through(pts.concat([pts[0]]), 4) : pts;
+    flat(P, col, a);
+    if (ink) paint(P, { ink, sw });
+  }
+  // The room's colour where it shows in H (between the ticker's bottom bezel and the desk), sampled once from the plate.
+  let ROOMC = null;
+  function roomCol() {
+    if (ROOMC) return ROOMC;
+    const img = PLATES.room; if (!img) return (ROOMC = C.night);
+    const px = img.get(Math.round((600 + 270) / 1620 * img.width), Math.round((1036 + 480) / 2880 * img.height));
+    return (ROOMC = '#' + px.slice(0, 3).map(v => v.toString(16).padStart(2, '0')).join(''));
+  }
   // screen() from look.js with native grounds (same shapes, same boil seeds).
   function screenLite(x, y, w, h, o) {
     boilSeed('screen' + o.key);
-    if (o.glow !== 0) glow(x + w / 2, y + h / 2, Math.max(w, h) * .75, o.glowCol, o.glow ?? .45);
+    if (o.glow !== 0) glow(x + w / 2, y + h / 2, Math.max(w, h) * .75, o.glowCol, o.glow ?? .45);   // (a ≤ 0 draws nothing but keeps the boil stream)
     const bz = rrPts(x - 16, y - 16, w + 32, h + 32, 30, 1.5);
     flat(bz, C.bezel); paint(bz, { ink: C.ink, sw: 1.2 });
     flat(rrPts(x, y, w, h, 18, 1), o.face || C.panel);
@@ -65,32 +80,73 @@
     boilSeed('tick' + (st.key || ''));
     inkLine(P, 1.4, C.tape, 'ink', .4);
     const last = P[P.length - 1];
-    paint(ellPts(last[0], last[1], 9, 9, 12), { wash: C.tape, ink: null });
+    flat(ellPts(last[0], last[1], 9, 9, 12), C.tape);
     glow(last[0], last[1], 40, '#E9E3D0', .5);
+  }
+  // card(), button() and clock() from look.js, with native fills under the same ink (same shapes, same boil seeds).
+  function cardLite(x, y, w, st = {}) {
+    const h = w * .78, up = st.up ?? 50, dn = 100 - up;
+    boilSeed('card');
+    if (st.title !== false) {
+      txt('BTC Up or Down', x + 40, y + 62, 54, C.cream, { align: 'left' });
+      txt(st.example ? '15 min · example' : '15 min', x + 40, y + 118, 36, C.creamDim, { align: 'left', ink: false });
+    }
+    clockLite(x + w - 92, y + 88, 62, st.clock ?? 900);
+    const by = y + 165, bw = (w - 110) / 2, bh = h - 225, hi = st.hi, pu = hi === 'up' ? st.pulse || 0 : 0, pd = hi === 'down' ? st.pulse || 0 : 0;
+    buttonLite(x + 40, by, bw, bh, 'Up', up, C.up, C.upDk, pu, 'up');
+    buttonLite(x + 70 + bw, by, bw, bh, 'Down', dn, C.down, C.downDk, pd, 'down');
+    if (st.bar !== false) {
+      const yb = by + bh + 28, xm = x + 40 + (w - 80) * up / 100;
+      boilSeed('bar');
+      flat(rrPts(x + 40, yb, xm - x - 40, 18, 9, .6), C.up);
+      flat(rrPts(xm, yb, x + w - 40 - xm, 18, 9, .6), C.down);
+    }
+  }
+  function buttonLite(x, y, w, h, label, cents, col, dk, pulse, key) {
+    boilSeed('btn' + key);
+    if (pulse > 0) glow(x + w / 2, y + h / 2, w * .9, col === C.up ? '#6BE08E' : '#FF8A5C', .8 * pulse);
+    flat(rrPts(x, y + 8, w, h, 22, 1), dk);
+    fillInk(rrPts(x, y - 4 * pulse, w, h, 22, 1), col, C.ink, 1);
+    txt(label, x + w / 2, y + h * .27 - 4 * pulse, h * .2, C.cream, { ink: false });
+    txt(`${Math.round(cents)}¢`, x + w / 2, y + h * .64 - 4 * pulse, h * .48 * (1 + .1 * pulse), C.cream);
+  }
+  function clockLite(x, y, r, secs) {
+    boilSeed('clock');
+    fillInk(ellPts(x, y, r, r, 30, .6), C.panelHi, C.ink, .8);
+    const k = clamp(secs / 900), n = Math.max(2, Math.ceil(40 * k)), P = [];
+    for (let i = 0; i <= n; i++) { const a = -Math.PI / 2 + TAU * k * i / n; P.push([x + Math.cos(a) * r * .8, y + Math.sin(a) * r * .8]); }
+    if (k > .005) inkLine(P, 1.6, secs < 90 ? C.down : C.cream, 'ink', .3);
+    const m = Math.floor(secs / 60), s = Math.floor(secs % 60);
+    txt(`${m}:${String(s).padStart(2, '0')}`, x, y + 3, r * .5, C.cream, { ink: false });
   }
   // desk() from sets.js, rebuilt so the pull-back can afford it (native grounds, parts outside the view skipped) and act
   // on it: st.cardFlip squeezes the card (0..1 width), st.lineK draws the ticker's line in, st.over() paints between the
   // set and the desk's front edge... Same boil seeds as desk(), so switching to desk() on a boil tick shows no seam.
-  //   st = { tl (the set's clock: room drift, ticker time), card, fn, lo, hi, named, upGlow, tickGlow, lineK, cardFlip }
+  //   st = { tl (the set's clock: room drift, ticker time), card, fn, lo, hi, named, upGlow, tickGlow, lineK, cardFlip,
+  //          room: false paints the room as one flat colour (H, where only a sliver of it shows under the screen) }
   function deskLite(st) {
     const tl = st.tl, cm = CAM, zw = W / 2 / cm.zoom, zh = H / 2 / cm.zoom, V = [cm.cx - zw, cm.cy - zh, cm.cx + zw, cm.cy + zh];
     const vis = (x0, y0, x1, y1) => x1 > V[0] && x0 < V[2] && y1 > V[1] && y0 < V[3];
-    room(tl);
+    // Screen light: a glow costs a full-frame pass once it's magnified past the frame, and at these zooms the dark room
+    // it lights barely shows, so the big glows fade in as the camera pulls back (all there by zoom 1.2, as in desk()).
+    const gk = ease(clamp((1.55 - cm.zoom) / .35));
+    if (st.room === false) flat(rectPts(-400, 600, W + 800, 1400), roomCol());   // H: only a sliver of room shows
+    else room(tl, { bloom: gk });
     boilSeed('desk');
     flat(rectPts(-400, DESK.top, W + 800, 1400, 2), '#1D1A1F');
     inkLine([[-400, DESK.top], [W / 2, DESK.top - 4], [W + 400, DESK.top + 2]], 1.1, C.ink, 'ink', .4);
     flat(rectPts(-400, DESK.top + 4, W + 800, 26, 1), '#2A2530');
     if (vis(DESK.mx - 16, DESK.my - 16, DESK.mx + DESK.mw + 16, DESK.my + DESK.mh + 16)) {
-      screenLite(DESK.mx, DESK.my, DESK.mw, DESK.mh, { key: 'mkt', glowCol: '#3E8F63', glow: .5 + .4 * (st.upGlow || 0) });
+      screenLite(DESK.mx, DESK.my, DESK.mw, DESK.mh, { key: 'mkt', glowCol: '#3E8F63', glow: (.5 + .4 * (st.upGlow || 0)) * gk });
       const f = st.cardFlip ?? 1;
-      if (f >= 1) card(CARD.x, CARD.y, CARD.w, st.card || {});
+      if (f >= 1) cardLite(CARD.x, CARD.y, CARD.w, st.card || {});
       else if (f > .02) {   // a card flip: the painted card squeezes about its centre; its lettering follows and fades
         const cx = CARD.x + CARD.w / 2, cy = CARD.y + CARD.w * .39, n0 = LETTERS.length, sx = toScreen(cx, cy)[0];
-        push(); translate(cx, cy); scale(f, 1); translate(-cx, -cy); card(CARD.x, CARD.y, CARD.w, st.card || {}); pop();
+        push(); translate(cx, cy); scale(f, 1); translate(-cx, -cy); cardLite(CARD.x, CARD.y, CARD.w, st.card || {}); pop();
         for (const L of LETTERS.slice(n0)) { L.x = sx + (L.x - sx) * f; L.alpha = (L.alpha ?? 1) * clamp((f - .25) / .5); }
       }
     }
-    screenLite(DESK.tx, DESK.ty, DESK.tw, DESK.th, { key: 'tick', glowCol: '#8C8672', glow: .35 + .4 * (st.tickGlow || 0) });
+    screenLite(DESK.tx, DESK.ty, DESK.tw, DESK.th, { key: 'tick', glowCol: '#8C8672', glow: (.35 + .4 * (st.tickGlow || 0)) * gk });
     const fn = st.fn || (tt => btcPath(tt));
     tickerLite(DESK.tx + 10, DESK.ty + 58, DESK.tw - 20, DESK.th - 70, { t: tl, span: 14, fn, lo: st.lo || 84380, hi: st.hi || 84620, key: 'desk' }, st.lineK ?? 1);
     if (vis(DESK.tx, DESK.ty, DESK.tx + DESK.tw, DESK.ty + 60)) {
@@ -101,8 +157,8 @@
     }
     if (vis(100, 1100, 580, 1240)) {
       boilSeed('mug');
-      paint(rrPts(120, 1110, 90, 110, 14, 1), { wash: '#3A3446', ink: C.ink, sw: 1 });
-      paint(ellPts(165, 1112, 45, 10, 16, .5), { wash: '#241F2A', ink: C.ink, sw: .7 });
+      fillInk(rrPts(120, 1110, 90, 110, 14, 1), '#3A3446', C.ink, 1);
+      fillInk(ellPts(165, 1112, 45, 10, 16, .5), '#241F2A', C.ink, .7);
       inkLine([[240, 1215], [320, 1190], [420, 1230], [560, 1200]], .9, '#34303A', 'ink', .6);
     }
   }
@@ -130,7 +186,7 @@
   function hPill(s, x, y, size, o = {}) {
     const k = o.k ?? 1; if (k <= .01) return;
     const w = (o.w || s.length * size * .52 + size * .9) * backOut(k), h = size * 1.45 * backOut(k);
-    inH(() => { boilSeed('pill' + (o.key || s)); paint(rrPts(x - w / 2, y - h / 2, w, h, h / 2, 1.2), { wash: o.bg || C.panelHi, ink: o.ink ?? C.ink, sw: o.sw ?? 1.1 }); });
+    inH(() => { boilSeed('pill' + (o.key || s)); fillInk(rrPts(x - w / 2, y - h / 2, w, h, h / 2, 1.2), o.bg || C.panelHi, o.ink ?? C.ink, o.sw ?? 1.1); });
     const [a, b] = hd(x + (o.dx || 0), y + size * .04); txt(s, a, b, size * backOut(k) / HS, o.col || C.cream, { ink: false, alpha: clamp(k * 2) });
   }
 
@@ -184,7 +240,7 @@
     const bodyTop = OPEN + (CLOSE - OPEN) * backOut(sp);
     let tip = null;
     if (gone < .5) tip = tape(end, t < T.spike ? dip + tick : bodyTop - price(end));
-    if (tip) { glow(tip[0], tip[1], 60, '#E9E3D0', .6); boilSeed('hi-tip'); paint(ellPts(tip[0], tip[1], 9, 9, 12), { wash: C.tape, ink: null }); }
+    if (tip) { glow(tip[0], tip[1], 60, '#E9E3D0', .6); boilSeed('hi-tip'); flat(ellPts(tip[0], tip[1], 9, 9, 12), C.tape); }
     return { tip, bodyTop, sp };
   }
   // the 60 s bracket under the window, drawn out from its centre
@@ -202,11 +258,11 @@
     const P = ribbonPts(end);
     for (let i = 0; i < P.length; i += 8) glow(P[i][0], P[i][1], 120, '#6F7FFF', .32 * (o.a ?? 1));
     boilSeed('hi-ribbon');
-    paint(ribbon(P, 17, 17), { wash: C.twap, ink: C.twapDk, sw: 1.1 });
+    fillInk(ribbon(P, 17, 17), C.twap, C.twapDk, 1.1);
     inkLine(P.map(([x, y]) => [x, y - 3]), .7, '#B7C0FF', 'inkfine', .4);
     const [x, y] = P[P.length - 1], th = o.thud || 0, r = 12;
     glow(x, y, 70, '#8C9BFF', .7);
-    paint(ellPts(x, y, r * (1 + .25 * th), r * (1 - .22 * th), 16), { wash: '#AEB8FF', ink: C.twapDk, sw: 1.2 });
+    fillInk(ellPts(x, y, r * (1 + .25 * th), r * (1 - .22 * th), 16), '#AEB8FF', C.twapDk, 1.2);
     return [x, y];
   }
   // A flame: a teardrop with a swaying tip, in three layers. k 0..1 grows it.
@@ -221,9 +277,9 @@
       return P;
     };
     boilSeed('flame' + seed);
-    paint(tear(1, 0), { wash: '#E8542A', ink: '#8A2A12', sw: .8, curv: .6 });
-    paint(tear(.66, w * .06), { wash: '#F7963A', ink: null, curv: .6 });
-    paint(tear(.36, w * .1), { wash: '#FFD86E', ink: null, curv: .6 });
+    fillInk(tear(1, 0), '#E8542A', '#8A2A12', .8, 255, true);
+    fillInk(tear(.66, w * .06), '#F7963A', null, 1, 255, true);
+    fillInk(tear(.36, w * .1), '#FFD86E', null, 1, 255, true);
   }
   // The candle: a green body from the open to the close, with a wick up to the high and a little flame on it.
   function candle(t, st) {
@@ -235,8 +291,8 @@
     boilSeed('hi-candle');
     if (gone < .6) {
       inkLine([[cx, wickTop], [cx, LOW]], 2.4, mixCol(C.upDk, '#2A2622', char), 'ink', 0);
-      paint(rrPts(cx - bw / 2, top, bw, OPEN - top, 5, 1), { wash: body, ink: C.ink, sw: 1.3 });
-      paint(rrPts(cx - bw / 2 + 5, top + 6, 9, Math.max(4, OPEN - top - 12), 4, .6), { wash: lt, ink: null });
+      fillInk(rrPts(cx - bw / 2, top, bw, OPEN - top, 5, 1), body, C.ink, 1.3);
+      flat(rrPts(cx - bw / 2 + 5, top + 6, 9, Math.max(4, OPEN - top - 12), 4, .6), lt);
     }
     // the literal little flame on the wick; it flares and leans toward you just before the burn
     const flare = seg(t, T.burn - .14, T.burn), fk = easeOut(seg(t, T.peak - .03, T.peak + .15)) * (1 - seg(t, T.burn + .05, T.burn + .2));
@@ -255,7 +311,7 @@
       const hgt = (90 + 170 * age) * sc, P = [];
       for (let k = 0; k <= 5; k++) { const q = k / 5; P.push([x + (hash(seed + i * 3) - .5) * 40 * sc + Math.sin(q * 3.2 + t * 1.6 + i * 2) * 22 * sc * q, y - hgt * q]); }
       boilSeed('smoke' + seed + '-' + i);
-      paint(ribbon(P, 24 * sc * (1 - .3 * age), 6 * sc), { wash: mixCol('#6E6A66', '#A9A493', age), washOp: 170 * (1 - age) * life, ink: null });
+      flat(ribbon(P, 24 * sc * (1 - .3 * age), 6 * sc), mixCol('#6E6A66', '#A9A493', age), 170 * (1 - age) * life);
     }
   }
   // Ash and dust flakes drifting over the frame (screen space, in front of everything). k scales how many.
@@ -264,7 +320,7 @@
       const x = frac(hash(i * 3.1) + t * (.012 + .02 * hash(i + 2))) * (W + 80) - 40, y = frac(hash(i * 5.7) - t * (.02 + .03 * hash(i + 9))) * 1300;
       const r = 3 + 5 * hash(i + 4), a = Math.sin(t * (.8 + hash(i)) + i) * .5 + .5;
       boilSeed('ash' + i);
-      paint(ellPts(x, y, r, r * .7, 7, .8, t * (1 + hash(i)) + i), { wash: i % 3 ? '#8A8580' : '#C9C2B4', washOp: (90 + 110 * a) * Math.min(1, k * 1.5), ink: null });
+      flat(ellPts(x, y, r, r * .7, 7, .8, t * (1 + hash(i)) + i), i % 3 ? '#8A8580' : '#C9C2B4', (90 + 110 * a) * Math.min(1, k * 1.5));
     }
   }
 
@@ -281,13 +337,16 @@
   }
   const SIT = { x: 600, y: PTB };   // where you land after the burn (feet on the old Price to Beat line)
   // The Up half in your near hand, kept upright against the arm's angle.
-  const holdHalf = (o) => (u, sw) => half(u * .95, -u * .1, u * 1.2, 'up', { key: 'you', rot: o.rot || 0, crumble: o.cr || 0, k: o.k ?? 1 });
+  const holdHalf = (o) => (u, sw) => {
+    half(u * .95, -u * .1, u * 1.2, 'up', { key: 'you', rot: o.rot || 0, crumble: o.cr || 0, k: o.k ?? 1 });
+    if (o.fire > .02) { push(); translate(u * .95, -u * .1); rotate(o.rot || 0); flame(-u * .35, u * .5, u * 1.3, u * 2.6, o.t, 40, o.fire); pop(); }   // it catches
+  };
 
   // Your pose in H: off-screen, then the run, the leap, the cling, the burn, the fall, sitting in the ash.
   function youH(t) {
     if (t < T.run) return null;
     const m = mood(t);
-    const cr = ease(seg(t, T.burn + .06, T.burn + .7)), hk = 1 - seg(t, T.burn + .7, T.burn + .85);
+    const cr = ease(seg(t, T.burn + .06, T.burn + .5)), hk = 1 - seg(t, T.burn + .55, T.burn + .7), fire = Math.sin(Math.PI * seg(t, T.burn - .01, T.burn + .5));
     if (t < T.leap - .06) {   // the run: side view, leaning in, the Up half held out in front
       const k = seg(t, T.run, T.leap - .06), x = lerp(-190, 648, k * (1.35 - .35 * k)), ph = (t - T.run) * 3.9;
       const aL = .95 + .15 * Math.sin(ph * TAU), rot = .13;
@@ -302,12 +361,12 @@
     if (t < T.burn + .15) {    // clinging to the candle; the flame leans down... WHOOMP, blown back
       const blast = easeOut(seg(t, T.burn, T.burn + .1)), shiver = Math.sin(t * 60) * .03 * (1 - blast);
       const aL = 1.25 + .2 * blast, rot = -.02 + shiver - .22 * blast;
-      return { x: 726 - 26 * blast, y: 548 - 10 * blast, o: { ...m, view: 'q', aL, aR: 1.35 + .15 * blast, rot, sq: -.1 * blast, armL: holdHalf({ rot: rot + aL, cr, k: hk }) } };
+      return { x: 726 - 26 * blast, y: 548 - 10 * blast, o: { ...m, view: 'q', aL, aR: 1.35 + .15 * blast, rot, sq: -.1 * blast, armL: holdHalf({ rot: rot + aL, cr, k: hk, fire, t }) } };
     }
     if (t < T.land) {          // the fall back down to the line, turning to face us
       const k = seg(t, T.burn + .15, T.land), [x, y] = arcPt([700, 538], [SIT.x, SIT.y], 40, easeIn(k));
       const aL = 1.4 - 1.6 * k, rot = -.22 + .3 * k;
-      return { x, y, o: { ...m, view: k < .5 ? 'q' : 'front', aL, aR: 1.2 - 1.5 * k, rot, sq: -.08, armL: holdHalf({ rot: rot + aL, cr, k: hk }) } };
+      return { x, y, o: { ...m, view: k < .5 ? 'q' : 'front', aL, aR: 1.2 - 1.5 * k, rot, sq: -.08, armL: holdHalf({ rot: rot + aL, cr, k: hk, fire, t }) } };
     }
     return { x: SIT.x, y: SIT.y, o: { ...m, view: 'front', ...sitPose(t, m), armL: hk > 0 ? holdHalf({ rot: -.75, cr, k: hk }) : null } };
   }
@@ -322,7 +381,7 @@
   function fire(t, cx, cy, front) {
     if (t < T.burn - .02 || t > T.burn + .75) return;
     const a = t - T.burn, grow = backOut(clamp(a / .09)), die = 1 - ease(seg(a, .22, .7));
-    if (!front) { glow(cx, cy - 40, 520 * (.7 + .3 * grow), '#FF7A30', .95 * die); glow(cx, cy - 80, 260, '#FFD27A', .8 * die * (1 - seg(a, 0, .3))); }
+    if (!front) { glow(cx, cy - 40, 420 * (.7 + .3 * grow), '#FF7A30', .95 * die); glow(cx, cy - 80, 220, '#FFD27A', .8 * die * (1 - seg(a, 0, .3))); }
     for (let i = front ? 1 : 0; i < 11; i += 2) {
       const ang = (i / 10 - .5) * 2.6, r = 90 + 60 * hash(i + 11), fx = cx + Math.sin(ang) * r * 1.4, fy = cy + 70 - Math.cos(ang) * r * .3 + 70 * hash(i + 5);
       const h = (230 + 190 * hash(i + 7)) * (1 - .3 * Math.abs(ang)) * (front ? .8 : 1);
@@ -330,7 +389,7 @@
     }
   }
 
-  window.HI = { HX, HY, HS, hd, X_END, X_LEFT, PXS, PTB, tx, price, twap, TW0, T, act, SIT, SOOT,
+  window.HI = { HX, HY, HS, hd, fillInk, X_END, X_LEFT, PXS, PTB, tx, price, twap, TW0, T, act, SIT, SOOT,
     flat, screenLite, deskLite, deskFront, camDesk, camH, inH, hPill, dashes, chart, bracket, average, candle, flame, smoke, ash,
     mood, youH, drawYou, fire, holdHalf, sootK, sitPose };
 
@@ -338,7 +397,7 @@
   // camera in H space: [t, x, y, zoom]; eased; shaken on the spike and the burn
   const CAMK = [
     [T.reveal, 430, 690, .9], [T.reveal + 1.25, 470, 655, 1], [T.spike - .3, 520, 650, 1.05], [T.peak + .12, 545, 600, 1.0],
-    [T.thud + .1, 670, 635, 1.17], [T.run + .02, 640, 628, 1.15], [T.run + .35, 480, 575, .95], [T.leap, 585, 548, .97],
+    [T.thud + .05, 745, 648, 1.42], [T.run - .05, 752, 650, 1.45], [T.run + .35, 480, 575, .95], [T.leap, 585, 548, .97],
     [T.burn - .05, 640, 520, 1.0], [T.land + .1, 650, 560, 1.03], [CUT.I, 660, 560, 1.06],
   ];
   function camera(t) {
@@ -351,7 +410,7 @@
   function shotH(t, lt, dur) {
     camera(t);
     const V = (() => { const c = CAM, zw = W / 2 / c.zoom, zh = H / 2 / c.zoom; return [(c.cx - zw - HX) * HS, (c.cy - zh - HY) * HS, (c.cx + zw - HX) * HS, (c.cy + zh - HY) * HS]; })();
-    deskLite({ tl: t - CUT.END, lineK: 0, named: 1, tickGlow: .6, fn: HOOK0.btc, lo: HOOK0.lo, hi: HOOK0.hi });
+    deskLite({ tl: t - CUT.END, lineK: 0, named: 0, tickGlow: .6, fn: HOOK0.btc, lo: HOOK0.lo, hi: HOOK0.hi, room: false });
     let tip, flameAt;
     inH(() => {
       const st = chart(t, V);
@@ -367,7 +426,7 @@
       drawYou(p);
       fire(t, 745, 470, true);
       if (t > T.burn + .15) { smoke(t, SIT.x - 40, SIT.y - 190, T.burn + .2, 3, 3); smoke(t, X_END + 30, 250, T.burn + .1, 9, 2, .8); }
-      if (t > T.burn && t < T.burn + .5) { const a = t - T.burn; glow(745, 430, 900, '#FF8A3C', .6 * Math.exp(-a * 7)); }
+      if (t > T.burn && t < T.burn + .3) { const a = t - T.burn; glow(745, 430, 560, '#FF8A3C', .6 * Math.exp(-a * 7)); }
     });
     // the 60 s label, only while the voice says it
     const lk = seg(t, T.bracket + .06, T.bracket + .2) * (1 - seg(t, T.labelOut - .15, T.labelOut));
@@ -375,7 +434,7 @@
     camEnd();
     ash(t, seg(t, T.burn, T.burn + .6));
     // in: G's full-frame panel wash lifts off the chart
-    const cover = 1 - easeOut(seg(t, T.reveal, T.reveal + .3));
+    const cover = 1 - easeOut(seg(t, T.reveal + .02, T.reveal + .32));
     if (cover > 0) flat(rectPts(-40, -40, W + 80, H + 80), C.panel, 255 * cover);
   }
   shots([[CUT.H, shotH]]);

@@ -1,7 +1,7 @@
 // G.js: THE OTHER SCREEN, the hook's answer (42.414 → 51.185). See STORYBOARD.md, shot G.
 //   In: F's Up tag filled the frame with green; G opens deep inside the market screen's Up button (63¢, the tag's price)
 //   and pulls back fast out of it to the desk: the reverse of A's push. You're watching the card; on "other" your eyes
-//   drop to the lower screen and its "?" tag pulses; the camera follows your look and the tag flips to BINANCE on the
+//   go to the lower screen and its "?" tag pulses; the camera follows your look and the tag flips to BINANCE on the
 //   beat just before "Binance" (you do a take). Held, then the camera opens up to both screens: the ticker jumps on
 //   "moves", an arc arrow runs from its live dot up to the card and, a beat later, Up follows (57¢ → 62¢). "Price to
 //   Beat": a dashed line draws across the ticker, BTC sitting above it. "The clock": the card's clock swells (3:00 left).
@@ -9,7 +9,7 @@
 //   (62¢) lights, and you leap onto the ticker's bezel and slap Up on the beat of "cheap".
 //   Out: a push into the ticker screen, ending on a full-frame C.panel (the G→H contract).
 (() => {
-  const tBin = wt('G2', 'binance'), tMoves = wt('G2', 'moves');
+  const tMoves = wt('G2', 'moves');
   const tPrice = wt('G3', 'price'), tClock = wt('G3', 'clock'), tBuy = wt('G3', 'buy');
   const tFlip = 43.446;                 // the beat just before "Binance": the tag's flip lands here
   const tJump = tMoves - .04;           // the ticker lands its jump just before "moves"
@@ -22,10 +22,11 @@
   const upAt = t => t < 44.4 ? 63 : t < tFollow ? lerp(63, 57, ease(seg(t, 44.4, 45.5))) : lerp(57, 62, easeOut(seg(t, tFollow, tFollow + .28)));
   const clockAt = t => 180.9 - (t - tClock);   // reads 3:00 on "clock"
   const env = (t, a, b, c, d) => Math.min(seg(t, a, b), 1 - seg(t, c, d));
+  // strokes cost even off-screen at high zoom, so what's out of view isn't painted (see BUGS.md, from B/C)
+  const onScreen = (x, y, r) => { if (!CAM) return true; const [sx, sy] = toScreen(x, y), rr = r * CAM.zoom; return sx > -rr && sx < W + rr && sy > -rr && sy < H + rr; };
   const kick = (t, t0, k) => t < t0 ? 0 : Math.exp(-(t - t0) * k);
 
   // ---------- where things are (world = desk coordinates, see sets.js) ----------
-  const TAG = [DESK.tx + DESK.tw - 120, DESK.ty + 36];            // the ticker's name tag
   const CLK = [CARD.x + CARD.w - 92, CARD.y + 88];                 // the card's clock
   const HOME = [DESK.youX, DESK.top], LEDGE = [462, DESK.ty - 16]; // you: on the desk, then on the ticker's top bezel
   const HIT = [284, 552];                                           // where your arm meets the Up button
@@ -34,7 +35,7 @@
   // ---------- camera: pull back out of the Up button, follow your look to the tag, open up, push into the ticker ----------
   // keys: [t, x, y, zoom, ease for the pan, ease for the zoom]
   const CAMK = [
-    [CUT.G, UPBTN.cx, UPBTN.cy, 9], [42.85, 470, 640, .97, ease, easeOut], [43.02, 470, 640, 1],
+    [CUT.G, UPBTN.cx, UPBTN.cy + 20, 3.2], [42.85, 470, 640, .97, ease, easeOut], [43.02, 470, 640, 1],
     [43.42, 591, 884, 1.85], [44.35, 588, 878, 1.93], [45.25, 432, 652, 1.04], [46.7, 440, 664, 1.07],
     [47.75, 440, 742, 1.15], [48.72, 446, 736, 1.17], [49.0, 510, 684, 1.08], [tPush, 516, 680, 1.11],
     [CUT.H, DESK.tx + DESK.tw / 2, 850, 9, easeOut, easeIn],
@@ -84,7 +85,7 @@
             aR: lerp(lerp(1.65, .75, slap) + .06 * wob, o.aR ?? .3, back), aL: lerp(.9, o.aL ?? .3, ease(seg(t, T_LAND, tTap + .3))),
             armR: stretchArm(lerp(lerp(1.8, 2.8, slap) + .25 * wob, 0, back)) };
     }
-    you(x, y, 21, o);
+    if (onScreen(x, y - 90, 200)) you(x, y, 21, o);
   }
 
   // ---------- the thought: your odds dial fills past the market's 62% to 75% ----------
@@ -100,7 +101,7 @@
     for (let i = 0; i < 44; i++) { const a = i / 44 * TAU, rr = R * (1 + .075 * Math.abs(Math.sin(a * 5 + .4))); P.push([bx + Math.cos(a) * rr, by + Math.sin(a) * rr * .92]); }
     boilSeed('bubble');
     paint(P, { wash: C.cream, ink: C.ink, sw: 1.1 });
-    // the dial: a dark UI disc, the market's 62% in dark green, your extra 13% in bright green
+    // the dial: a dark UI disc filling to the market's 62% (a cream mark), then on to your 75% in brighter green
     const r = 70 * s, p62 = ease(seg(t, tBuy + .12, tBuy + .3)), p75 = ease(seg(t, tBuy + .32, tBuy + .46));
     boilSeed('dial');
     paint(ellPts(bx, by, r, r, 30, .5), { wash: C.panel, ink: C.ink, sw: .9 });
@@ -148,8 +149,9 @@
 
   function shotG(t, lt, dur) {
     // out: the ticker's panel fills the frame (H opens on full-frame C.panel); its last frame is all panel
-    const cover = seg(lt, dur - .13, dur - .02);
-    if (cover >= 1) { paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.panel, ink: null }); return; }
+    // (the last three frames are all panel, the first all green: a deep zoom on the desk is the costliest thing to paint)
+    const cover = seg(lt, dur - .2, dur - .085), open = 1 - seg(lt, .02, .12);
+    if (cover >= 1 || open >= 1) { paint(rectPts(-40, -40, W + 80, H + 80), { wash: cover >= 1 ? C.panel : C.up, ink: null }); return; }
     const pushing = t > tPush;   // no extra button/tag light while diving in (glows are the costly primitive)
     camera(t);
     const up = upAt(t);
@@ -180,7 +182,6 @@
     }
     camEnd();
     // in: F's green, now the Up button's face, clears as we pull back out of it
-    const open = 1 - seg(lt, 0, .1);
     if (open > 0 || cover > 0) flushLetters();
     if (open > 0) paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.up, washOp: 255 * open, ink: null });
     if (cover > 0) paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.panel, washOp: 255 * cover, ink: null });
