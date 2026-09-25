@@ -51,7 +51,7 @@
   function youE1(t) {
     const m = actYou(t, youKeys, { take: .8 });
     const aD = 1.0 + .08 * Math.sin((t - DE.TCU) * 5) - .25 * spring(t, DE.TCU, 7, 20);      // D's hold, continued
-    const aR = lerp(aD, kf(t, [[28.2, .05], [29.8, .05], [30.05, .55]]), ease(seg(t, 28.15, 28.6)));
+    const aR = lerp(aD, kf(t, [[28.2, .05], [29.8, .05], [30.05, .55], [30.5, .55], [30.8, .05]]), ease(seg(t, 28.15, 28.6)));
     const rot = kf(t, [[28.2, 0], [28.6, -.09], [29.78, -.09], [30.0, .02], [30.3, 0]]) + (m.rot || 0) * ease(seg(t, 28.2, 28.6));
     return { x: YX, y: FY, o: { ...m, view: 'q', flip: false, aR, rot } };
   }
@@ -64,10 +64,10 @@
   function camE1(t) {
     const [x0, y0, z0] = DE.camEnd;
     // push in on you ("You waited… nothing"), then pan across to the stranger ("filled instantly… 3%")
-    const x = kf(t, [[CUT.E, x0], [28.9, 285], [30.2, 292], [30.9, 640], [32.9, 652]], ease);
+    const x = kf(t, [[CUT.E, x0], [28.9, 285], [30.2, 292], [30.9, 750], [32.9, 762]], ease);
     const y = kf(t, [[CUT.E, y0], [28.9, 948], [30.2, 944], [30.9, 930], [32.9, 924]], ease);
     const z = kf(t, [[CUT.E, z0], [28.9, 1.22], [30.2, 1.24], [30.9, 1.22], [32.9, 1.26]], ease);
-    const wx = 200 * easeIn(seg(t, 32.95, TWHIP));                  // whip: pan right, fast (kept inside the plate's margin)
+    const wx = 85 * easeIn(seg(t, 32.95, TWHIP));                   // whip: pan right (kept inside the plate's margin)
     const sh = t > TCHOMP ? shakeXY(t, 7 * Math.exp(-(t - TCHOMP) * 9)) : [0, 0];
     cam(t, x + wx + sh[0], y + sh[1], z);
   }
@@ -76,14 +76,15 @@
     room(t, { plate: 'stage', bloom: 0 });
     books(t, { bidK: 1, askK: 0, askOp: .35, spread: 0 });
     DE.veil(1);
-    const Y = youE1(t), H = themE1(t), seeY = DE.onCanvas(Y.x, Y.y, U), seeH = DE.onCanvas(H.x, H.y, U);
+    // (after 30.86 the pan has left you behind: you're off-canvas, and p5.brush strokes just off-canvas are slow)
+    const Y = youE1(t), H = themE1(t), hy = DE.heldHalf(t, 'up', Y), hd = DE.heldHalf(t, 'down', H);
+    const seeY = t < 30.86 && DE.onCanvas(Y.x, Y.y, U, 10, 6, Math.max(6, (hy.x + .7 * hy.r - Y.x) / U)), seeH = DE.onCanvas(H.x, H.y, U, 10, Math.max(6, (H.x - hd.x + .7 * hd.r) / U), 6);
     if (seeY) you(Y.x, Y.y, U, { ...Y.o, boilKey: 'you' });
     if (seeH) them(H.x, H.y, U, { ...H.o, boilKey: 'them' });
     // your half: at your side while you doze, lifted a little on "nothing"
-    const hy = DE.heldHalf(t, 'up', Y);
     if (seeY) halfC(hy.x, hy.y, hy.r, 'up', { glow: hy.glow, key: 'upD', rot: lerp(hy.rot, -.25, ease(seg(t, 28.2, 28.6))) });
     // the stranger's half: tilted up to show it off, then bitten
-    const hd = DE.heldHalf(t, 'down', H), bite = t < TCHOMP ? 0 : .78 * backOut(seg(t, TCHOMP, TCHOMP + .06));
+    const bite = t < TCHOMP ? 0 : .78 * backOut(seg(t, TCHOMP, TCHOMP + .06));
     const rot = lerp(hd.rot, -.5, ease(seg(t, 28.35, 28.9))), fill = t > TZIP ? Math.exp(-(t - TZIP) * 4) : 0;
     const rD = hd.r * (1 + .15 * spring(t, TZIP, 9, 26)) * (1 - .1 * seg(t, TCHOMP, TCHOMP + .1));
     if (fill > .01) glow(hd.x, hd.y, 200, '#FFF0C0', fill);
@@ -91,8 +92,8 @@
     // the bite point on the half's top edge (where half()'s bite lands for this tilt)
     const bp = [hd.x + (.33 * Math.cos(rot) + .55 * Math.sin(rot)) * rD, hd.y + (.33 * Math.sin(rot) - .55 * Math.cos(rot)) * rD];
     // the replay: the stranger's chip zips in with speed lines and fills instantly
-    if (t > TZIP - .2 && t < TZIP + .08) {
-      const k = seg(t, TZIP - .2, TZIP), p0 = [1190, 700], e = easeIn(k), x = lerp(p0[0], hd.x, e), y = lerp(p0[1], hd.y, e);
+    if (t > TZIP - .13 && t < TZIP + .08) {
+      const k = seg(t, TZIP - .13, TZIP), p0 = [1330, 640], e = k * k, x = lerp(p0[0], hd.x, e), y = lerp(p0[1], hd.y, e);
       boilSeed('zip');
       for (let i = 0; i < 4; i++) {
         const back = (140 + 90 * hash(i)) * Math.min(1, k * 3), dx = (p0[0] - hd.x), dy = (p0[1] - hd.y), L = Math.hypot(dx, dy), off = (i - 1.5) * 16;
@@ -118,7 +119,7 @@
     const k0 = seg(t, T.nothing - .16, T.nothing) * (1 - seg(t, 30.52, 30.7));
     pill('0%', 405, 790, 62, { k: k0, key: 'zero' });
     const k3 = seg(t, TCHOMP - .12, TCHOMP + .02);
-    pill('3%', 470, 800, 62, { k: k3, key: 'three' });
+    pill('3%', 800, 735, 62, { k: k3, key: 'three' });
     camEnd();
     const w = seg(t, 32.95, 33.31);
     if (w > 0) { flushLetters(); whip(w, -1); }

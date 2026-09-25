@@ -56,3 +56,17 @@ and work around it inside your own shot file meanwhile.
   one at zoom 1.17). Split long lines into overlapping strokes under ~1000 screen px.
 - **I.js depends on H.js** (`window.HI`: the shared chart, camera and deskLite kit), so H.js must load first, as it does
   in short.html.
+
+## Perf: p5.brush shapes just off-canvas are slow (found building D/E)
+- **Where:** any shot; seen with `you()`/`them()` in `short/shots/E.js`.
+- **Problem:** a character sitting a few px to a few hundred px outside the canvas (e.g. panned off the left edge) made
+  frames cost +30–60% compared with the same frame with that character skipped or fully on screen (measured as a ratio to
+  A's frame at 2.0 s, interleaved to cancel the machine load). Moving the camera 150 px so the character left the canvas
+  raised the cost from 1.0× to 1.3×; not drawing it brought it back to 0.9×.
+- **Workaround (in E.js / D.js):** `DE.onCanvas(x, y, u, pad, l, r)` tests a character's screen box through the current
+  camera; shots skip characters (and what they hold) once the camera has left them. Proposed shared fix: a
+  `onCanvas()` helper in look.js that `you()`/`them()` call themselves (skip when fully off-canvas).
+- **Also:** a full-frame `paint(rectPts(...), { wash })` behind a whip cost ~2–3× a whole frame here; keep whip camera
+  travel inside the plate's margin (the plate covers world x −270..1350, y −480..2400) instead of painting a backdrop.
+- **E.js depends on D.js** (`window.DE`: the cast's positions, pose/held-half functions, `armTip`, `halfC`, `veil`,
+  `onCanvas`), so D.js must load first, as it does in short.html.

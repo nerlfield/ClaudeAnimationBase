@@ -62,8 +62,8 @@
   }
   // Is a character (ground point x, y, unit u) anywhere on the canvas? p5.brush strokes just off-canvas are slow, so
   // shots skip a character that the camera has left entirely.
-  function onCanvas(x, y, u, pad = 40) {
-    const a = toScreen(x - 8 * u, y - 13 * u), b = toScreen(x + 8 * u, y + 2 * u);
+  function onCanvas(x, y, u, pad = 10, l = 8, r = 8) {   // l, r: how far it reaches left and right, in u
+    const a = toScreen(x - l * u, y - 13 * u), b = toScreen(x + r * u, y + 2 * u);
     return Math.max(a[0], b[0]) > -pad && Math.min(a[0], b[0]) < W + pad && Math.max(a[1], b[1]) > -pad && Math.min(a[1], b[1]) < H + pad;
   }
   window.DE = { U, YX, TX, FY, ROW, CHIP_U, CHIP_D, HR, TCU, TCD, armTip, halfC, heldAt, sparks, veil, onCanvas };
@@ -75,7 +75,7 @@
     [23.2, 'hopeful', { lookX: .5, lookY: -1 }], [TI + .02, 'surprised', { lookX: .6, lookY: -1 }],
     [26.3, 'hopeful', { lookX: .6, lookY: -.9 }], [TCU, 'happy', { lookX: .6, lookY: -.3 }]];
   const themKeys = [[T.stranger - .1, 'mischief', { lookX: .6, lookY: -.5 }], [TS2 + .03, 'smug', { lookX: .4, lookY: -.6 }],
-    [22.66, 'suspicious', { lookX: 1, lookY: -.1 }], [23.72, 'hopeful', { lookX: .6, lookY: -1 }],
+    [22.66, 'suspicious', { lookX: 1, lookY: -.1 }], [23.75, 'hopeful', { lookX: .6, lookY: -1 }],
     [TI + .06, 'surprised', { lookX: .4, lookY: -1, emote: null }], [26.45, 'hopeful', { lookX: .7, lookY: -.8 }], [TCD, 'excited', { lookX: .5, lookY: -.3 }]];
   window.DE.youKeys = youKeys; window.DE.themKeys = themKeys;
 
@@ -118,7 +118,7 @@
   // ---------- props ----------
   // The two chips: held, slapped onto the top bid row, lifted and flown up together to the mint.
   function chipState(t, side, P) {
-    const up = side === 'up', ts = up ? TS1 : TS2, lift = up ? 23.26 : 23.84, fly = .6, meet = [MX + (up ? -54 : 54), MY + 8];
+    const up = side === 'up', ts = up ? TS1 : TS2, lift = up ? 23.26 : 23.87, fly = up ? .6 : .57, meet = [MX + (up ? -54 : 54), MY + 8];
     const tip = armTip(P.x, P.y, U, P.o);
     if (t < ts - .04) return { x: tip[0], y: tip[1] - 30, s: 1.05 };
     if (t < ts) { const k = ease(seg(t, ts - .04, ts)); return { x: lerp(tip[0], (up ? CHIP_U : CHIP_D)[0], k), y: lerp(tip[1] - 30, ROW, k), s: 1.1 }; }
@@ -180,18 +180,21 @@
     tumbleweed(t);
     // the cast
     const Y = t >= T.in ? youPose(t) : null, H = t >= T.stranger - .1 ? themPose(t) : null;
-    if (Y) you(Y.x, Y.y, U, { ...Y.o, boilKey: 'you' });
-    if (H) them(H.x, H.y, U, { ...H.o, boilKey: 'them' });
-    // the chips
-    for (const [side, P, col, label] of [['up', Y, C.up, '60¢'], ['down', H, C.down, '40¢']]) {
-      if (!P) continue;
+    // the chips: in a hand they're in front of the cast; placed on the board (or flying off it) they're behind it
+    const chips = front => { for (const [side, P, col, label] of [['up', Y, C.up, '60¢'], ['down', H, C.down, '40¢']]) {
+      if (!P || (t < (side === 'up' ? TS1 : TS2) + .5) !== front) continue;   // in front until the slapper has settled
       const c = chipState(t, side, P); if (!c) continue;
       if (c.land != null && c.land < .4) glow(c.x, c.y, 120, side === 'up' ? '#6BE08E' : '#FF8A5C', .8 * (1 - c.land / .4));
       if (c.s < .05) continue;
       push(); translate(c.x, c.y); rotate(c.rot || 0); translate(-c.x, -c.y);
       chip(c.x, c.y, label, col, { s: c.s });
       pop();
-    }
+    } };
+    chips(false);
+    if (t > TS1 + .5 && t < 24.6) flushLetters();   // placed chips' labels go behind the cast too (letters otherwise sit on top)
+    if (Y) you(Y.x, Y.y, U, { ...Y.o, boilKey: 'you' });
+    if (H) them(H.x, H.y, U, { ...H.o, boilKey: 'them' });
+    chips(true);
     // the fuse: a gold flash where the chips meet, and the $1 coin pops out of it
     if (t > 24.4 && t < 24.9) glow(MX, MY, 280, '#FFD46A', 1.3 * Math.sin(seg(t, 24.4, 24.9) * Math.PI));
     const q = coinSquash(t);
