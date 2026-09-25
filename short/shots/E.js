@@ -76,12 +76,12 @@
     room(t, { plate: 'stage', bloom: 0 });
     books(t, { bidK: 1, askK: 0, askOp: .35, spread: 0 });
     DE.veil(1);
-    const Y = youE1(t), H = themE1(t);
-    you(Y.x, Y.y, U, { ...Y.o, boilKey: 'you' });
-    them(H.x, H.y, U, { ...H.o, boilKey: 'them' });
+    const Y = youE1(t), H = themE1(t), seeY = DE.onCanvas(Y.x, Y.y, U), seeH = DE.onCanvas(H.x, H.y, U);
+    if (seeY) you(Y.x, Y.y, U, { ...Y.o, boilKey: 'you' });
+    if (seeH) them(H.x, H.y, U, { ...H.o, boilKey: 'them' });
     // your half: at your side while you doze, lifted a little on "nothing"
     const hy = DE.heldHalf(t, 'up', Y);
-    halfC(hy.x, hy.y, hy.r, 'up', { glow: hy.glow, key: 'upD', rot: lerp(hy.rot, -.25, ease(seg(t, 28.2, 28.6))) });
+    if (seeY) halfC(hy.x, hy.y, hy.r, 'up', { glow: hy.glow, key: 'upD', rot: lerp(hy.rot, -.25, ease(seg(t, 28.2, 28.6))) });
     // the stranger's half: tilted up to show it off, then bitten
     const hd = DE.heldHalf(t, 'down', H), bite = t < TCHOMP ? 0 : .78 * backOut(seg(t, TCHOMP, TCHOMP + .06));
     const rot = lerp(hd.rot, -.5, ease(seg(t, 28.35, 28.9))), fill = t > TZIP ? Math.exp(-(t - TZIP) * 4) : 0;
@@ -181,7 +181,7 @@
   function shotE2(t) {
     camE2(t);
     room(t, { plate: 'stage', bloom: 0 });
-    const Y = youE2(t), tip = armTip(Y.x, Y.y, UY, Y.o), gone = t > 37.15;
+    const Y = youE2(t), tip = armTip(Y.x, Y.y, UY, Y.o), gone = t > 37.15 || !DE.onCanvas(Y.x, Y.y, UY);
     // your half: the flips swap it Up↔Down, the gate bites it, it shrinks
     let side = 'up', r = 60, bite = 0, fx = 1, hop = 0;
     FL.forEach((f, i) => {

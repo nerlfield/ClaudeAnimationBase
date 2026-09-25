@@ -60,7 +60,13 @@
     boilSeed('veil');
     for (const [x, y, w, h] of [BOOK.U, BOOK.D]) paint(rrPts(x + 12, y + 100, w - 24, h - 112, 18, .8), { wash: C.panel, washOp: 170 * k, ink: null });
   }
-  window.DE = { U, YX, TX, FY, ROW, CHIP_U, CHIP_D, HR, TCU, TCD, armTip, halfC, heldAt, sparks, veil };
+  // Is a character (ground point x, y, unit u) anywhere on the canvas? p5.brush strokes just off-canvas are slow, so
+  // shots skip a character that the camera has left entirely.
+  function onCanvas(x, y, u, pad = 40) {
+    const a = toScreen(x - 8 * u, y - 13 * u), b = toScreen(x + 8 * u, y + 2 * u);
+    return Math.max(a[0], b[0]) > -pad && Math.min(a[0], b[0]) < W + pad && Math.max(a[1], b[1]) > -pad && Math.min(a[1], b[1]) < H + pad;
+  }
+  window.DE = { U, YX, TX, FY, ROW, CHIP_U, CHIP_D, HR, TCU, TCD, armTip, halfC, heldAt, sparks, veil, onCanvas };
 
   // ---------- acting ----------
   // You: slide in (fast, leaning), slap 60¢ on "sixty", watch the stranger, glance, look up, flinch at the stamp, catch.
