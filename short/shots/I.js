@@ -250,7 +250,7 @@
       } else {            // on the desk: a sad beat, a little rise (anticipation), then down behind the desk
         const land = Math.exp(-(t - E.land) * 7) * Math.cos((t - E.land) * 16);
         const hide = t < E.sink ? 0 : t < E.sink + .08 ? -.05 * Math.sin(Math.PI / 2 * seg(t, E.sink, E.sink + .08)) : lerp(-.05, 1, easeIn(seg(t, E.sink + .08, E.sunk)));
-        you(DESK.youX, DESK.top + 200 * hide, 21, { ...m, view: 'q', flip: true, sq: .22 * land + (hide > .1 ? -.08 : 0), aL: dL, aR: dR + .8 * seg(hide, .1, .6), boilKey: 'you' });
+        you(DESK.youX, DESK.top + 200 * hide, 21, { ...m, view: 'q', flip: true, sq: .22 * land + (hide > .1 ? -.08 : 0), aL: dL, aR: dR + .8 * seg(hide, .1, .6), emoteK: (m.emoteK ?? 1) * (1 - seg(hide, .45, .85)), boilKey: 'you' });
         if (hide > 0) HI.deskFront(DESK.youX - 118);
       }
     }

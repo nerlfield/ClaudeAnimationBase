@@ -35,3 +35,24 @@ and work around it inside your own shot file meanwhile.
   whole frame, so when you() overlaps the card (G's leap onto the ticker's top bezel), "38¢" is painted over its body.
   G calls `flushLetters()` right after `desk(..., { hide: 1 })` and draws you() itself. Proposed: call `flushLetters()`
   in desk() just before the trader is drawn (A's trader stands clear of the text, so it doesn't show there yet).
+
+## From shots H and I
+
+- **The I→A contract leaves out two things A passes at t = 0.** The seam table says `desk(t, { card: HOOK0.card, fn, lo,
+  hi, hide: 1, named: 0 })`, but A.js's frame 0 also has `upGlow: 1` (`exp(-max(0, t - tLand) * 1.5)` is 1 before the
+  landing) and `tickGlow: .6`. I.js matches A's actual frame (it passes both, and calls desk(t − 65.6) and
+  cam(t − 65.6, …HOOK0.cam) so the room drift, the ticker and the camera drift line up too). Proposed: put them in HOOK0
+  (e.g. `HOOK0.set = { upGlow: 1, tickGlow: .6 }`) so the table and A agree.
+- **sets.js `desk()`: `hide` doesn't hide.** The trader is drawn after the desk slab, so for 0 < hide < 1 it slides down
+  in front of the desk (A's pop-up at 3.57–3.73 rises from in front of it). I.js sinks the trader behind the desk by
+  repainting the slab's front over it (same boil seed and edge stroke). Proposed: draw the trader before the slab.
+- **Perf: a wash costs ~15–40 ms a shape plus its area; a native p5 fill of the same points looks identical** (flat colour,
+  the paper grain multiplies over both) and costs next to nothing. Strokes are cheap. A glow costs a full-frame pass
+  once it's magnified past the frame. H.js has `flat()` / `fillInk()` (native fill under the brush's ink outline) and
+  `deskLite()`, a desk() rebuilt that way (native fills, the screens' big glows faded in only below zoom ~1.5, parts
+  outside the view skipped): ~0.6× desk()'s cost at the hook framing and ~0.6× at zoom 1.7. Proposed: the same inside
+  screen()/card()/desk() (keep the ink, fill natively).
+- **p5.brush drops a stroke whose span is much longer than the canvas** (a 4500 px inkLine vanished at zoom 1, a 1150 px
+  one at zoom 1.17). Split long lines into overlapping strokes under ~1000 screen px.
+- **I.js depends on H.js** (`window.HI`: the shared chart, camera and deskLite kit), so H.js must load first, as it does
+  in short.html.

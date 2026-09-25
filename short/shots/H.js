@@ -25,7 +25,7 @@
   const base = s => PTB + C0 + A(s) + (s < -60 ? -38 * Math.sin(.045 * s + 1.1) * Math.min(1, (-60 - s) / 40) : 0);
   const price = s => s <= -1 ? base(s) : base(-1) - SPK * (1 - Math.exp(-(s + 1) * 9)) / (1 - Math.exp(-9));
   const twap = s => { let a = 0; const n = 120; for (let i = 0; i < n; i++) a += price(s - 60 + (i + .5) * 60 / n); return a / n; };
-  for (let k = 0; k < 3; k++) C0 += 24 - (twap(-1) - PTB);   // the average sits 24 px under the line before the spike
+  for (let k = 0; k < 3; k++) C0 += 28 - (twap(-1) - PTB);   // the average sits 28 px under the line before the spike
   const OPEN = price(-1), CLOSE = price(0), HIGH = CLOSE - 42, LOW = OPEN + 12, TW0 = twap(0);
 
   // ---------- times (video seconds), all on or just before their words ----------
@@ -120,8 +120,8 @@
     txt(`${m}:${String(s).padStart(2, '0')}`, x, y + 3, r * .5, C.cream, { ink: false });
   }
   // desk() from sets.js, rebuilt so the pull-back can afford it (native grounds, parts outside the view skipped) and act
-  // on it: st.cardFlip squeezes the card (0..1 width), st.lineK draws the ticker's line in, st.over() paints between the
-  // set and the desk's front edge... Same boil seeds as desk(), so switching to desk() on a boil tick shows no seam.
+  // on it: st.cardFlip squeezes the card (0..1 width), st.lineK draws the ticker's line in. The trader isn't drawn here
+  // (I.js draws you itself). Same shapes and boil seeds as desk(), so switching to desk() on a boil tick shows no seam.
   //   st = { tl (the set's clock: room drift, ticker time), card, fn, lo, hi, named, upGlow, tickGlow, lineK, cardFlip,
   //          room: false paints the room as one flat colour (H, where only a sliver of it shows under the screen) }
   function deskLite(st) {
@@ -260,7 +260,7 @@
     boilSeed('hi-ribbon');
     fillInk(ribbon(P, 17, 17), C.twap, C.twapDk, 1.1);
     inkLine(P.map(([x, y]) => [x, y - 3]), .7, '#B7C0FF', 'inkfine', .4);
-    const [x, y] = P[P.length - 1], th = o.thud || 0, r = 12;
+    const [x, y] = P[P.length - 1], th = o.thud || 0, r = 10;
     glow(x, y, 70, '#8C9BFF', .7);
     fillInk(ellPts(x, y, r * (1 + .25 * th), r * (1 - .22 * th), 16), '#AEB8FF', C.twapDk, 1.2);
     return [x, y];
@@ -411,7 +411,6 @@
     camera(t);
     const V = (() => { const c = CAM, zw = W / 2 / c.zoom, zh = H / 2 / c.zoom; return [(c.cx - zw - HX) * HS, (c.cy - zh - HY) * HS, (c.cx + zw - HX) * HS, (c.cy + zh - HY) * HS]; })();
     deskLite({ tl: t - CUT.END, lineK: 0, named: 0, tickGlow: .6, fn: HOOK0.btc, lo: HOOK0.lo, hi: HOOK0.hi, room: false });
-    let tip, flameAt;
     inH(() => {
       const st = chart(t, V);
       bracket(t);
@@ -419,7 +418,7 @@
       const end = t < T.nudge ? -60 + 59 * ease(seg(t, T.ribbon, T.ribbonEnd)) : -1 + easeOut(seg(t, T.nudge, T.thud));
       const thud = t > T.thud ? Math.exp(-(t - T.thud) * 7) * Math.cos((t - T.thud) * 22) : 0;
       average(t, end, { thud });
-      flameAt = candle(t, st);
+      candle(t, st);
       // you, the fire, the smoke
       const p = youH(t);
       fire(t, 745, 470, false);
