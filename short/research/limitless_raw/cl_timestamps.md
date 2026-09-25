@@ -1,0 +1,62 @@
+# How Report Timestamps Work
+Source: https://docs.chain.link/data-streams/how-report-timestamps-work
+
+> For the complete documentation index, see [llms.txt](/llms.txt).
+
+> **NOTE: Get started**
+>
+> Data Streams is self-serve, no sales call required. [Sign up](https://app.chain.link) to get started, or follow the
+> [sign-up guide](/data-streams/sign-up).
+
+Every Data Streams report carries two timestamps:
+
+- **`validFromTimestamp`** — when the report's price *starts being valid*
+- **`observationsTimestamp`** — when the report's price *was last observed*.
+
+Together, they describe a window of time rather than a single instant. This page explains how the two timestamps define a [report's window](#report-windows), what to expect when [no report exists for a given moment](#determining-current-price), and how timestamps apply to [Time Weighted Average Price (TWAP) streams](#twap-streams).
+
+## Report windows
+
+A report does not have verified price for a single instant in time. The `validFromTimestamp` marks the beginning of the window, and the `observationsTimestamp` marks the end.
+
+Both fields are Unix timestamps in seconds. [Each report schema](/data-streams/reference/report-schema-overview) contains definitions, including the unit of time, for all fields.
+
+The window of time can vary depending on how frequently the Decentralized Oracle Network (DON) can observe the data and generate reports. Windows are contiguous by construction: each one starts immediately following the previous window. Each report is designed to have no gaps or overlap, with every time interval belonging to exactly one report.
+
+## Determining current price
+
+Because each report covers a window rather than an instant, the "current" price at any given moment is the price of the report whose window contains that moment. Whether such a report exists yet depends on how recently the DON observed the data and delivered the report.
+
+**Normal case: a report exists at that exact moment**
+
+For example, a report exists with `observationsTimestamp = 12:05:00` and a 1-second window. The report is delivered slightly after `12:05:00` (for reports with second-precision timestamps, typically up to 1-2 seconds later) due to DON consensus and transmission.
+
+**Edge case: no report at that exact moment**
+
+It is possible for no report to be observed with `observationsTimestamp = 12:05:00`. For example:
+
+- Last report: `observationsTimestamp = 12:04:59`
+- Next report: `observationsTimestamp = 12:05:01`
+
+The next report's `validFromTimestamp` is `12:05:00`, absorbing the gap and creating a 2-second window (`12:05:00` → `12:05:01`). In this example, the price for `12:05:00` is observed one second later at `12:05:01`.
+
+Because windows can vary in width, **do not assume every report covers the same window**. Read `validFromTimestamp` and `observationsTimestamp` from each report rather than deriving the window from the previous report's timestamp or from your own clock.
+
+## TWAP streams
+
+Time Weighted Average Price (TWAP) streams report the average price over a rolling window, rather than a single observed price. A TWAP report is an **aggregated calculation** derived from the underlying reports. See the [TWAP report schema](/data-streams/reference/report-schema-v2#time-weighted-average-price-twap) for the full field definitions.
+
+A TWAP window is anchored to the latest observation and moves forward with each new report. Unlike standard streams, it doesn't align to the clock or snap to round numbers.
+
+For example, a 60-second TWAP requested "at `12:05:01`" covers `12:04:01` → `12:05:01`.
+
+**Formula:**
+
+```
+TWAP = (sum of price × duration for each report in the window) / window length in seconds
+```
+
+- 30-second TWAP → divide by 30
+- 60-second TWAP → divide by 60
+
+The TWAP is constructed from the underlying reports that fall within its window. Each underlying report normally covers about 1 second, but if a report's window is wider because it absorbed a gap, its price is weighted across the full window it covers.

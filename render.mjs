@@ -1,4 +1,4 @@
-// render.mjs: renders studio.html in headless Chrome. Length and fps come from the page (PROJECT in src/config.js).
+// render.mjs: renders studio.html (or --page=<file>) in headless Chrome. Length and fps come from the page (PROJECT in its config).
 //
 //   Look at it (open the images with your image viewer / Read tool):
 //     node render.mjs --sheet=0.5,1,1.5,2 [--cols=4] [--w=480] --out=out/check/a.jpg        contact sheet of chosen times
@@ -35,7 +35,9 @@ function playwrightChromes() {
 }
 const CHROME = CHROMES.find(p => p && existsSync(p));
 if (!CHROME) { console.error('Chrome not found: pass --chrome=<path> or set CHROME_PATH'); process.exit(1); }
-const fps = +(args.fps || 24), FRAMES_DIR = 'out/frames';
+// --page=short.html renders another page than studio.html; fps defaults to the page's PROJECT.fps, else 24.
+const PAGE = args.page || 'studio.html', FRAMES_DIR = args['frames-dir'] || 'out/frames';
+let fps = +(args.fps || 0);
 const run = (cmd, a) => new Promise((ok, bad) => { const p = spawn(cmd, a, { stdio: 'inherit' }); p.on('close', c => c ? bad(new Error(cmd + ' exited ' + c)) : ok()); });
 const times = s => String(s).split(',').map(Number);
 const span = s => String(s).split(':').map(Number);
@@ -45,7 +47,7 @@ const fields = s => { const out = []; let d = 0, cur = ''; for (const ch of Stri
 if (args.encode) {
   const out = args.out || 'out/video.mp4', n = readdirSync(FRAMES_DIR).filter(f => f.endsWith('.jpg')).length, audio = args.audio;
   console.log(`encoding ${n} frames → ${out}${audio ? ' with ' + audio : ''}`);
-  await run('ffmpeg', ['-y', '-loglevel', 'error', '-stats', '-framerate', String(fps), '-i', `${FRAMES_DIR}/f%05d.jpg`,
+  await run('ffmpeg', ['-y', '-loglevel', 'error', '-stats', '-framerate', String(fps || 24), '-i', `${FRAMES_DIR}/f%05d.jpg`,
     ...(audio ? ['-i', audio, '-map', '0:v', '-map', '1:a', '-c:a', 'aac', '-b:a', '192k', '-shortest'] : []),
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out]);
   console.log('wrote ' + out);
@@ -64,14 +66,15 @@ const gpu = args['soft-gl'] ? ['--use-angle=swiftshader', '--enable-unsafe-swift
 const sandbox = process.platform === 'linux' ? ['--no-sandbox'] : [];
 const browser = await puppeteer.launch({
   executablePath: CHROME, headless: true, protocolTimeout: 0,
-  args: [...sandbox, '--allow-file-access-from-files', '--ignore-gpu-blocklist', ...gpu, '--enable-gpu-rasterization', '--window-size=1920,1080', '--disable-renderer-backgrounding', '--disable-background-timer-throttling']
+  args: [...sandbox, '--allow-file-access-from-files', '--ignore-gpu-blocklist', ...gpu, '--enable-gpu-rasterization', '--window-size=1920,1920', '--disable-renderer-backgrounding', '--disable-background-timer-throttling']
 });
 async function openPage(tag = '') {
   const page = await browser.newPage();
   page.on('console', m => { if (['error', 'warn'].includes(m.type())) console.log(`[page${tag}]`, m.text()); });
   page.on('pageerror', e => console.log(`[page error${tag}]`, e.message));
-  await page.goto(pathToFileURL(resolve('studio.html')).href + '?render', { waitUntil: 'networkidle0' });
+  await page.goto(pathToFileURL(resolve(PAGE)).href + '?render', { waitUntil: 'networkidle0' });
   await page.waitForFunction('window.ready === true', { timeout: 60000 });
+  if (!fps) fps = await page.evaluate(() => PROJECT.fps || 24);
   if (args.loop) {
     const ok = await page.evaluate(name => { if (!LOOPS[name]) return false; window.LOOP = LOOPS[name]; return true; }, args.loop);
     if (!ok) { console.error(`no loop named "${args.loop}"`); process.exit(1); }

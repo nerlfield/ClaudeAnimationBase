@@ -1,7 +1,8 @@
 // core.js: constants, helpers, paper, paint wrapper, compositing and render hooks.
 // Length and rhythm come from PROJECT in config.js.
-const W = 1920, H = 1080;
-const BPM = PROJECT.bpm, BEAT = 60 / BPM, OFF = PROJECT.offset || 0, BOIL = 12, DUR = PROJECT.duration;
+// Frame size comes from PROJECT (w, h), default 1920×1080; a vertical Short sets w: 1080, h: 1920.
+const W = PROJECT.w || 1920, H = PROJECT.h || 1080;
+const BPM = PROJECT.bpm, BEAT = 60 / BPM, OFF = PROJECT.offset || 0, BOIL = PROJECT.boil || 12, DUR = PROJECT.duration;
 const TAU = Math.PI * 2;
 const PAL = {
   paper: '#F3EBDC', ink: '#2B2233', clay: '#D97757', clayDk: '#A84D33', clayLt: '#F2A283',
@@ -182,7 +183,12 @@ function centred(pts, draw) {
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
   push(); translate(cx, cy); draw(pts.map(([x, y]) => [x - cx, y - cy])); pop();
 }
-function paint(pts, o = {}) { centred(pts, (P) => paintAt(P, o)); }
+// PROJECT.fills = 'wash' paints every watercolour fill as a flat translucent wash instead. p5.brush's fills cost over a
+// second each on software GL (no GPU), so a character with a few fills takes ~10 s a frame; washes cost a few ms.
+function paint(pts, o = {}) {
+  if (o.fill && PROJECT.fills === 'wash' && !window.BAKE) o = o.wash ? { ...o, fill: null } : { ...o, wash: o.fill, washOp: (o.fillOp ?? 170) * .6, fill: null };
+  centred(pts, (P) => paintAt(P, o));
+}
 function paintAt(pts, o) {
   if (o.wash || o.fill || o.hatch) {
     if (o.wash) brush.wash(o.wash, o.washOp ?? 255); else brush.noWash();
@@ -276,8 +282,10 @@ async function setup() {
   createCanvas(W, H, WEBGL); pixelDensity(1); noLoop();
   brush.scaleBrushes(5); defineBrushes();
   paperG = makePaper(); grainC = makeGrain(); glowTex = makeGlowTex(); letG = createGraphics(W, H); letG.pixelDensity(1);
-  outC = document.getElementById('out'); outX = outC.getContext('2d');
+  outC = document.getElementById('out'); outC.width = W; outC.height = H; outX = outC.getContext('2d');
   await document.fonts.load('100px "Permanent Marker"');
+  for (const f of PROJECT.fonts || []) await document.fonts.load(`100px ${f}`);   // extra fonts a project declares
+  if (window.preloadAssets) await window.preloadAssets();   // a project's images (e.g. baked plates), before the first frame
   window.ready = true;
   if (!location.search.includes('render')) devUI();
 }
@@ -297,6 +305,7 @@ function composite(t) {
   drawLetters(c);
   c.globalCompositeOperation = 'multiply'; c.drawImage(grainC, 0, 0);
   c.globalCompositeOperation = 'source-over';
+  if (window.overlayLayer) window.overlayLayer(c, t);   // optional screen-space layer over the grain (e.g. burned-in captions)
 }
 window.renderAt = async (t, type = 'image/png', q = .92) => { T = t; await redraw(); composite(t); return outC.toDataURL(type, q); };
 // Contact sheet of several times, for visual checks: returns { url, ms[] }. crop = [x, y, w, h] fills each cell with just

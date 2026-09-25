@@ -1,0 +1,2 @@
+PRICE_MARKET_CONFIG",0,{outcomes:{labels:["Up","Down"],icons:["↑","↓"],colors:{outcome0:{bg:"green.500",text:"white"},outcome1:{bg:"red.500",text:"white"}},directionLabels:["Up","Down"]}
+let d=[{max:25,defaultVariant:"red",altVariant:"redAndWhiteTrack",color:"var(--chakra-colors-red-500)"},{max:50,defaultVariant:"yellow",altVariant:"yellowAndWhiteTrack",color:"var(--chakra-colors-orange-500)"},{max:100,defaultVariant:"green",altVariant:"greenAndWhiteTrack",color:"var(--chakra-colors-green-500)"}]

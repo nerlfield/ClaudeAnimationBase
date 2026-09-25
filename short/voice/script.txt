@@ -1,0 +1,9 @@
+This fifteen-minute Bitcoin bet just jumped from fifty cents to eighty. The first buyers were watching another screen.
+Up wins if Bitcoin ends at or above where it started. One Up plus one Down is backed by one dollar, and the winner takes it. So sixty-two cents means a sixty-two percent chance.
+Each side has an order book. Bids to buy, asks to sell, and a spread between.
+You bid sixty cents on Up. A stranger bids forty on Down. Nobody's selling. But sixty plus forty is a dollar, so the exchange mints a fresh pair and fills you both.
+You waited in the book, so you pay nothing. The stranger filled instantly, so they pay up to three percent. And selling costs most at fifty-fifty. Limitless says that discourages flip-flopping.
+Now weigh the book. Bids minus asks, over both. When bids are heavier, price tends to drift up.
+That other screen? Binance, one of the fastest places Bitcoin moves show up. Traders check it against the Price to Beat and the clock, and buy when Up looks cheap.
+But this market settles on Chainlink's sixty-second average. A last-second spike barely moves it, so chasing that candle can burn you.
+Add fees and a half-second delay, and you can lose your whole stake. Then the close becomes the next round's Price to Beat.

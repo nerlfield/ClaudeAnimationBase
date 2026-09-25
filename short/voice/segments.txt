@@ -1,0 +1,27 @@
+# One spoken sentence per line: <beat id> | <gap after, seconds> | <text>
+# The gap is the air after the sentence. Wow beats get 0.35–0.55 s; everything else stays tight.
+A1 | 0.15 | This fifteen-minute Bitcoin bet just jumped from fifty cents to eighty.
+A2 | 0.35 | The first buyers were watching another screen.
+B1 | 0.15 | Up wins if Bitcoin ends at or above where it started.
+B2 | 0.20 | One Up plus one Down is backed by one dollar, and the winner takes it.
+B3 | 0.35 | So sixty-two cents means a sixty-two percent chance.
+C1 | 0.10 | Each side has an order book.
+C2 | 0.30 | Bids to buy, asks to sell, and a spread between.
+D1 | 0.10 | You bid sixty cents on Up.
+D2 | 0.12 | A stranger bids forty on Down.
+D3 | 0.30 | Nobody's selling.
+D4 | 0.55 | But sixty plus forty is a dollar, so the exchange mints a fresh pair and fills you both.
+E1 | 0.12 | You waited in the book, so you pay nothing.
+E2 | 0.35 | The stranger filled instantly, so they pay up to three percent.
+E3 | 0.12 | And selling costs most at fifty-fifty.
+E4 | 0.35 | Limitless says that discourages flip-flopping.
+F1 | 0.10 | Now weigh the book.
+F2 | 0.12 | Bids minus asks, over both.
+F3 | 0.35 | When bids are heavier, price tends to drift up.
+G1 | 0.10 | That other screen?
+G2 | 0.20 | Binance, one of the fastest places Bitcoin moves show up.
+G3 | 0.35 | Traders check it against the Price to Beat and the clock, and buy when Up looks cheap.
+H1 | 0.15 | But this market settles on Chainlink's sixty-second average.
+H2 | 0.50 | A last-second spike barely moves it, so chasing that candle can burn you.
+I1 | 0.20 | Add fees and a half-second delay, and you can lose your whole stake.
+I2 | 0.00 | Then the close becomes the next round's Price to Beat.

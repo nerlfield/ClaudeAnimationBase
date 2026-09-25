@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Short studio: 15-minute markets</title>
+<style>
+  @font-face { font-family: "Lilita One"; src: url("short/fonts/lilita-one-latin-400-normal.woff2") format("woff2"); font-display: block; }
+  @font-face { font-family: "Permanent Marker"; src: url("short/fonts/permanent-marker-latin-400-normal.woff2") format("woff2"); font-display: block; }
+  html, body { margin: 0; background: #1b1820; color: #eee; font: 13px system-ui, sans-serif; }
+  main { padding: 12px; display: grid; gap: 8px; justify-items: start; }
+  #out { height: min(86vh, 1920px); aspect-ratio: 9 / 16; width: auto; background: #16181B; }
+  .p5Canvas { display: none !important; }
+  .bar { display: flex; gap: 10px; align-items: center; width: min(100%, 560px); }
+  #scrub { flex: 1; }
+  #tt { font-variant-numeric: tabular-nums; min-width: 190px; }
+</style>
+<script src="node_modules/p5/lib/p5.min.js"></script>
+<script src="node_modules/p5.brush/dist/p5.brush.js"></script>
+</head>
+<body>
+<main>
+  <canvas id="out" width="1080" height="1920"></canvas>
+  <div class="bar"><input id="scrub" type="range" min="0" max="66" step="0.0333" value="0"><span id="tt">loading…</span></div>
+</main>
+<!-- engine (shared with studio.html) -->
+<script src="short/config.js"></script>
+<script src="src/core.js"></script>
+<script src="src/clawd.js"></script>
+<script src="src/timeline.js"></script>
+<!-- this Short: narration timing, the shared look, captions, then one file per shot -->
+<script src="short/voice/words.js"></script>
+<script src="short/plates/plates.js"></script>
+<script src="short/src/plates.js"></script>
+<script src="short/src/look.js"></script>
+<script src="short/src/captions.js"></script>
+<script src="short/style/stills.js"></script>
+<script>
+  // short.html?loop=hook (a LOOPS entry) scrubs a standalone loop instead of the video.
+  const q = new URLSearchParams(location.search).get('loop'); if (q && LOOPS[q]) window.LOOP = LOOPS[q];
+</script>
+</body>
+</html>

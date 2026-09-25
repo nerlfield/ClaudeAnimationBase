@@ -1,0 +1,152 @@
+[
+ {
+  "id": "A1",
+  "text": "This fifteen-minute Bitcoin bet just jumped from fifty cents to eighty.",
+  "start": 0.0,
+  "end": 3.158
+ },
+ {
+  "id": "A2",
+  "text": "The first buyers were watching another screen.",
+  "start": 3.308,
+  "end": 5.073
+ },
+ {
+  "id": "B1",
+  "text": "Up wins if Bitcoin ends at or above where it started.",
+  "start": 5.423,
+  "end": 8.023
+ },
+ {
+  "id": "B2",
+  "text": "One Up plus one Down is backed by one dollar, and the winner takes it.",
+  "start": 8.173,
+  "end": 11.563
+ },
+ {
+  "id": "B3",
+  "text": "So sixty-two cents means a sixty-two percent chance.",
+  "start": 11.763,
+  "end": 14.457
+ },
+ {
+  "id": "C1",
+  "text": "Each side has an order book.",
+  "start": 14.807,
+  "end": 15.968
+ },
+ {
+  "id": "C2",
+  "text": "Bids to buy, asks to sell, and a spread between.",
+  "start": 16.068,
+  "end": 18.483
+ },
+ {
+  "id": "D1",
+  "text": "You bid sixty cents on Up.",
+  "start": 18.783,
+  "end": 20.13
+ },
+ {
+  "id": "D2",
+  "text": "A stranger bids forty on Down.",
+  "start": 20.23,
+  "end": 21.901
+ },
+ {
+  "id": "D3",
+  "text": "Nobody's selling.",
+  "start": 22.021,
+  "end": 22.811
+ },
+ {
+  "id": "D4",
+  "text": "But sixty plus forty is a dollar, so the exchange mints a fresh pair and fills you both.",
+  "start": 23.111,
+  "end": 27.709
+ },
+ {
+  "id": "E1",
+  "text": "You waited in the book, so you pay nothing.",
+  "start": 28.259,
+  "end": 30.07
+ },
+ {
+  "id": "E2",
+  "text": "The stranger filled instantly, so they pay up to three percent.",
+  "start": 30.19,
+  "end": 32.697
+ },
+ {
+  "id": "E3",
+  "text": "And selling costs most at fifty-fifty.",
+  "start": 33.047,
+  "end": 35.044
+ },
+ {
+  "id": "E4",
+  "text": "Limitless says that discourages flip-flopping.",
+  "start": 35.164,
+  "end": 37.115
+ },
+ {
+  "id": "F1",
+  "text": "Now weigh the book.",
+  "start": 37.465,
+  "end": 38.389
+ },
+ {
+  "id": "F2",
+  "text": "Bids minus asks, over both.",
+  "start": 38.489,
+  "end": 39.975
+ },
+ {
+  "id": "F3",
+  "text": "When bids are heavier, price tends to drift up.",
+  "start": 40.095,
+  "end": 42.138
+ },
+ {
+  "id": "G1",
+  "text": "That other screen?",
+  "start": 42.488,
+  "end": 43.436
+ },
+ {
+  "id": "G2",
+  "text": "Binance, one of the fastest places Bitcoin moves show up.",
+  "start": 43.536,
+  "end": 46.648
+ },
+ {
+  "id": "G3",
+  "text": "Traders check it against the Price to Beat and the clock, and buy when Up looks cheap.",
+  "start": 46.848,
+  "end": 50.981
+ },
+ {
+  "id": "H1",
+  "text": "But this market settles on Chainlink's sixty-second average.",
+  "start": 51.331,
+  "end": 54.396
+ },
+ {
+  "id": "H2",
+  "text": "A last-second spike barely moves it, so chasing that candle can burn you.",
+  "start": 54.546,
+  "end": 58.466
+ },
+ {
+  "id": "I1",
+  "text": "Add fees and a half-second delay, and you can lose your whole stake.",
+  "start": 58.966,
+  "end": 62.217
+ },
+ {
+  "id": "I2",
+  "text": "Then the close becomes the next round's Price to Beat.",
+  "start": 62.417,
+  "end": 64.827
+ }
+]
