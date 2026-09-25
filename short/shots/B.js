@@ -15,10 +15,11 @@
   const beatAt = n => OFF + n * BEAT;
   // ---- times (video seconds), each read on its word or just before ----
   const tGo = 5.58, tFin = 7.03, tFlare = beatAt(13.5) /* 7.075, "above" 7.083 */, tStart = wt('B1', 'started') - .08, tClr = 7.86;
-  const tUpIn = wt('B2', 'Up') - .28, tDnIn = wt('B2', 'Down') - .26, tSnap = beatAt(19) /* 9.912 */;
+  const tUpIn = wt('B2', 'Up') - .2, tDnIn = wt('B2', 'Down') - .2, tSnap = beatAt(19) /* 9.912 */;
   const tLbl = wt('B2', 'one', 2) - .04, tSplit = wt('B2', 'and') - .02, tWin = wt('B2', 'winner') - .04, tTake = wt('B2', 'takes') - .02;
   const tCrumble = beatAt(21.5) /* 11.20 */, tSweep = wt('B3', 'So') - .06, tTag = beatAt(23) /* 11.976 */, tFlip = beatAt(25) /* 13.008 */;
   const tTagOut = 14.36;
+  const bobY = t => 4 * wob(t, .35) * seg(t, 11.62, 12.3);   // same as C.js's (where it's fully on)
 
   // ---- the Bitcoin path: a closed-form wander through keys (px above the line), ending well above it ----
   const PK = [0, 72, 30, -30, -84, -36, 48, 112];
@@ -38,8 +39,11 @@
     if (rb) { arc(x1 - rb, y1 - rb, rb, 0); arc(x0 + rb, y1 - rb, rb, Math.PI / 2); } else P.push([x1, y1], [x0, y1]);
     return P;
   }
+  // Is a world point (radius r) inside the frame? The reveal starts at 6.5x zoom, where strokes cost a lot even
+  // off-screen, so things out of view are skipped.
+  const onScreen = (x, y, r) => { if (!CAM) return true; const [sx, sy] = toScreen(x, y), rr = r * CAM.zoom; return sx > -rr && sx < W + rr && sy > -rr && sy < H + rr; };
   function dashLine(x0, x1, y, xr, col, sw) {   // fixed dashes from x0, drawn up to xr (so a growing line doesn't slide)
-    for (let x = x0; x < Math.min(x1, xr) - 4; x += 52) inkLine([[x, y], [Math.min(x + 28, xr, x1), y]], sw, col, 'inkfine', 0);
+    for (let x = x0; x < Math.min(x1, xr) - 4; x += 52) if (onScreen(x + 14, y, 20)) inkLine([[x, y], [Math.min(x + 28, xr, x1), y]], sw, col, 'inkfine', 0);
   }
   function ring15(x, y, r, left, o = {}) {   // the round's clock as a ring that empties (no digits: no extra number)
     const k = o.k ?? 1; if (k <= .01) return; r *= backOut(k);
@@ -73,6 +77,14 @@
     for (let i = 0; i < n; i++) {
       const ang = a0 + (i + .5) / n * spread + (hash(i * 7 + key.length) - .5) * .35, d = rad * (.3 + .7 * easeOut(a)) * (.75 + .5 * hash(i * 3 + 1));
       paint(starPts(x + Math.cos(ang) * d, y + Math.sin(ang) * d, 17 * (1 - a) + 2, .3, 4, ang), { wash: col, washOp: 255 * (1 - a * a), ink: null });
+    }
+  }
+  function puff(x, y, age, life) {   // a small cloud of ash where the loser crumbles
+    if (age < 0 || age > life) return; const a = age / life;
+    boilSeed('puff');
+    for (let i = 0; i < 6; i++) {
+      const ang = -Math.PI / 2 + (i - 2.5) * .5, d = 40 + 90 * easeOut(a) * (.7 + .5 * hash(i + 40)), s = (22 + 16 * hash(i + 41)) * (.6 + .8 * easeOut(a));
+      paint(ellPts(x + Math.cos(ang) * d, y + Math.sin(ang) * d * .7 + 30 * a, s, s * .8, 12, 2), { wash: '#5A534C', washOp: 150 * (1 - a), ink: null });
     }
   }
   function streaks(x, y, dir, k, col, key) {   // painted smears trailing a fast-moving half (dir: +1 moving right)
@@ -119,26 +131,26 @@
     paint(band(ZX0, LINE, ZX1, ZBOT, 0, 30), { wash: C.down, washOp: (78 - 34 * won) * (1 - clr), ink: null });
     // the zones' light breathes; the Up zone flares when the marker finishes above
     const br = .5 + .5 * wob(t, .55);
-    glow(470, 470, 420, '#2F8A55', ((.22 + .08 * br) * (1 + 1.2 * won) + 1.1 * fl) * (1 - clr) * seg(lt, .2, .5));
-    glow(470, 810, 400, '#C0441C', (.3 + .08 * (1 - br)) * (1 - .6 * won) * (1 - clr) * seg(lt, .2, .5));
+    glow(470, 470, 420, '#2F8A55', ((.22 + .08 * br) * (1 + 1.2 * won) + 1.1 * fl) * (1 - clr) * seg(lt, .3, .55));
+    glow(470, 810, 400, '#C0441C', (.3 + .08 * (1 - br)) * (1 - .6 * won) * (1 - clr) * seg(lt, .3, .55));
     // the starting line draws itself from the start dot; it brightens on "started"
     const ps = t < tStart ? 0 : Math.exp(-(t - tStart) * 3) * clamp((t - tStart) / .08);
     const lc = mixCol(mixCol(C.cream, C.creamDim, .25 - .25 * ps), '#1F2624', clr);
     boilSeed('line');
     dashLine(ZX0 + 24, ZX1 - 24, LINE, lerp(ZX0 + 24, ZX1, easeOut(seg(lt, .1, .45))), lc, 1.25 + .5 * ps);
     if (ps > .02) glow(mX(0), LINE, 90, '#E9E3D0', .7 * ps);
-    paint(ellPts(mX(0), LINE, 11 + 4 * ps, 11 + 4 * ps, 12, .4), { wash: lc, ink: C.ink, sw: .6 });
+    if (onScreen(mX(0), LINE, 20)) paint(ellPts(mX(0), LINE, 11 + 4 * ps, 11 + 4 * ps, 12, .4), { wash: lc, ink: C.ink, sw: .6 });
     // the path so far (it rolls up into the marker as the chart clears)
     const q = p * clr;
     if (p - q > .004) { const P = []; for (let i = 0; i <= 44; i++) { const u = lerp(q, p, i / 44); P.push([mX(u), mY(u)]); } boilSeed('trail'); inkLine(P, 1.3, C.tape, 'ink', .3); }
     // the clock ring empties with the race
     const done = t < tFin ? 0 : dec(t, tFin, 3);
-    ring15(792, 230, 58, 1 - p, { k: 1 - seg(t, tClr, tClr + .3), flash: done });
+    if (onScreen(792, 230, 80)) ring15(792, 230, 58, 1 - p, { k: 1 - seg(t, tClr, tClr + .3), flash: done });
     // the marker: crouches, races, lands above the line and hops on the flare
     const hop = jump(t, tFlare, tFlare + .3, 34), an = t < tGo ? .14 * ease(seg(t, tGo - .16, tGo)) : 0;
     const slope = (dev(clamp(p + .02)) - dev(clamp(p - .02))) / (mX(.02) - mX(0)) / 2, racing = t > tGo && t < tFin;
     const mx = mX(p), my = mY(p) + hop.dy - (t > tFlare + .3 ? 5 * wob(t, .9) : 0);
-    btc(mx, my, 36, { k: 1 - seg(t, tClr + .08, tClr + .26), rot: racing ? clamp(-slope * .5, -.35, .35) + .12 : .05 * wob(t, .7), sq: an + hop.sq * .8, glow: .5 + .5 * won * (1 - clr) });
+    if (onScreen(mx, my, 60)) btc(mx, my, 36, { k: 1 - seg(t, tClr + .08, tClr + .26), rot: racing ? clamp(-slope * .5, -.35, .35) + .12 : .05 * wob(t, .7), sq: an + hop.sq * .8, glow: .5 + .5 * won * (1 - clr) });
     sparks(mx, my, t - tFlare, .5, 10, 150, C.upLt, 'flare', -Math.PI, Math.PI);
   }
 
@@ -148,13 +160,13 @@
     if (t < tUpIn) return;
     // --- the two halves slide in, tremble, pull back and snap ---
     if (t < tSnap + .1) {
-      const inU = seg(t, tUpIn, tUpIn + .3), inD = seg(t, tDnIn, tDnIn + .28), ten = ease(seg(t, 9.25, 9.72)), ant = ease(seg(t, 9.72, 9.8)), sn = easeIn(seg(t, 9.8, tSnap));
+      const inU = seg(t, tUpIn, tUpIn + .45), inD = seg(t, tDnIn, tDnIn + .42), ten = ease(seg(t, 9.25, 9.72)), ant = ease(seg(t, 9.72, 9.8)), sn = easeIn(seg(t, 9.8, tSnap));
       const trem = 3.5 * seg(t, 9.3, 9.72) * (1 - ant), bob = 1 - seg(t, 9.6, 9.8), g = .22 + .08 * wob(t, .6) + .45 * seg(t, 9.3, 9.8);
       const xu = lerp(lerp(-280, 280, backOut(inU)) + 38 * ten - 16 * ant, X, sn) + trem * Math.sin(t * 95);
       const xd = lerp(lerp(1260, 640, backOut(inD)) - 38 * ten + 16 * ant, X, sn) + trem * Math.sin(t * 88 + 1);
       const yu = Y + 7 * wob(t, .8) * bob + trem * .6 * Math.cos(t * 83), yd = Y + 7 * wob(t, .8, .37) * bob + trem * .6 * Math.cos(t * 79);
-      streaks(xu - R, yu, 1, Math.max(seg(t, tUpIn, tUpIn + .08) * (1 - seg(t, tUpIn + .12, tUpIn + .3)), sn * (1 - seg(t, tSnap, tSnap + .06))), C.upDk, 'u');
-      if (t >= tDnIn) streaks(xd + R, yd, -1, Math.max(seg(t, tDnIn, tDnIn + .08) * (1 - seg(t, tDnIn + .12, tDnIn + .28)), sn * (1 - seg(t, tSnap, tSnap + .06))), C.downDk, 'd');
+      streaks(xu - R, yu, 1, Math.max(seg(t, tUpIn, tUpIn + .05) * (1 - seg(t, tUpIn + .12, tUpIn + .3)), sn * (1 - seg(t, tSnap, tSnap + .06))), C.upDk, 'u');
+      if (t >= tDnIn) streaks(xd + R, yd, -1, Math.max(seg(t, tDnIn, tDnIn + .05) * (1 - seg(t, tDnIn + .12, tDnIn + .3)), sn * (1 - seg(t, tSnap, tSnap + .06))), C.downDk, 'd');
       half(xu, yu, R, 'up', { rot: lerp(-.5, 0, backOut(inU)) + .03 * wob(t, .7) * bob, glow: g });
       if (t >= tDnIn) half(xd, yd, R, 'down', { rot: lerp(.5, 0, backOut(inD)) + .03 * wob(t, .7, .5) * bob, glow: g });
     }
@@ -177,31 +189,33 @@
     const { x: X, y: Y, r: R } = COIN;
     const d = 55 * backOut(seg(t, tSplit, tSplit + .2)), crack = dec(t, tSplit, 7);
     if (crack > .02) glow(X, Y, R * 1.6, '#FFF1C8', .9 * crack);
+    // the loser (drawn behind the coin): droops on "winner", is shoved aside on "takes", crumbles to ash and is gone
+    const cr = seg(t, tCrumble, tCrumble + .55), gone = ease(seg(t, tCrumble + .3, tCrumble + .62));
+    if (gone < 1) {
+      const kn = easeOut(seg(t, tTake, tTake + .2)), droop = ease(seg(t, tWin, tWin + .2)), shiver = 3 * droop * (1 - seg(t, tCrumble + .1, tCrumble + .3));
+      const xd = X + d + 115 * kn + shiver * Math.sin(t * 70), yd = Y + 8 * droop + 30 * kn;
+      around(xd + R * .4, yd + R, 1 - gone * .7, 1 - gone, () => half(xd, yd, R, 'down', { rot: .1 * droop + .45 * kn, crumble: cr, glow: .15 * (1 - droop) }));
+    }
+    puff(X + 55 + 115 + R * .45, Y + 40 + R * .2, t - tCrumble, .7);
     // the coin re-forms behind the winner
-    const kc = seg(t, tTake, tTake + .24), hold = t > tTake + .3;
+    const kc = seg(t, tTake, tTake + .24);
     if (kc > 0) {
       const tf = seg(t, tTag - .05, tTag + .1) * dec(t, tTag + .1, 2.5) + seg(t, tFlip - .02, tFlip + .06) * dec(t, tFlip + .06, 2.2);
-      glow(X, Y, R * 2.4, '#FFD46A', .45 + .1 * wob(t, .5) + .8 * dec(t, tTake, 3) * kc);
-      coin(X, Y, R, { k: kc, label: null });
+      const Yb = Y + bobY(t);   // the re-formed coin floats (C.js continues the same bob)
+      glow(X, Yb, R * 2.4, '#FFD46A', .45 + .1 * wob(t, .5) + .8 * dec(t, tTake, 3) * kc);
+      coin(X, Yb, R, { k: kc, label: null });
       const wf = .62 * easeOut(seg(t, tSweep, tTag)) + .025 * Math.sin(Math.PI * seg(t, tTag - .06, tTag + .3));
-      if (wf > .004) wedge(X, Y, R * .74, wf, t < tTag + .05 ? seg(t, tSweep, tSweep + .05) * (1 - seg(t, tTag, tTag + .06)) : 0, .3 + .1 * wob(t, .45) + .6 * tf);
+      if (wf > .004) wedge(X, Yb, R * .74, wf, t < tTag + .05 ? seg(t, tSweep, tSweep + .05) * (1 - seg(t, tTag, tTag + .06)) : 0, .3 + .1 * wob(t, .45) + .6 * tf);
     }
-    // the winner: pops out left, hops on "winner", slides home onto the coin and melts into it
-    const hop = jump(t, tWin, tWin + .26, 30), home = ease(seg(t, tTake, tTake + .18)), melt = seg(t, tTake + .22, tTake + .5);
+    // the winner: pops out left, hops on "winner", slides home onto the coin and sinks into it
+    const hop = jump(t, tWin, tWin + .26, 30), home = ease(seg(t, tTake, tTake + .18)), melt = ease(seg(t, tTake + .2, tTake + .46));
     if (melt < 1) {
       const xu = lerp(X - d, X, home), yu = Y + hop.dy;
-      around(xu - R * .4, yu + R, 1 + hop.sq * .7, 1 - hop.sq, () => half(xu, yu, R, 'up', { k: 1 - melt * .97, glow: .25 + .7 * seg(t, tWin - .05, tWin + .1) * (1 - melt) }));
-    }
-    // the loser: droops on "winner", gets knocked aside on "takes", crumbles to ash and is gone
-    const cr = seg(t, tCrumble, tCrumble + .72), gone = ease(seg(t, tCrumble + .5, tCrumble + .8));
-    if (gone < 1) {
-      const kn = easeOut(seg(t, tTake, tTake + .2)), droop = ease(seg(t, tWin, tWin + .2));
-      const xd = X + d + 150 * kn + 2.5 * Math.sin(t * 70) * droop * (1 - kn), yd = Y + 8 * droop;
-      around(xd + R * .4, yd, 1 - gone, 1 - gone, () => half(xd, yd, R, 'down', { rot: .1 * droop + .5 * kn, crumble: cr, glow: .15 * (1 - droop) }));
+      around(X, Y, 1 - melt, 1 - melt, () => around(xu - R * .4, yu + R, 1 + hop.sq * .7, 1 - hop.sq, () => half(xu, yu, R, 'up', { glow: .25 + .7 * seg(t, tWin - .05, tWin + .1) * (1 - melt) })));
     }
     // the tag: "62¢" lands with the wedge, becomes "62%", and leaves before the cut
     const tk = t < tFlip - .06 ? seg(t, tTag - .14, tTag) : t < tFlip - .02 ? lerp(1, .04, easeIn(seg(t, tFlip - .075, tFlip - .02))) : lerp(.04, 1, seg(t, tFlip - .02, tFlip + .12));
-    const k = Math.min(tk, 1 - seg(t, tTagOut, tTagOut + .12)), tx = X - R * 1.02, ty = Y - R * .62 + 3 * wob(t, .6);
+    const k = Math.min(tk, 1 - seg(t, tTagOut, tTagOut + .12)), tx = X - R * 1.02, ty = Y + bobY(t) - R * .62 + 3 * wob(t, .6);
     if (k > .01) {
       const lf = dec(t, tTag, 3) * seg(t, tTag - .05, tTag) + dec(t, tFlip, 2.5) * seg(t, tFlip - .02, tFlip + .02);
       if (lf > .02) glow(tx, ty, 150, '#6BE08E', .8 * lf);

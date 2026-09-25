@@ -66,7 +66,7 @@
 
   // ---- the coin cracks into its halves, which whip apart and flatten into the headers ----
   function split(t) {
-    const { x: X, y: Y, r: R } = COIN;
+    const { x: X, r: R } = COIN, Y = COIN.y + 4 * wob(t, .35) * (1 - seg(t, tWhip, tLand));   // B's coin bob, until the whip
     const kc = 1 - seg(t, tCrack, tCrack + .1);
     // the halves: first the whole coin under the cracking gold, then a squeeze (anticipation) and the whip
     const sq = ease(seg(t, tCrack + .05, tWhip)) * (1 - seg(t, tWhip, tWhip + .05)), trem = 2.5 * sq;
