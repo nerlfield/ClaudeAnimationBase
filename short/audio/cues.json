@@ -1,94 +1,643 @@
 [
-  { "t": 1.95,   "sfx": "ticks_rise",      "gain_db": -9,  "note": "A: counter ticks while Up rockets 50 to 80c (1.95-2.85)" },
-  { "t": 2.85,   "sfx": "coin_ding",       "gain_db": -3,  "note": "A: WOW, price lands at 80c (just before 'eighty' 2.89)" },
-  { "t": 2.85,   "sfx": "low_hit",         "gain_db": -5,  "note": "A: low hit under the ding" },
-  { "t": 3.30,   "sfx": "whoosh_soft",     "gain_db": -9,  "note": "A: camera pull-back and tilt" },
-  { "t": 3.70,   "sfx": "pop",             "gain_db": -4,  "note": "A: YOU pop up behind the desk" },
-  { "t": 4.50,   "sfx": "whoosh_soft",     "gain_db": -13, "rate": 1.35, "note": "A: eye swish down to the '?' screen" },
-
-  { "t": 5.269,  "sfx": "whoosh_push",     "gain_db": -4,  "note": "CUT A>B (beat 10): push through the Up button" },
-  { "t": 5.40,   "sfx": "clock_ticks_fast","gain_db": -15, "note": "B: fast-forward clock ticks 5.4-7.0" },
-  { "t": 7.10,   "sfx": "chime",           "gain_db": -9,  "note": "B: marker finishes above the line, Up zone flares" },
-  { "t": 8.40,   "sfx": "slide",           "gain_db": -9,  "note": "B: Up half slides in" },
-  { "t": 9.22,   "sfx": "slide",           "gain_db": -9,  "rate": 0.9, "note": "B: Down half slides in" },
-  { "t": 9.90,   "sfx": "magnet_snap",     "gain_db": -3,  "note": "B: halves SNAP into the $1 coin" },
-  { "t": 10.20,  "sfx": "sparkle",         "gain_db": -11, "note": "B: coin shimmer" },
-  { "t": 11.20,  "sfx": "crumble",         "gain_db": -5,  "note": "B: LOL, the Down half crumbles" },
-  { "t": 12.00,  "sfx": "pop",             "gain_db": -7,  "note": "B: '62c' tag pops on" },
-  { "t": 13.20,  "sfx": "card_flip",       "gain_db": -5,  "note": "B: 62c flips to 62%" },
-
-  { "t": 14.555, "sfx": "whoosh_whip",     "gain_db": -4,  "note": "CUT B>C (beat 28): coin splits, halves fly apart" },
-  { "t": 15.50,  "sfx": "paper_unroll",    "gain_db": -9,  "note": "C: the two ladders unroll" },
-  { "t": 16.103, "sfx": "tick",            "gain_db": -10, "rate": 1.1, "note": "C: bid bar 1 (ticks sit on the eighth-note grid)" },
-  { "t": 16.361, "sfx": "tick",            "gain_db": -10, "rate": 1.1, "note": "C: bid bar 2" },
-  { "t": 16.619, "sfx": "tick",            "gain_db": -10, "rate": 1.1, "note": "C: bid bar 3" },
-  { "t": 16.877, "sfx": "tick",            "gain_db": -12, "rate": 0.85, "note": "C: ask bar 1 (dim, lower)" },
-  { "t": 17.135, "sfx": "tick",            "gain_db": -12, "rate": 0.85, "note": "C: ask bar 2" },
-  { "t": 17.393, "sfx": "tick",            "gain_db": -12, "rate": 0.85, "note": "C: ask bar 3" },
-  { "t": 17.80,  "sfx": "soft_ping",       "gain_db": -9,  "note": "C: the spread glows" },
-
-  { "t": 18.683, "sfx": "whoosh_soft",     "gain_db": -10, "note": "CUT C>D (beat 36): camera drifts down to the bids; music groove drops here" },
-  { "t": 19.20,  "sfx": "chip_clack",      "gain_db": -4,  "note": "D: your 60c chip lands" },
-  { "t": 21.00,  "sfx": "chip_clack",      "gain_db": -4,  "rate": 0.93, "note": "D: the stranger's 40c chip lands" },
-  { "t": 22.10,  "sfx": "wind_tumbleweed", "gain_db": -9,  "dur": 1.1,  "note": "D: LOL, nobody's selling, tumbleweed" },
-  { "t": 23.40,  "sfx": "whoosh_soft",     "gain_db": -9,  "note": "D: the chips lift and fly together" },
-  { "t": 24.60,  "sfx": "coins_fuse",      "gain_db": -6,  "note": "D: chips fuse into $1 (the clink's peak lands here)" },
-  { "t": 25.84,  "sfx": "stamp",           "gain_db": -4,  "note": "D: WOW, the STAMP ('mints' 25.84)" },
-  { "t": 25.84,  "sfx": "low_hit",         "gain_db": -8,  "note": "D: weight under the stamp" },
-  { "t": 25.86,  "sfx": "coin_ding",       "gain_db": -13, "rate": 0.6, "note": "D: metallic ring under the stamp" },
-  { "t": 25.95,  "sfx": "sparkle",         "gain_db": -9,  "note": "D: sparks off the stamp" },
-  { "t": 26.70,  "sfx": "whoosh_soft",     "gain_db": -9,  "note": "D: fresh Up half flies to you" },
-  { "t": 26.90,  "sfx": "whoosh_soft",     "gain_db": -9,  "rate": 0.9, "note": "D: fresh Down half flies to the stranger" },
-  { "t": 27.30,  "sfx": "coin_ding",       "gain_db": -9,  "note": "D: filled (ding 1)" },
-  { "t": 27.45,  "sfx": "coin_ding",       "gain_db": -10, "rate": 1.12, "note": "D: filled (ding 2)" },
-
-  { "t": 27.969, "sfx": "whoosh_soft",     "gain_db": -13, "note": "CUT D>E (beat 54): camera eases back to the two-shot" },
-  { "t": 28.50,  "sfx": "snore",           "gain_db": -10, "note": "E: you waited, zzz" },
-  { "t": 29.80,  "sfx": "chime",           "gain_db": -11, "rate": 1.1, "note": "E: soft bell, 0% pill" },
-  { "t": 30.80,  "sfx": "zip",             "gain_db": -5,  "note": "E: the stranger's chip zips in" },
-  { "t": 32.10,  "sfx": "chomp",           "gain_db": -3,  "note": "E: twist, fee bite CHOMP, 3%" },
-  { "t": 33.00,  "sfx": "whoosh_whip",     "gain_db": -4,  "note": "E: whip pan to the fee hill (music drops out 33.13)" },
-  { "t": 34.40,  "sfx": "gate_clunk",      "gain_db": -5,  "note": "E: the toll gate on the summit, 50/50" },
-  { "t": 35.85,  "sfx": "whoosh_soft",     "gain_db": -12, "rate": 1.1,  "note": "E: flip 1" },
-  { "t": 36.00,  "sfx": "chomp",           "gain_db": -9,  "rate": 1.15, "note": "E: bite 1" },
-  { "t": 36.35,  "sfx": "whoosh_soft",     "gain_db": -12, "rate": 1.2,  "note": "E: flip 2" },
-  { "t": 36.50,  "sfx": "chomp",           "gain_db": -9,  "rate": 1.25, "note": "E: bite 2" },
-  { "t": 36.75,  "sfx": "whoosh_soft",     "gain_db": -12, "rate": 1.3,  "note": "E: flip 3" },
-  { "t": 36.90,  "sfx": "chomp",           "gain_db": -9,  "rate": 1.35, "note": "E: bite 3" },
-  { "t": 37.05,  "sfx": "boing",           "gain_db": -11, "note": "E: dizzy" },
-
-  { "t": 37.255, "sfx": "whoosh_soft",     "gain_db": -9,  "note": "CUT E>F (beat 72): the hill flattens into the scale beam" },
-  { "t": 37.70,  "sfx": "weights_clunk",   "gain_db": -4,  "note": "F: bids and asks pour into the pans" },
-  { "t": 38.50,  "sfx": "pop",             "gain_db": -7,  "note": "F: formula pill pops on" },
-  { "t": 40.30,  "sfx": "weights_clunk",   "gain_db": -9,  "rate": 1.2, "note": "F: more bid blocks drop" },
-  { "t": 40.60,  "sfx": "creak",           "gain_db": -5,  "note": "F: the scale tips toward bids" },
-  { "t": 41.30,  "sfx": "rise_soft",       "gain_db": -10, "note": "F: price drifts up 60 to 63c" },
-
-  { "t": 42.414, "sfx": "whoosh_push",     "gain_db": -4,  "rate": 0.9, "note": "CUT F>G (beat 82): pull back out of the market to the desk" },
-  { "t": 43.50,  "sfx": "card_flip",       "gain_db": -2,  "note": "G: OMG, the '?' tag flips to BINANCE" },
-  { "t": 43.50,  "sfx": "low_hit",         "gain_db": -10, "note": "G: weight under the reveal" },
-  { "t": 44.20,  "sfx": "clock_ticks_fast","gain_db": -15, "note": "G: the ticker twitches first, Up follows" },
-  { "t": 48.00,  "sfx": "dash_scratch",    "gain_db": -9,  "note": "G: Price to Beat line draws" },
-  { "t": 49.00,  "sfx": "tick_tock",       "gain_db": -9,  "note": "G: the clock ring pulses" },
-  { "t": 49.70,  "sfx": "pop",             "gain_db": -7,  "note": "G: thought bubble" },
-  { "t": 50.70,  "sfx": "click",           "gain_db": -4,  "note": "G: you tap Up" },
-  { "t": 50.74,  "sfx": "coin_ding",       "gain_db": -10, "rate": 1.25, "note": "G: clink" },
-
-  { "t": 51.185, "sfx": "whoosh_push",     "gain_db": -4,  "note": "CUT G>H (beat 99): push into the ticker" },
-  { "t": 53.30,  "sfx": "whoosh_soft",     "gain_db": -11, "rate": 0.8, "note": "H: the blue average ribbon draws" },
-  { "t": 55.30,  "sfx": "riser",           "gain_db": -7,  "note": "H: riser peaks as the spike candle shoots up" },
-  { "t": 55.30,  "sfx": "zip",             "gain_db": -7,  "rate": 1.2, "note": "H: the candle zips up" },
-  { "t": 55.80,  "sfx": "dull_thud",       "gain_db": -3,  "note": "H: WTF, the average barely moves" },
-  { "t": 56.90,  "sfx": "running_feet",    "gain_db": -7,  "note": "H: you run for the candle" },
-  { "t": 57.96,  "sfx": "flame_whoomp",    "gain_db": -4,  "dur": 0.45,  "note": "H: the burn, WHOOMP ('burn' 57.96)" },
-  { "t": 57.96,  "sfx": "~music_dip",      "gain_db": -6,  "dur": 0.4, "note": "music dips under the burn (music also drops to the sparse intro texture at 57.89)" },
-  { "t": 58.40,  "sfx": "sizzle",          "gain_db": -8,  "note": "H: sizzle to ash (after 'you', in the air)" },
-
-  { "t": 58.923, "sfx": "whoosh_soft",     "gain_db": -13, "rate": 0.8, "note": "CUT H>I (beat 112): ash drifts, camera pulls back" },
-  { "t": 59.30,  "sfx": "chomp",           "gain_db": -8,  "rate": 1.2, "note": "I: fee bite ('fees' 59.28)" },
-  { "t": 59.90,  "sfx": "hourglass_tick",  "gain_db": -6,  "note": "I: 0.5 s hourglass ('delay' 59.88)" },
-  { "t": 61.40,  "sfx": "crumble",         "gain_db": -4,  "note": "I: OMG, the whole stake crumbles" },
-  { "t": 63.10,  "sfx": "chime",           "gain_db": -9,  "note": "I: the close locks" },
-  { "t": 63.60,  "sfx": "card_flip",       "gain_db": -5,  "note": "I: the card flips to a fresh round (loop reveal)" },
-  { "t": 65.40,  "sfx": "tick",            "gain_db": -11, "note": "I: first tick of the hook, so the loop is seamless" }
+ {
+  "t": 1.95,
+  "sfx": "ticks_rise",
+  "gain_db": -9,
+  "note": "A: counter ticks while Up rockets 50 to 80c (1.95-2.85)"
+ },
+ {
+  "t": 2.69,
+  "sfx": "coin_ding",
+  "gain_db": -3,
+  "note": "A: WOW, price lands at 80c (just before 'eighty' 2.89)"
+ },
+ {
+  "t": 2.69,
+  "sfx": "low_hit",
+  "gain_db": -5,
+  "note": "A: low hit under the ding"
+ },
+ {
+  "t": 3.3,
+  "sfx": "whoosh_soft",
+  "gain_db": -9,
+  "note": "A: camera pull-back and tilt"
+ },
+ {
+  "t": 3.6,
+  "sfx": "pop",
+  "gain_db": -4,
+  "note": "A: YOU pop up behind the desk"
+ },
+ {
+  "t": 4.4,
+  "sfx": "whoosh_soft",
+  "gain_db": -13,
+  "rate": 1.35,
+  "note": "A: eye swish down to the '?' screen"
+ },
+ {
+  "t": 5.0,
+  "sfx": "whoosh_push",
+  "gain_db": -4,
+  "note": "CUT A>B (beat 10): push through the Up button"
+ },
+ {
+  "t": 5.58,
+  "sfx": "clock_ticks_fast",
+  "gain_db": -15,
+  "note": "B: fast-forward clock ticks 5.4-7.0"
+ },
+ {
+  "t": 7.075,
+  "sfx": "chime",
+  "gain_db": -9,
+  "note": "B: marker finishes above the line, Up zone flares"
+ },
+ {
+  "t": 8.21,
+  "sfx": "slide",
+  "gain_db": -9,
+  "note": "B: Up half slides in"
+ },
+ {
+  "t": 9.02,
+  "sfx": "slide",
+  "gain_db": -9,
+  "rate": 0.9,
+  "note": "B: Down half slides in"
+ },
+ {
+  "t": 9.912,
+  "sfx": "magnet_snap",
+  "gain_db": -3,
+  "note": "B: halves SNAP into the $1 coin"
+ },
+ {
+  "t": 10.14,
+  "sfx": "sparkle",
+  "gain_db": -11,
+  "note": "B: coin shimmer"
+ },
+ {
+  "t": 10.66,
+  "sfx": "pop",
+  "gain_db": -9,
+  "note": "B: the coin opens"
+ },
+ {
+  "t": 11.13,
+  "sfx": "coins_fuse",
+  "gain_db": -9,
+  "note": "B: Up takes the whole coin"
+ },
+ {
+  "t": 11.2,
+  "sfx": "crumble",
+  "gain_db": -5,
+  "note": "B: LOL, the Down half crumbles"
+ },
+ {
+  "t": 11.976,
+  "sfx": "pop",
+  "gain_db": -7,
+  "note": "B: '62c' tag pops on"
+ },
+ {
+  "t": 13.0,
+  "sfx": "card_flip",
+  "gain_db": -5,
+  "note": "B: 62c flips to 62%"
+ },
+ {
+  "t": 14.6,
+  "sfx": "pop",
+  "gain_db": -9,
+  "note": "C: the pie-coin cracks"
+ },
+ {
+  "t": 14.78,
+  "sfx": "whoosh_whip",
+  "gain_db": -4,
+  "note": "CUT B>C (beat 28): coin splits, halves fly apart"
+ },
+ {
+  "t": 15.07,
+  "sfx": "click",
+  "gain_db": -9,
+  "note": "C: headers land"
+ },
+ {
+  "t": 15.22,
+  "sfx": "paper_unroll",
+  "gain_db": -9,
+  "note": "C: the two ladders unroll"
+ },
+ {
+  "t": 16.1,
+  "sfx": "tick",
+  "gain_db": -10,
+  "rate": 1.1,
+  "note": "C: bid bar 1 (ticks sit on the eighth-note grid)"
+ },
+ {
+  "t": 16.24,
+  "sfx": "tick",
+  "gain_db": -10,
+  "rate": 1.1,
+  "note": "C: bid bar 2"
+ },
+ {
+  "t": 16.38,
+  "sfx": "tick",
+  "gain_db": -10,
+  "rate": 1.1,
+  "note": "C: bid bar 3"
+ },
+ {
+  "t": 16.84,
+  "sfx": "tick",
+  "gain_db": -12,
+  "rate": 0.85,
+  "note": "C: ask bar 1 (dim, lower)"
+ },
+ {
+  "t": 16.98,
+  "sfx": "tick",
+  "gain_db": -12,
+  "rate": 0.85,
+  "note": "C: ask bar 2"
+ },
+ {
+  "t": 17.12,
+  "sfx": "tick",
+  "gain_db": -12,
+  "rate": 0.85,
+  "note": "C: ask bar 3"
+ },
+ {
+  "t": 17.79,
+  "sfx": "soft_ping",
+  "gain_db": -9,
+  "note": "C: the spread glows"
+ },
+ {
+  "t": 18.95,
+  "sfx": "whoosh_soft",
+  "gain_db": -10,
+  "note": "CUT C>D (beat 36): camera drifts down to the bids; music groove drops here"
+ },
+ {
+  "t": 19.08,
+  "sfx": "chip_clack",
+  "gain_db": -4,
+  "note": "D: your 60c chip lands"
+ },
+ {
+  "t": 20.94,
+  "sfx": "chip_clack",
+  "gain_db": -4,
+  "rate": 0.93,
+  "note": "D: the stranger's 40c chip lands"
+ },
+ {
+  "t": 22.0,
+  "sfx": "wind_tumbleweed",
+  "gain_db": -9,
+  "dur": 1.1,
+  "note": "D: LOL, nobody's selling, tumbleweed"
+ },
+ {
+  "t": 23.26,
+  "sfx": "whoosh_soft",
+  "gain_db": -9,
+  "note": "D: the chips lift and fly together"
+ },
+ {
+  "t": 23.87,
+  "sfx": "whoosh_soft",
+  "gain_db": -11,
+  "note": "D: second chip lifts"
+ },
+ {
+  "t": 24.38,
+  "sfx": "coins_fuse",
+  "gain_db": -6,
+  "note": "D: chips fuse into $1 (the clink's peak lands here)"
+ },
+ {
+  "t": 24.48,
+  "sfx": "sparkle",
+  "gain_db": -12,
+  "note": "D: $1 shimmer"
+ },
+ {
+  "t": 25.4,
+  "sfx": "creak",
+  "gain_db": -10,
+  "note": "D: stamp wind-up"
+ },
+ {
+  "t": 25.83,
+  "sfx": "stamp",
+  "gain_db": -4,
+  "note": "D: WOW, the STAMP ('mints' 25.84)"
+ },
+ {
+  "t": 25.83,
+  "sfx": "low_hit",
+  "gain_db": -8,
+  "note": "D: weight under the stamp"
+ },
+ {
+  "t": 25.85,
+  "sfx": "coin_ding",
+  "gain_db": -13,
+  "rate": 0.6,
+  "note": "D: metallic ring under the stamp"
+ },
+ {
+  "t": 25.95,
+  "sfx": "sparkle",
+  "gain_db": -9,
+  "note": "D: sparks off the stamp"
+ },
+ {
+  "t": 26.12,
+  "sfx": "pop",
+  "gain_db": -8,
+  "note": "D: fresh pair pops"
+ },
+ {
+  "t": 26.34,
+  "sfx": "whoosh_soft",
+  "gain_db": -9,
+  "note": "D: fresh Up half flies to you"
+ },
+ {
+  "t": 26.5,
+  "sfx": "whoosh_soft",
+  "gain_db": -9,
+  "rate": 0.9,
+  "note": "D: fresh Down half flies to the stranger"
+ },
+ {
+  "t": 27.0,
+  "sfx": "coin_ding",
+  "gain_db": -9,
+  "note": "D: filled (ding 1)"
+ },
+ {
+  "t": 27.25,
+  "sfx": "coin_ding",
+  "gain_db": -10,
+  "rate": 1.12,
+  "note": "D: filled (ding 2)"
+ },
+ {
+  "t": 27.969,
+  "sfx": "whoosh_soft",
+  "gain_db": -13,
+  "note": "CUT D>E (beat 54): camera eases back to the two-shot"
+ },
+ {
+  "t": 28.3,
+  "sfx": "snore",
+  "gain_db": -15,
+  "note": "E: you waited, zzz"
+ },
+ {
+  "t": 29.6,
+  "sfx": "chime",
+  "gain_db": -11,
+  "rate": 1.1,
+  "note": "E: soft bell, 0% pill"
+ },
+ {
+  "t": 30.9,
+  "sfx": "zip",
+  "gain_db": -8,
+  "note": "E: the stranger's chip zips in"
+ },
+ {
+  "t": 31.02,
+  "sfx": "soft_ping",
+  "gain_db": -15,
+  "note": "E: the stranger filled"
+ },
+ {
+  "t": 32.06,
+  "sfx": "chomp",
+  "gain_db": -3,
+  "note": "E: twist, fee bite CHOMP, 3%"
+ },
+ {
+  "t": 33.0,
+  "sfx": "whoosh_whip",
+  "gain_db": -4,
+  "note": "E: whip pan to the fee hill (music drops out 33.13)"
+ },
+ {
+  "t": 34.0,
+  "sfx": "gate_clunk",
+  "gain_db": -5,
+  "note": "E: the toll gate on the summit, 50/50"
+ },
+ {
+  "t": 35.93,
+  "sfx": "whoosh_soft",
+  "gain_db": -12,
+  "rate": 1.1,
+  "note": "E: flip 1"
+ },
+ {
+  "t": 36.07,
+  "sfx": "chomp",
+  "gain_db": -9,
+  "rate": 1.15,
+  "note": "E: bite 1"
+ },
+ {
+  "t": 36.38,
+  "sfx": "whoosh_soft",
+  "gain_db": -12,
+  "rate": 1.2,
+  "note": "E: flip 2"
+ },
+ {
+  "t": 36.52,
+  "sfx": "chomp",
+  "gain_db": -9,
+  "rate": 1.25,
+  "note": "E: bite 2"
+ },
+ {
+  "t": 36.55,
+  "sfx": "boing",
+  "gain_db": -11,
+  "note": "E: dizzy"
+ },
+ {
+  "t": 36.76,
+  "sfx": "whoosh_soft",
+  "gain_db": -12,
+  "rate": 1.3,
+  "note": "E: flip 3"
+ },
+ {
+  "t": 36.9,
+  "sfx": "chomp",
+  "gain_db": -9,
+  "rate": 1.35,
+  "note": "E: bite 3"
+ },
+ {
+  "t": 36.95,
+  "sfx": "whoosh_soft",
+  "gain_db": -11,
+  "note": "E: you tumble out"
+ },
+ {
+  "t": 37.3,
+  "sfx": "whoosh_soft",
+  "gain_db": -9,
+  "note": "CUT E>F (beat 72): the hill flattens into the scale beam"
+ },
+ {
+  "t": 37.45,
+  "sfx": "dull_thud",
+  "gain_db": -10,
+  "note": "F: the book lands"
+ },
+ {
+  "t": 38.04,
+  "sfx": "weights_clunk",
+  "gain_db": -4,
+  "note": "F: bids and asks pour into the pans"
+ },
+ {
+  "t": 38.47,
+  "sfx": "pop",
+  "gain_db": -7,
+  "note": "F: formula pill pops on"
+ },
+ {
+  "t": 40.32,
+  "sfx": "weights_clunk",
+  "gain_db": -9,
+  "rate": 1.2,
+  "note": "F: more bid blocks drop"
+ },
+ {
+  "t": 40.6,
+  "sfx": "creak",
+  "gain_db": -5,
+  "note": "F: the scale tips toward bids"
+ },
+ {
+  "t": 41.39,
+  "sfx": "rise_soft",
+  "gain_db": -10,
+  "note": "F: price drifts up 60 to 63c"
+ },
+ {
+  "t": 42.1,
+  "sfx": "whoosh_push",
+  "gain_db": -9,
+  "note": "F: push into the tag"
+ },
+ {
+  "t": 42.43,
+  "sfx": "whoosh_push",
+  "gain_db": -4,
+  "rate": 0.9,
+  "note": "CUT F>G (beat 82): pull back out of the market to the desk"
+ },
+ {
+  "t": 43.446,
+  "sfx": "card_flip",
+  "gain_db": -2,
+  "note": "G: OMG, the '?' tag flips to BINANCE"
+ },
+ {
+  "t": 43.45,
+  "sfx": "low_hit",
+  "gain_db": -10,
+  "note": "G: weight under the reveal"
+ },
+ {
+  "t": 45.76,
+  "sfx": "zip",
+  "gain_db": -8,
+  "note": "G: the ticker jumps first"
+ },
+ {
+  "t": 46.03,
+  "sfx": "chime",
+  "gain_db": -11,
+  "note": "G: Up follows"
+ },
+ {
+  "t": 47.84,
+  "sfx": "dash_scratch",
+  "gain_db": -9,
+  "note": "G: Price to Beat line draws"
+ },
+ {
+  "t": 48.97,
+  "sfx": "tick_tock",
+  "gain_db": -9,
+  "note": "G: the clock ring pulses"
+ },
+ {
+  "t": 49.56,
+  "sfx": "pop",
+  "gain_db": -7,
+  "note": "G: thought bubble"
+ },
+ {
+  "t": 50.24,
+  "sfx": "whoosh_soft",
+  "gain_db": -12,
+  "note": "G: you leap"
+ },
+ {
+  "t": 50.6,
+  "sfx": "click",
+  "gain_db": -4,
+  "note": "G: you tap Up"
+ },
+ {
+  "t": 50.64,
+  "sfx": "coin_ding",
+  "gain_db": -10,
+  "rate": 1.25,
+  "note": "G: clink"
+ },
+ {
+  "t": 50.85,
+  "sfx": "whoosh_push",
+  "gain_db": -6,
+  "note": "G: push into the ticker (cut 51.185)"
+ },
+ {
+  "t": 51.62,
+  "sfx": "whoosh_soft",
+  "gain_db": -12,
+  "note": "H: the 60 s window slides in"
+ },
+ {
+  "t": 53.3,
+  "sfx": "whoosh_soft",
+  "gain_db": -11,
+  "rate": 0.8,
+  "note": "H: the blue average ribbon draws"
+ },
+ {
+  "t": 54.97,
+  "sfx": "riser",
+  "gain_db": -7,
+  "note": "H: riser peaks as the spike candle shoots up"
+ },
+ {
+  "t": 55.2,
+  "sfx": "zip",
+  "gain_db": -7,
+  "rate": 1.2,
+  "note": "H: the candle zips up"
+ },
+ {
+  "t": 55.76,
+  "sfx": "dull_thud",
+  "gain_db": -3,
+  "note": "H: WTF, the average barely moves"
+ },
+ {
+  "t": 56.55,
+  "sfx": "running_feet",
+  "gain_db": -7,
+  "note": "H: you run for the candle"
+ },
+ {
+  "t": 57.89,
+  "sfx": "flame_whoomp",
+  "gain_db": -4,
+  "dur": 0.45,
+  "note": "H: the burn, WHOOMP ('burn' 57.96)"
+ },
+ {
+  "t": 57.89,
+  "sfx": "~music_dip",
+  "gain_db": -6,
+  "dur": 0.4,
+  "note": "music dips under the burn (music also drops to the sparse intro texture at 57.89)"
+ },
+ {
+  "t": 58.34,
+  "sfx": "low_hit",
+  "gain_db": -9,
+  "note": "H: you land ko"
+ },
+ {
+  "t": 58.4,
+  "sfx": "sizzle",
+  "gain_db": -8,
+  "note": "H: sizzle to ash (after 'you', in the air)"
+ },
+ {
+  "t": 58.923,
+  "sfx": "whoosh_soft",
+  "gain_db": -13,
+  "rate": 0.8,
+  "note": "CUT H>I (beat 112): ash drifts, camera pulls back"
+ },
+ {
+  "t": 59.26,
+  "sfx": "chomp",
+  "gain_db": -8,
+  "rate": 1.2,
+  "note": "I: fee bite ('fees' 59.28)"
+ },
+ {
+  "t": 59.82,
+  "sfx": "hourglass_tick",
+  "gain_db": -6,
+  "note": "I: 0.5 s hourglass ('delay' 59.88)"
+ },
+ {
+  "t": 61.5,
+  "sfx": "crumble",
+  "gain_db": -4,
+  "note": "I: OMG, the whole stake crumbles"
+ },
+ {
+  "t": 62.7,
+  "sfx": "chime",
+  "gain_db": -9,
+  "note": "I: the close locks"
+ },
+ {
+  "t": 63.0,
+  "sfx": "whoosh_soft",
+  "gain_db": -11,
+  "note": "I: pull back out of the screen"
+ },
+ {
+  "t": 63.56,
+  "sfx": "card_flip",
+  "gain_db": -5,
+  "note": "I: the card flips to a fresh round (loop reveal)"
+ },
+ {
+  "t": 64.08,
+  "sfx": "whoosh_soft",
+  "gain_db": -13,
+  "note": "I: you slide down behind the desk"
+ },
+ {
+  "t": 65.4,
+  "sfx": "tick",
+  "gain_db": -11,
+  "note": "I: first tick of the hook, so the loop is seamless"
+ }
 ]
