@@ -115,7 +115,7 @@ function card(x, y, w, st = {}) {
   boilSeed('card');
   if (st.title !== false) {
     txt('BTC Up or Down', x + 40, y + 62, 54, C.cream, { align: 'left' });
-    txt('15 min', x + 40, y + 118, 36, C.creamDim, { align: 'left', ink: false });
+    txt(st.example ? '15 min · example' : '15 min', x + 40, y + 118, 36, C.creamDim, { align: 'left', ink: false });
   }
   clock(x + w - 92, y + 88, 62, st.clock ?? 900);
   const by = y + 165, bw = (w - 110) / 2, bh = h - 225;
@@ -180,6 +180,14 @@ const YOU = { col: C.you, dk: C.youDk, lt: C.youLt, hat: 'headphones' };
 const THEM = { col: C.them, dk: C.themDk, lt: C.themLt, hat: 'beanie' };
 function you(x, y, u, o = {}) { clawd(x, y, u, { ...YOU, ...o }); }
 function them(x, y, u, o = {}) { clawd(x, y, u, { ...THEM, ...o }); }
+// Emotions for these two. The kit's emotions() cross-fades body colour from each key's own colours, so every key
+// must carry the character's colours, or the body drifts back to the kit's terracotta. Always act them through these:
+//   you(x, y, u, actYou(t, [[0, 'neutral'], [1.2, 'surprised', { lookX: .8 }]]))      feelYou('happy', t, { view: 'q' })
+const _cols = P => ({ col: P.col, dk: P.dk, lt: P.lt });
+const actAs = P => (t, keys, o) => emotions(t, keys.map(([tt, e, ov]) => [tt, e, { ..._cols(P), ...(ov || {}) }]), o);
+const actYou = actAs(YOU), actThem = actAs(THEM);
+const feelYou = (name, t, over = {}) => feel(name, t, { ..._cols(YOU), ...over });
+const feelThem = (name, t, over = {}) => feel(name, t, { ..._cols(THEM), ...over });
 
 // ---------- camera helpers ----------
 // A camera that never parks. cam(t, wx, wy, z) puts world point (wx, wy) at the centre of the safe stage (470, 655),
