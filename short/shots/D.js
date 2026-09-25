@@ -42,7 +42,7 @@
     pop();
   }
   // A half held in a hand: the hand grips its bottom edge.
-  const heldAt = (tip, r) => [tip[0], tip[1] - r * .5];
+  const heldAt = (tip, r, dir = 1) => [tip[0] + dir * r * .45, tip[1] - r * .3];
   // Gold sparks off an impact: n stars on ballistic arcs, fading. Pure in t.
   function sparks(x, y, t0, t, n, o = {}) {
     const a = t - t0, life = o.life || .6; if (a < 0 || a > life) return;
@@ -54,7 +54,13 @@
       paint(starPts(px, py, (o.s || 18) * (1 - q) * (.7 + .6 * hash(i + 2)), .28, 4, ang + a * 6), { wash: i % 3 ? C.goldLt : C.cream, washOp: 255 * (1 - q * q), ink: null });
     }
   }
-  window.DE = { U, YX, TX, FY, ROW, CHIP_U, CHIP_D, HR, TCU, TCD, armTip, halfC, heldAt, sparks };
+  // After the fill the books step back: a panel-coloured veil over each ladder, so the held halves read against it.
+  function veil(k) {
+    if (k <= .01) return;
+    boilSeed('veil');
+    for (const [x, y, w, h] of [BOOK.U, BOOK.D]) paint(rrPts(x + 12, y + 100, w - 24, h - 112, 18, .8), { wash: C.panel, washOp: 170 * k, ink: null });
+  }
+  window.DE = { U, YX, TX, FY, ROW, CHIP_U, CHIP_D, HR, TCU, TCD, armTip, halfC, heldAt, sparks, veil };
 
   // ---------- acting ----------
   // You: slide in (fast, leaning), slap 60¢ on "sixty", watch the stranger, glance, look up, flinch at the stamp, catch.
@@ -70,7 +76,7 @@
   function youPose(t) {
     const m = actYou(t, youKeys, { take: .8 });
     const kIn = seg(t, T.in, T.in + .14), x = lerp(-230, YX, backOut(kIn));
-    let rot = .2 * (1 - ease(kIn)) + .08 * spring(t, T.in + .14, 7, 16), sq = m.sq || 0, dy = m.dy || 0, aR = m.aR;
+    let rot = (m.rot || 0) + .2 * (1 - ease(kIn)) + .08 * spring(t, T.in + .14, 7, 16), sq = m.sq || 0, dy = m.dy || 0, aR = m.aR;
     const smear = t < T.in + .14 ? .6 * Math.sin(kIn * Math.PI) : 0;
     if (t < TS1 + .45) {                                           // the slap: arm up, crouch, stretch, slap, settle
       aR = kf(t, [[T.in, 1.15], [TS1 - .09, 1.2], [TS1 - .04, .95], [TS1, 1.55], [TS1 + .1, 1.4], [TS1 + .45, m.aR]]);
@@ -85,7 +91,7 @@
   function themPose(t) {
     const m = actThem(t, themKeys, { take: .8 });
     const kIn = seg(t, T.stranger - .1, T.stranger + .3), x = lerp(1190, TX, ease(kIn));
-    let rot = -.1 * Math.sin(kIn * Math.PI) - .06 * spring(t, T.stranger + .3, 6, 14), sq = m.sq || 0, dy = m.dy || 0, aR = m.aR;
+    let rot = (m.rot || 0) - .1 * Math.sin(kIn * Math.PI) - .06 * spring(t, T.stranger + .3, 6, 14), sq = m.sq || 0, dy = m.dy || 0, aR = m.aR;
     if (t < TS2 + .5) {                                            // sneak in holding the chip low, wind up, slap
       aR = kf(t, [[T.stranger - .1, .35], [TS2 - .35, .35], [TS2 - .12, 1.25], [TS2 - .05, 1.05], [TS2, 1.55], [TS2 + .12, 1.4], [TS2 + .5, m.aR]]);
       sq += kf(t, [[TS2 - .12, 0], [TS2 - .05, .14], [TS2, -.22], [TS2 + .08, .1], [TS2 + .22, 0]]);
@@ -95,6 +101,13 @@
     if (t >= TCD) aR = 1.0 + .08 * Math.sin((t - TCD) * 4.3 + 1) - .25 * spring(t, TCD, 7, 20);
     return { x, y: FY, o: { ...m, view: 'q', flip: true, rot, sq, dy, aR } };
   }
+
+  // A caught half, held up in the hand (E continues from this).
+  function heldHalf(t, side, P) {
+    const up = side === 'up', tc = up ? TCU : TCD, hand = heldAt(armTip(P.x, P.y, U, P.o), HR, up ? 1 : -1);
+    return { x: hand[0], y: hand[1], r: HR * (1 + .12 * spring(t, tc, 8, 24)), rot: (up ? -.1 : .1) + .06 * Math.sin((t - tc) * 4), glow: .5 + .3 * Math.exp(-(t - tc) * 3) };
+  }
+  Object.assign(window.DE, { youPose, themPose, heldHalf, camEnd: [460, 812, .95] });
 
   // ---------- props ----------
   // The two chips: held, slapped onto the top bid row, lifted and flown up together to the mint.
@@ -107,8 +120,8 @@
     if (t < lift - .08) return { x: home[0], y: home[1], s: 1.2 * (1 + .18 * spring(t, ts, 9, 26)), land: t - ts };
     if (t < lift) { const k = seg(t, lift - .08, lift); return { x: home[0], y: home[1] + 7 * Math.sin(k * Math.PI / 2), s: 1.2 * (1 - .06 * k) }; }
     if (t < lift + fly) { const k = seg(t, lift, lift + fly), p = arcPt(home, meet, 150, ease(k)); return { x: p[0], y: p[1], s: 1.2 * (1 + .08 * Math.sin(k * Math.PI)), rot: (up ? 1 : -1) * .5 * Math.sin(k * Math.PI) }; }
-    const hov = t - lift - fly, bob = 6 * Math.sin(hov * 7), pull = ease(seg(t, 24.36, 24.5));
-    if (t < 24.6) return { x: lerp(meet[0], MX + (up ? -10 : 10), pull), y: meet[1] + bob * (1 - pull), s: 1.2 * (1 - .4 * seg(t, 24.48, 24.6)), k: 1 - seg(t, 24.5, 24.6) };
+    const hov = t - lift - fly, bob = 6 * Math.sin(hov * 7) * (1 - seg(t, 24.3, 24.4)), clink = kf(t, [[24.3, 0], [24.38, 1], [24.43, .8], [24.47, 1]]);
+    if (t < 24.57) return { x: lerp(meet[0], MX + (up ? -47 : 47), clink) + (up ? 1 : -1) * 30 * ease(seg(t, 24.46, 24.57)), y: meet[1] + bob, s: 1.2 * (1 - ease(seg(t, 24.46, 24.57))) };
     return null;
   }
   // The exchange's stamp: out of frame → lowers into view → winds up (rises) → slams → holds → lifts away.
@@ -122,16 +135,18 @@
   const coinSquash = t => t < TI ? 0 : t < 25.96 ? .36 : .36 * Math.exp(-(t - 25.96) * 9) * Math.cos((t - 25.96) * 30);
   function tumbleweed(t) {
     const k = seg(t, 22.26, 23.15); if (k <= 0 || k >= 1) return;
-    const r = 52, x = lerp(-150, 1110, k), hop = Math.abs(Math.sin(k * Math.PI * 3.6 + .3)) * 60 * (1 - .4 * k), y = 846 - r - hop;
+    const r = 66, x = lerp(-170, 1130, k), ph = k * Math.PI * 3.4 + .35, hop = Math.abs(Math.sin(ph)) * 64 * (1 - .35 * k), y = 850 - r - hop;
     boilSeed('tumble');
-    paint(ellPts(x, 850, r * (1 - hop / 200), 8, 14), { wash: C.ink, washOp: 90, ink: null });
-    push(); translate(x, y); rotate((x + 150) / r);
-    for (let i = 0; i < 6; i++) {
-      const a = i * 1.05, P = [];
-      for (let j = 0; j <= 14; j++) { const b = j / 14 * TAU; P.push([Math.cos(b) * r * (.55 + .45 * hash(i + j * .1)) * Math.cos(a) - Math.sin(b) * r * .6 * Math.sin(a), Math.cos(b) * r * .9 * Math.sin(a) + Math.sin(b) * r * .6 * Math.cos(a)]); }
-      inkLine(P, i % 2 ? .8 : 1.1, i % 2 ? '#8A7448' : '#C4A76A', 'dry', .6);
+    paint(ellPts(x, 852, r * (1 - hop / 220), 9, 14), { wash: C.ink, washOp: 80, ink: null });
+    const land = Math.abs(Math.cos(ph)) > .9 ? 1 : 0;   // a puff of dust where it touches down
+    if (land) for (const d of [-1, 1]) paint(ellPts(x + d * r * .8, 846, 16, 9, 10), { wash: '#6E6650', washOp: 90, ink: null });
+    push(); translate(x, y); rotate((x + 170) / r); scale(1 + .06 * (1 - hop / 64), 1 - .06 * (1 - hop / 64));
+    for (let i = 0; i < 9; i++) {   // loops of dry twigs, each tilted a different way
+      const a = i * .7 + hash(i) * .5, rr = r * (.55 + .45 * hash(i + 20)), P = [];
+      for (let j = 0; j <= 12; j++) { const b = j / 12 * TAU; P.push([Math.cos(b) * rr * Math.cos(a) - Math.sin(b) * rr * .55 * Math.sin(a), Math.cos(b) * rr * Math.sin(a) + Math.sin(b) * rr * .55 * Math.cos(a)]); }
+      inkLine(P, i % 3 ? .9 : 1.3, ['#C9AE72', '#8C7447', '#B09058'][i % 3], 'dry', .7);
     }
-    for (let i = 0; i < 5; i++) { const a = hash(i + 40) * TAU; inkLine([[Math.cos(a) * r * .3, Math.sin(a) * r * .3], [Math.cos(a) * r * 1.1, Math.sin(a) * r * 1.05]], .7, '#A88E58', 'inkfine', .3); }
+    for (let i = 0; i < 7; i++) { const a = hash(i + 40) * TAU, a2 = a + .4 * (hash(i + 50) - .5); inkLine([[Math.cos(a) * r * .5, Math.sin(a) * r * .5], [Math.cos(a2) * r * 1.12, Math.sin(a2) * r * 1.1]], .7, '#9C8250', 'inkfine', .3); }
     pop();
   }
 
@@ -155,6 +170,7 @@
       D: { askK: 1 - ease(sD), askOp: 1 - .65 * gD } });
     // the filled rows flash as each half lands
     for (const [tc, x, col] of [[TCU, 222, '#6BE08E'], [TCD, 632, '#FF8A5C']]) if (t > tc) glow(x, ROW, 230, col, .9 * Math.exp(-(t - tc) * 3.5));
+    veil(ease(seg(t, TCD + .15, CUT.E)));
     tumbleweed(t);
     // the cast
     const Y = t >= T.in ? youPose(t) : null, H = t >= T.stranger - .1 ? themPose(t) : null;
@@ -165,19 +181,21 @@
       if (!P) continue;
       const c = chipState(t, side, P); if (!c) continue;
       if (c.land != null && c.land < .4) glow(c.x, c.y, 120, side === 'up' ? '#6BE08E' : '#FF8A5C', .8 * (1 - c.land / .4));
+      if (c.s < .05) continue;
       push(); translate(c.x, c.y); rotate(c.rot || 0); translate(-c.x, -c.y);
-      chip(c.x, c.y, label, col, { s: c.s, k: c.k ?? 1 });
+      chip(c.x, c.y, label, col, { s: c.s });
       pop();
     }
     // the fuse: a gold flash where the chips meet, and the $1 coin pops out of it
-    if (t > 24.44 && t < 24.9) glow(MX, MY, 260, '#FFD46A', 1.2 * Math.sin(seg(t, 24.44, 24.9) * Math.PI));
+    if (t > 24.4 && t < 24.9) glow(MX, MY, 280, '#FFD46A', 1.3 * Math.sin(seg(t, 24.4, 24.9) * Math.PI));
     const q = coinSquash(t);
-    if (t > 24.5 && t < 26.14) {
+    if (t > 24.4 && t < 24.6) flushLetters();   // the coin grows over the chips' labels
+    if (t > 24.48 && t < 26.14) {
       const bob = t < TI ? 5 * Math.sin((t - 24.5) * 6) : 0, ringRot = .1 * spring(t, 24.62, 5, 22) + .08 * spring(t, 25.96, 6, 34);
       push(); translate(MX, MY + CR + bob); scale(1 + .45 * q, 1 - q);
-      coin(0, -CR, CR, { k: seg(t, 24.5, 24.68), glow: .45 + .15 * Math.sin(t * 5), rot: ringRot, label: null, key: 'mint' });
+      coin(0, -CR, CR, { k: seg(t, 24.48, 24.66), glow: .45 + .15 * Math.sin(t * 5), rot: ringRot, label: null, key: 'mint' });
       pop();
-      const lk = backOut(seg(t, 24.5, 24.68));
+      const lk = backOut(seg(t, 24.48, 24.66));
       if (lk > .02) txt('$1', MX, MY + CR + bob - CR * (1 - q) + 4, CR * .82 * lk * (1 - .5 * q), C.goldDk, { ink: false, rot: ringRot });
     }
     // the stamp
@@ -213,11 +231,11 @@
       for (const [side, P, t0, t1, tc] of [['up', Y, 26.34, TCU, TCU], ['down', H, 26.5, TCD, TCD]]) {
         const up = side === 'up', s = up ? -1 : 1, pop = backOut(seg(t, 26.12, 26.3));
         const start = [MX + s * .42 * CR + s * 22 * pop, MY - 6 * pop];
-        const tip = armTip(P.x, P.y, U, P.o), hand = heldAt(tip, HR);
+        const tip = armTip(P.x, P.y, U, P.o), hand = heldAt(tip, HR, up ? 1 : -1);
         let x, y, r, rot;
         if (t < t0) { x = start[0]; y = start[1] + 4 * Math.sin((t - 26.12) * 9); r = CR; rot = s * .12 * pop; }
-        else if (t < t1) { const k = ease(seg(t, t0, t1)), p = arcPt(start, hand, 110, k); x = p[0]; y = p[1]; r = lerp(CR, HR, k); rot = s * .12 + s * TAU * .5 * easeOut(seg(t, t0, t1)); }
-        else { x = hand[0]; y = hand[1]; r = HR * (1 + .12 * spring(t, tc, 8, 24)); rot = .1 * s + .06 * Math.sin((t - tc) * 4); }
+        else if (t < t1) { const k = ease(seg(t, t0, t1)), p = arcPt(start, hand, 110, k); x = p[0]; y = p[1]; r = lerp(CR, HR, k); rot = s * .12 + s * TAU * easeOut(seg(t, t0, t1)); }
+        else { const h = heldHalf(t, side, P); x = h.x; y = h.y; r = h.r; rot = h.rot; }
         halfC(x, y, r, side, { glow: .5 + .3 * Math.exp(-Math.max(0, t - t1) * 3), key: side + 'D', rot });
       }
     }

@@ -27,8 +27,8 @@
   // ---------- where things are (world = desk coordinates, see sets.js) ----------
   const TAG = [DESK.tx + DESK.tw - 120, DESK.ty + 36];            // the ticker's name tag
   const CLK = [CARD.x + CARD.w - 92, CARD.y + 88];                 // the card's clock
-  const HOME = [DESK.youX, DESK.top], LEDGE = [427, DESK.ty - 16]; // you: on the desk, then on the ticker's top bezel
-  const HIT = [352, 611];                                           // where your arm meets the Up button
+  const HOME = [DESK.youX, DESK.top], LEDGE = [462, DESK.ty - 16]; // you: on the desk, then on the ticker's top bezel
+  const HIT = [284, 552];                                           // where your arm meets the Up button
   const BUB = [786, 596];                                           // the thought bubble
 
   // ---------- camera: pull back out of the Up button, follow your look to the tag, open up, push into the ticker ----------
@@ -48,32 +48,41 @@
 
   // ---------- you ----------
   const gaze = t => kf(t, [
-    [CUT.G, [.6, -.9]], [42.76, [.6, -.9]], [42.86, [.9, .85]],     // "that other screen": down to the "?"
-    [45.95, [.9, .8]], [46.07, [.7, -.85]],                         // follow the arrow up to the Up button
-    [47.72, [.7, -.85]], [47.82, [.9, .75]],                        // down to the Price to Beat
-    [48.92, [.9, .75]], [49.0, [.45, -1]],                          // up to the clock
-    [49.56, [.45, -1]], [49.64, [0, -1]],                           // up into the thought
-    [49.95, [0, -1]], [50.04, [.9, -.5]],                           // at the Up button: decided
+    [CUT.G, [.75, -.85]], [42.76, [.75, -.85]], [42.86, [.95, -.45]],   // "that other screen": over to the "?" tag
+    [45.5, [.95, -.45]], [45.6, [.95, -.2]],                          // the live dot jumps
+    [45.95, [.95, -.2]], [46.07, [.75, -.85]],                        // follow the arrow up to the Up button
+    [47.72, [.75, -.85]], [47.82, [.95, .1]],                         // along to the Price to Beat
+    [48.92, [.95, .1]], [49.0, [.45, -1]],                            // up to the clock
+    [49.56, [.45, -1]], [49.64, [0, -1]],                             // up into the thought
+    [49.95, [0, -1]], [50.04, [.9, -.6]],                             // at the Up button: decided
   ], ease);
   const MOOD = [[CUT.G - 1, 'neutral'], [42.8, 'suspicious'], [tFlip + .04, 'surprised'], [44.3, 'smug'],
                 [47.75, 'thinking', { emote: null }], [49.97, 'determined'], [tTap + .04, 'happy']];
   const T_CROUCH = 50.08, T_OFF = 50.24, T_LAND = 50.5;
+  // the heading-side arm stretches, cartoon-style, so the slap reaches the button (clawd's armR hook, in arm space)
+  const ARMCOL = mixCol(C.you, C.youDk, .4);
+  const stretchArm = L => (u, sw) => {
+    if (L > .05) paint(rrPts(-.5 * u, -.45 * u, (L + .5) * u, .9 * u, .4 * u, u * .03), { wash: ARMCOL, ink: C.ink, sw: sw * .8 });
+    paint(ellPts(L * u, 0, .62 * u, .6 * u, 14, u * .03), { wash: C.you, ink: C.ink, sw: sw * .8 });
+  };
   function trader(t) {
     const m = actYou(t, MOOD, { take: .8 }), [lx, ly] = gaze(t);
     let x = HOME[0], y = HOME[1], o = { ...m, lookX: lx, lookY: ly, view: 'q', flip: true };
-    if (t < T_OFF) {   // at the desk; a crouch before the leap
+    if (t < T_OFF) {   // at the desk; a crouch before the leap: squash, arms back, a lean away from the jump
       const c = ease(seg(t, T_CROUCH, T_OFF - .02));
-      o = { ...o, ...(t > 50.1 ? turn(t, 50.1, 50.2, -.125, -.25) : {}), sq: (o.sq || 0) + .3 * c, aL: lerp(o.aL ?? .2, -.6, c), aR: lerp(o.aR ?? .2, -.6, c) };
-    } else if (t < T_LAND) {   // the leap, on an arc, stretched, arm up
+      o = { ...o, sq: (o.sq || 0) + .3 * c, dy: (o.dy || 0) * (1 - c), rot: lerp(o.rot || 0, .1, c), aL: lerp(o.aL ?? .2, -.7, c), aR: lerp(o.aR ?? .2, -.7, c) };
+    } else if (t < T_LAND) {   // the leap, on an arc: stretched, leaning in, the slapping arm raised over the head
       const k = seg(t, T_OFF, T_LAND);
       [x, y] = arcPt(HOME, LEDGE, 170, k * (.6 + .4 * k));
-      o = { ...o, view: 'side', flip: true, noShadow: true, dy: 0, sq: -.18 * Math.sin(Math.PI * k) + .12 * (1 - seg(k, 0, .25)), rot: -.22 * Math.sin(Math.PI * k), aL: 1.7, smear: .35 * Math.sin(Math.PI * k), smearDir: -1 };
-    } else {   // landed on the ticker's bezel: the slap, then a happy bounce with the arm on the button
-      const age = t - T_LAND, slap = seg(t, T_LAND + .02, tTap);
+      o = { ...o, noShadow: true, dy: 0, sq: -.2 * Math.sin(Math.PI * k) + .15 * (1 - seg(k, 0, .2)), rot: -.25 * Math.sin(Math.PI * k), aL: .9,
+            aR: 1.65, armR: stretchArm(1.8 * easeOut(seg(k, 0, .5))), smear: .3 * Math.sin(Math.PI * k) };
+    } else {   // landed on the ticker's bezel: the arm whips down onto Up (stretching to reach), recoils, a happy bounce
+      const slap = easeIn(seg(t, T_LAND + .02, tTap)), back = ease(seg(t, tTap + .2, tTap + .45)), wob = spring(t, tTap, 9, 30);
       [x, y] = LEDGE;
-      o = { ...o, view: 'side', flip: true, sq: (o.sq || 0) + .26 * kick(t, T_LAND, 11), dy: t < tTap + .1 ? 0 : o.dy,
-            aL: t < tTap + .22 ? lerp(1.7, 1.05, easeIn(slap)) + .1 * spring(t, tTap, 9, 30) : lerp(1.05, o.aL ?? .4, ease(seg(t, tTap + .22, tTap + .45))) };
-      if (age < .05) o.smear = 0;
+      o = { ...o, sq: (o.sq || 0) + .26 * kick(t, T_LAND, 11), dy: t < tTap + .1 ? 0 : o.dy,
+            rot: -.12 * Math.min(ease(seg(t, T_LAND, tTap)), 1 - back) + (o.rot || 0) * back,
+            aR: lerp(lerp(1.65, .75, slap) + .06 * wob, o.aR ?? .3, back), aL: lerp(.9, o.aL ?? .3, ease(seg(t, T_LAND, tTap + .3))),
+            armR: stretchArm(lerp(lerp(1.8, 2.8, slap) + .25 * wob, 0, back)) };
     }
     you(x, y, 21, o);
   }
@@ -96,13 +105,13 @@
     boilSeed('dial');
     paint(ellPts(bx, by, r, r, 30, .5), { wash: C.panel, ink: C.ink, sw: .9 });
     const wedge = (a0, a1, col) => { if (a1 - a0 < .002) return; const Q = [[bx, by]], n = Math.max(2, Math.ceil(40 * (a1 - a0))); for (let i = 0; i <= n; i++) { const a = -Math.PI / 2 + TAU * lerp(a0, a1, i / n); Q.push([bx + Math.cos(a) * r * .9, by + Math.sin(a) * r * .9]); } paint(Q, { wash: col, ink: null }); };
-    wedge(0, .62 * p62, C.upDk);
+    wedge(0, .62 * p62, C.up);
     if (p75 > 0) { glow(bx, by, r * 1.6, '#6BE08E', .5 * p75); wedge(.62, .62 + .13 * p75, C.upLt); }
-    paint(ellPts(bx, by, r * .56, r * .56, 24, .4), { wash: C.panel, ink: null });
+    paint(ellPts(bx, by, r * .6, r * .6, 24, .4), { wash: C.panel, ink: null });
     const ta = -Math.PI / 2 + TAU * .62;   // the market's mark
-    if (p62 > .95) inkLine([[bx + Math.cos(ta) * r * .5, by + Math.sin(ta) * r * .5], [bx + Math.cos(ta) * r * 1.02, by + Math.sin(ta) * r * 1.02]], .9, C.cream, 'ink', 0);
+    if (p62 > .95) inkLine([[bx + Math.cos(ta) * r * .5, by + Math.sin(ta) * r * .5], [bx + Math.cos(ta) * r * 1.08, by + Math.sin(ta) * r * 1.08]], 1.4, C.cream, 'ink', 0);
     const tk = seg(t, tBuy + .36, tBuy + .5);
-    if (tk > 0) txt('75%', bx, by + 2, 34 * s * backOut(tk), C.cream, { ink: false });
+    if (tk > 0) txt('75%', bx, by + 2, 40 * s * backOut(tk), C.cream, { ink: false });
   }
 
   // ---------- the arc arrow: the ticker moves, the Up price follows ----------
@@ -138,11 +147,15 @@
   }
 
   function shotG(t, lt, dur) {
+    // out: the ticker's panel fills the frame (H opens on full-frame C.panel); its last frame is all panel
+    const cover = seg(lt, dur - .13, dur - .02);
+    if (cover >= 1) { paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.panel, ink: null }); return; }
+    const pushing = t > tPush;   // no extra button/tag light while diving in (glows are the costly primitive)
     camera(t);
     const up = upAt(t);
     const named = ease(seg(t, 43.3, 43.47));
-    const tagPulse = Math.max(.8 * env(t, 42.8, 42.95, 43.28, 43.36) * (1 + .15 * Math.sin(t * 16)), .9 * kick(t, tFlip - .02, 1.1) * (t > tFlip - .02 ? 1 : 0));
-    const cardPulse = Math.max(.12 + .05 * Math.sin(t * 5), kick(t, tFollow, 2.2), .7 * env(t, 49.9, 49.98, 50.2, 50.34), kick(t, tTap, 1.8));
+    const tagPulse = pushing ? 0 : Math.max(.8 * env(t, 42.8, 42.95, 43.28, 43.36) * (1 + .15 * Math.sin(t * 16)), .9 * kick(t, tFlip - .02, 1.1) * (t > tFlip - .02 ? 1 : 0));
+    const cardPulse = pushing ? 0 : Math.max(.12 + .05 * Math.sin(t * 5), kick(t, tFollow, 2.2), .7 * env(t, 49.9, 49.98, 50.2, 50.34), kick(t, tTap, 1.8));
     const tk = desk(t, {
       card: { up, clock: clockAt(t), hi: 'up', pulse: cardPulse, example: true },
       fn: btc, lo: LO, hi: HI, named, tagPulse,
@@ -150,11 +163,13 @@
       tickGlow: Math.max(.5 * env(t, 42.85, 43.0, 43.6, 44.4), kick(t, tJump - .05, 2.4)),
       hide: 1,
     });
+    flushLetters();   // the card's and ticker's lettering is part of the screens: paint it now, so you stand in front of it
     priceToBeat(t, tk);
     followArrow(t, tk);
     clockSwell(t);
-    trader(t);
     bubble(t);
+    flushLetters();
+    trader(t);
     if (t > tTap && t < tTap + .45) {   // the buy: a burst off the Up button where your arm lands
       const a = (t - tTap) / .45;
       boilSeed('tapsparks');
@@ -166,8 +181,6 @@
     camEnd();
     // in: F's green, now the Up button's face, clears as we pull back out of it
     const open = 1 - seg(lt, 0, .1);
-    // out: the ticker's panel fills the frame (H opens on full-frame C.panel)
-    const cover = seg(lt, dur - .12, dur);
     if (open > 0 || cover > 0) flushLetters();
     if (open > 0) paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.up, washOp: 255 * open, ink: null });
     if (cover > 0) paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.panel, washOp: 255 * cover, ink: null });

@@ -128,6 +128,11 @@
   }
 
   function shotF(t, lt, dur) {
+    // out: the Up tag's green fills the frame; F's last frame is all green, and G opens on this green, pulling back out
+    // of the market screen's Up button
+    const cover = seg(lt, dur - .13, dur - .02);
+    if (cover >= 1) { paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.up, ink: null }); return; }
+    const pushing = t > tPush + .06;   // diving into the tag: skip the side lights (glows are the costly primitive)
     room(t, { plate: 'stage', bloom: 0 });
     camera(t);
     // light: the pans glow as the formula names them (bids, asks, then both)
@@ -136,9 +141,9 @@
     const gBid = Math.max(env(tBids - .05, tBids + .1, tAsks - .12, tAsks + .05), gBoth, .8 * env(tMore - .1, tMore + .05, tHeavy + .4, tHeavy + .9));
     const gAsk = Math.max(env(tAsks - .08, tAsks + .08, tOver - .12, tOver), gBoth);
     const [lx, ly] = panAt(t, 'bid'), [rx, ry] = panAt(t, 'ask');
-    if (gBid > 0) glow(lx, ly - 110, 250, '#6BE08E', .75 * gBid);
-    if (gAsk > 0) glow(rx, ry - 110, 250, '#E9E3D0', .5 * gAsk);
-    glow(PX, 560, 520, '#1F6B45', .35 + .1 * wob(t, .2));   // the stage's own breathing light
+    if (gBid > 0 && !pushing) glow(lx, ly - 110, 250, '#6BE08E', .75 * gBid);
+    if (gAsk > 0 && !pushing) glow(rx, ry - 110, 250, '#E9E3D0', .5 * gAsk);
+    if (!pushing) glow(PX, 560, 520, '#1F6B45', .35 + .1 * wob(t, .2));   // the stage's own breathing light
 
     // the hill flattens into the beam (with a sag), a fulcrum grows under it, the pans pop onto its ends
     const k = 1 - ease(seg(t, CUT.F, 37.6)) - .07 * Math.sin(Math.PI * seg(t, 37.45, 37.78));
@@ -186,8 +191,6 @@
     upTag(t);
     camEnd();
 
-    // out: the Up tag's green fills the frame (G opens on this green and pulls back out of the Up button)
-    const cover = seg(lt, dur - .12, dur);
     if (cover > 0) { flushLetters(); paint(rectPts(-40, -40, W + 80, H + 80), { wash: C.up, washOp: 255 * cover, ink: null }); }
   }
   shots([[CUT.F, shotF]]);
