@@ -23,4 +23,14 @@
 
 ## Asset licences
 
-To be filled in as assets are made: fonts, voice, music, sound effects. No stock footage or images are used; everything on screen is rendered by this project's code.
+No stock footage, stock images or reference-video material is used. Every frame is rendered by this project's code (`shorts/blackhole/`), so no on-screen attribution is needed.
+
+| asset | source | licence / terms | where |
+|---|---|---|---|
+| Voiceover, 12 lines | ElevenLabs text-to-speech, premade voice "Chris – Charming, Down-to-Earth" (`iP95p4xoKVk53GoZ742B`), model `eleven_multilingual_v2`, generated with the user's API key (Creator plan) | ElevenLabs: paid plans include a commercial licence with no attribution requirement (free plans must credit ElevenLabs). https://help.elevenlabs.io/hc/en-us/articles/13313564601361-Can-I-publish-the-content-I-generate-on-the-platform | `shorts/blackhole/tools/vo.py` → `build/vo.wav` |
+| Music bed, 37.4 s, 90 BPM | ElevenLabs Music (`music_v1`) from a composition plan written for this video (intro / build / drop sections, no artist or film references; request in `build/audio/music_req2.json`) | Eleven Music model-specific terms, Creator plan: "All online and offline commercial use permitted, except film, TV, radio, & Studio Games"; "No Attribution Required" on Starter and above. https://elevenlabs.io/eleven-music-model-specific-terms | `build/audio/music_v2.mp3` |
+| Sound effects: whooshes, impact, rumble, shimmer, riser, reverse swell, ping, zip, whip, tick | Mirelo `text_to_sfx` v1.6, generated for this video from text prompts (cue list in `tools/mix.py`) | Mirelo ToS §7: rights in the output vest in the user. §2: on the **Free plan** output is for **non-commercial use only**, and Free users must "clearly and visibly attribute Mirelo as the sound provider" when publishing. The upload description credits Mirelo to cover this. If the Short will be monetised, the account needs a paid Mirelo plan, or the SFX should be swapped for CC0 ones. https://www.mirelo.ai/termsofservice | `build/audio/sfx/*.wav` |
+| Fonts: Montserrat Black / ExtraBold, Inter ExtraBold / Black, Archivo Black | Google Fonts | SIL Open Font License 1.1 (free to embed and use commercially). https://openfontlicense.org | `shorts/blackhole/assets/fonts/` |
+| Star field, Milky Way band, accretion disk textures, astronaut | Procedural (hash noise and signed-distance fields) in `bh/shade.py` and `bh/diagram.py` | Original to this project (MIT, like the repo) | — |
+
+The API key the user supplied was only read from an environment variable at run time. It is not stored in the repository.

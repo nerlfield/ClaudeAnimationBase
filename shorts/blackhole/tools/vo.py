@@ -141,6 +141,11 @@ def main():
             speed = round(min(1.12, speed * (dur / (t1 - t0)) * 1.02), 3)
         a = int(t0 * SR)
         mix[a:a + len(pcm)] += pcm
+        # clamp the alignment to the trimmed audio: the last word's end otherwise includes trailing silence
+        spoken_end = (np.where(np.abs(pcm) > 0.01)[0][-1] + 1) / SR
+        al = dict(al)
+        al['character_end_times_seconds'] = [min(e, spoken_end) for e in al['character_end_times_seconds']]
+        al['character_start_times_seconds'] = [min(s0, spoken_end) for s0 in al['character_start_times_seconds']]
         ws = words_from_alignment(al, t0)
         all_words += [dict(w=w, s=round(s, 3), e=round(e, 3)) for w, s, e in ws]
         k = 0

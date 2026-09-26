@@ -22,7 +22,7 @@
 
 **Tools.** O, A–D and F–G: a custom Schwarzschild ray tracer in numba. Per frame, it integrates a table of null geodesics for the camera's radius; each pixel then looks up its disk crossings (with Doppler and gravitational shift) and its escape direction (lensed stars with an image-space point spread, so magnified stars brighten instead of bloating). E: the same star and disk shaders unlensed, a raymarched signed-distance-field astronaut, and the light pulse. Post: bloom, hue-preserving filmic tone curve, faint chromatic fringe, vignette, per-frame grain, temporal supersampling on fast moves, and a caption scrim that darkens bright backgrounds under the captions. Every frame is a pure function of t.
 
-**HUD: the depth gauge.** A vertical ladder at the left edge (x 60–260, y 330–1080, clear of captions and the right-side UI), titled "DISTANCE" with a small "(HORIZON = 1×)". Ticks at 25×, 10×, 3×, 1.5× and 1× HORIZON, labels 34 px. An ice "YOU ▸" marker sits on the left of the line (so it never covers a label) and slides during the moves, never touching the HORIZON tick until the very end. Visible 15.0–22.2 and 26.67–36.9.
+**HUD: the depth gauge.** A vertical ladder at the left edge (x 60–260, y 330–1080, clear of captions and the right-side UI), titled "DISTANCE" with a small "(HORIZON = 1×)". Ticks at 25×, 10×, 3×, 1.5× and 1× HORIZON, labels 34 px. An ice "YOU ▸" marker sits on the left of the line (so it never covers a label) and slides during the moves, never touching the HORIZON tick until the very end. Visible 15.0–22.2 and 26.67–32.7; it fades once YOU reaches the horizon, so the dot's labels and the loop frame are clean.
 
 ---
 
@@ -48,9 +48,9 @@
 - **Out.** Camera move into B.
 
 ### B: Flat, then not · 5.33–16.00 · [in: continuous camera move]
-- **Seen.** The camera rises to 40° above the disk: the disk is now obviously a flat tilted ring, like Saturn's rings, with the hole in its middle. The far half lights up ice with a label "BACK", the near half keeps its gold with "FRONT". The camera swings back down to the side, and the ice half rises and bends over the top of the hole into the arch. It was the back of the disk all along.
+- **Seen.** The camera rises to 58° above the disk: the disk is now obviously a flat tilted ring, like Saturn's rings, with the hole in its middle. The far half lights up ice with a label "BACK", the near half keeps its gold with "FRONT". The camera swings back down to the side, and the ice half rises and bends over the top of the hole into the arch. It was the back of the disk all along.
 - **Event.** Flat tilted ring → arch, with the ice tag carrying the identity across.
-- **Camera.** Rise 5.33 → 7.10 (θ 82° → 40°, pulling back to r 30 so the ring fits), hold with a 3° yaw drift until 8.6, swing down 8.6 → 10.67 with a 2° overshoot and settle on the 10.67 bar, then a slow push to 16.0.
+- **Camera.** Rise 5.33 → 7.10 (θ 82° → 32° from the pole, pulling back to r 34 and widening the field of view from 42° to 60° so the ring fits), hold with a 3° yaw drift until 8.6, swing down 8.6 → 10.67 with a 2° overshoot and settle on the 10.67 bar, then a slow push to 16.0.
 - **Reads.**
   - 5.33–7.10: the view tilts and the disk opens into an ellipse. The eye rides the disk.
   - 6.00–7.60: VO "The disk around it is flat." The eye is on the tilted ring.
@@ -80,7 +80,7 @@
 - **Out.** Match cut on the line: E opens exactly edge-on, so the bright line continues across the cut before it opens into a circle.
 
 ### E: The back of your head · 22.20–26.67 · [in: match cut, line → circle]
-- **Seen.** Diagram, labelled "* DIAGRAM, NOT TO SCALE". From below the ring plane: the black horizon sphere, the photon sphere drawn as a thin circle of light, and on it an astronaut (14% of frame width, in the upper half) labelled "YOU" with a leader line to the helmet. A pulse of light leaves the back of the helmet, runs the whole lap and hits the visor with a flash; its path stays drawn as a faint trail.
+- **Seen.** Diagram, labelled "* DIAGRAM, NOT TO SCALE"; the hole sits at 40% height once the ring opens so the lap stays clear of the captions. From below the ring plane: the black horizon sphere, the photon sphere drawn as a thin circle of light, and on it an astronaut (≈18% of frame width, in the upper half) labelled "YOU" with a leader line to the helmet. A pulse of light leaves the back of the helmet, runs the whole lap and hits the visor with a flash; its path stays drawn as a faint trail with arrowheads showing the direction.
 - **Event.** The line opens into a circle (22.2–23.0); the pulse's lap (22.7 → 24.0); the flash; the double take (the helmet whips round to look behind, and back).
 - **Camera.** Elevation −2° → −31° (ease-out), slow 5° orbit, back to −2° at 26.3–26.67.
 - **Reads.**
@@ -97,19 +97,20 @@
 - **Reads.**
   - 26.67–27.20: the match cut; we're back at the line.
   - 26.90–28.80: VO "Now hover just above the edge." The eye follows the bright sky as it rolls up.
-  - 29.00–32.30: VO "The whole universe gets squeezed into one dot above your head." The eye is on the shrinking circle. "1.001×" with "0.1% ABOVE THE EDGE" pops in the upper third at 29.6–31.2.
+  - 27.00–27.90: "LOOKING UP ↑" kicker at the top as the camera tilts.
+  - 29.00–31.85: VO "The whole universe gets squeezed into one dot above your head." The eye is on the shrinking circle.
   - 32.00: the dot lands.
 - **Out.** Continuous into G.
 
 ### G: Everything else · 32.00–37.33 · [out: the loop, this frame continues into O]
-- **Seen.** The dot, the same framing as frame 0, creeping smaller as we inch down. "STARLIGHT: 30× BLUER" sits under it (32.3–33.6).
+- **Seen.** The dot, the same framing as frame 0, creeping smaller as we inch down. "1.001×" with "0.1% ABOVE THE EDGE" pops at the top (31.9–33.2) as the gauge's YOU marker reaches the horizon; then "THE UNIVERSE" labels the dot (33.3) and "BLACK HOLE" appears with arrows pointing out into the black (34.9), word-synced to the VO.
 - **Event.** The last creep; the gauge fades out (36.3–36.9) so the final frames are identical to O's.
 - **Camera.** The same continuous function as O (G at time t equals O at time t − 37.33), so the loop has no seam.
 - **Reads.**
-  - 32.00–33.30: **the dot, the whole universe, held 1.3 s** with its label.
+  - 32.00–33.30: **the dot, the whole universe, held 1.3 s**, with its 1.001× label.
   - 33.40–34.20: VO "Everything else?"
   - 34.20–35.00: a beat.
-  - 35.00–35.70: VO "Black hole." The eye takes in the black around the dot.
+  - 35.00–35.70: VO "Black hole." The gold callout's arrows push the eye out into the black around the dot (no caption under the dot, so it can't read as the dot's name).
   - 35.70–37.33: hold. The last read gets 1.6 s to land, then the loop into "This dot is the whole universe."
 
 ---
@@ -122,5 +123,5 @@
 - **Every seam has a transition, and they vary.** Seamless loop (G→O), inverted match cut (O→A), camera move (A→B→C), braked arrival (C→D), match cut line → circle (D→E), circle → line (E→F), continuous (F→G).
 - **The ending rhymes with the opening.** It *is* the opening frame: the dot, now understood.
 - **Every setup pays off on screen.** The dot claim (O) pays off in F–G; the BACK tag in B pays off as the arch; the line in D is explained in E; the gauge's HORIZON tick is reached in F; "hover" (said in D and F) is the condition the dot needs.
-- **On-screen text never restates the image.** REAL PHYSICS SIMULATION, BACK/FRONT, the gauge, 1.5× PHOTON SPHERE, YOU, * DIAGRAM, NOT TO SCALE, 1.001× 0.1% ABOVE THE EDGE and STARLIGHT: 30× BLUER each add something the picture and VO don't say.
+- **On-screen text never restates the image.** REAL PHYSICS SIMULATION, BACK/FRONT, the gauge, 1.5× PHOTON SPHERE, YOU, * DIAGRAM, NOT TO SCALE, LOOKING UP ↑, 1.001× 0.1% ABOVE THE EDGE, THE UNIVERSE and the BLACK HOLE arrows each add something the picture and VO don't say.
 - **Safe zone.** Captions sit at 60–73% of the height, labels in the upper third and the left gauge; nothing below 80% or in the right 12%.

@@ -20,7 +20,7 @@ SHADOW = (5, 7, 13)          # #05070D
 
 CAP_SIZE = 80                # Montserrat Black at 80 px -> cap height ~56 px (2.9% of 1920)
 CAP_Y = int(0.69 * H)        # caption baseline
-CAP_MAXW = 800
+CAP_MAXW = 780
 
 
 @lru_cache(maxsize=32)
@@ -80,7 +80,7 @@ def caption(words, hot=(), age=1.0):
     while True:
         f = font('Montserrat-Black.ttf', size)
         lines = _wrap(f, words, CAP_MAXW)
-        if len(lines) <= 2 or size <= 66:
+        if len(lines) <= 2 or size <= 60:
             break
         size -= 4
     if len(lines) == 2:                               # balance the two lines
@@ -125,7 +125,7 @@ def _pop(lay, scale, alpha, center):
 
 def top_label(text, age=1.0, fade=1.0):
     """Letter-spaced label near the top, e.g. REAL PHYSICS SIMULATION."""
-    f = font('Inter-ExtraBold.ttf', 56)
+    f = font('Inter-ExtraBold.ttf', 50)
     lay = _layer(); d = ImageDraw.Draw(lay)
     spaced = text.upper()
     tw = f.getlength(spaced) + 3.0 * len(spaced)
@@ -179,7 +179,7 @@ def point_label(text, at, age=1.0, fade=1.0, dx=34, dy=-60, size=40, color=ICE, 
 
 # gauge: depth ladder on the left edge, sqrt-log scale in distance from the centre (r_s units)
 G_X = 150
-G_TOP, G_BOT = 430, 1000
+G_TOP, G_BOT = 400, 850
 TICKS = [(25.0, '25\u00d7'), (10.0, '10\u00d7'), (3.0, '3\u00d7'), (1.5, '1.5\u00d7'), (1.0, '1\u00d7 = HORIZON')]
 
 
@@ -231,7 +231,7 @@ def callout_black(age=1.0, fade=1.0, y=1250):
     tw = f.getlength(text)
     d.text((W / 2 - tw / 2, y - 60), text, font=f, fill=GOLD + (255,), stroke_width=3, stroke_fill=SHADOW + (160,))
     # four arrows pointing outward, away from the dot, into the black
-    for (x0, y0, x1, y1) in [(W / 2 - tw / 2 - 16, y + 10, 90, y + 300), (W / 2 + tw / 2 + 16, y + 10, W - 170, y + 300),
+    for (x0, y0, x1, y1) in [(W / 2 - tw / 2 - 16, y + 10, 90, y + 235), (W / 2 + tw / 2 + 16, y + 10, W - 215, y + 235),
                              (W / 2 - tw / 2 - 16, y - 40, 70, y - 150)]:
         d.line([(x0, y0), (x1, y1)], fill=GOLD + (230,), width=6)
         ang = math.atan2(y1 - y0, x1 - x0)

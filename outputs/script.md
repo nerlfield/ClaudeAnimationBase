@@ -68,27 +68,28 @@ Bars at 90 BPM: 0.00, 2.67, 5.33, 8.00, 10.67, 13.33, 16.00, 18.67, 21.33, 24.00
 | 24.00–24.80 | "That's the back of your own head." (24.2–25.9) | **the flash in the visor** | the visor | bright ping on 24.00 | — | — |
 | 25.00–26.30 | — | the double take | the helmet | small whip | — | — |
 | 26.30–26.67 | — | ring collapses to a line | the line | whoosh out | — | **match cut** circle → line |
-| 26.90–28.80 | "Now hover just above the edge." | sinking and tilting up; the bright sky rolls up | the sky | long riser starts | — | — |
-| 29.00–32.30 | "The whole universe gets squeezed into one dot above your head." | the circle shrinks to the dot, turning ice | the circle | riser peaks | 1.001× / 0.1% ABOVE THE EDGE (29.6–31.2) | — |
-| 32.00–33.30 | *(silence)* | **the dot**, as in frame 0 | the dot | hit on 32.00; music drops to one high tone | STARLIGHT: 30× BLUER (32.3–33.6) | — |
-| 33.40–34.20 | "Everything else?" | creep | the dot | near silence | — | — |
-| 35.00–35.70 | "Black hole." | — | the black | low sub swell | — | — |
+| 26.90–28.60 | "Now hover just above the edge." | sinking and tilting up; the bright sky rolls up | the sky | long riser starts | LOOKING UP ↑ (27.0–27.9) | — |
+| 29.00–31.85 | "The whole universe gets squeezed into one dot above your head." | the circle shrinks to the dot, turning ice | the circle | riser peaks | — | — |
+| 32.00–33.30 | *(silence)* | **the dot**, as in frame 0 | the dot | hit on 32.00; music drops to one high tone | 1.001× / 0.1% ABOVE THE EDGE (31.9–33.2) | — |
+| 33.30–34.25 | "Everything else?" | creep | the dot | near silence | THE UNIVERSE (ice leader on the dot, 33.3) | — |
+| 34.90–35.70 | "Black hole." | — | out into the black | low soft hit | BLACK HOLE (gold, arrows pointing into the black, 34.9); not captioned under the dot | — |
 | 35.70–37.33 | — | hold; gauge fades (36.3–36.9) | the dot | swell resolves into O's shimmer | — | **seamless loop** into frame 0 |
 
 ## Captions
 
-Burned in and word-synced from the TTS character timestamps, chunked at phrase boundaries (≤4 words):
+Burned in and word-synced from the TTS character timestamps (`build/words.json`). Each chunk is a whole phrase, split only where the voice breathes, and wraps to two balanced lines when it is long:
 
 - THIS DOT IS / THE WHOLE UNIVERSE.
-- TO SEE IT, / FLY DOWN / TO A BLACK HOLE.
-- THE DISK AROUND IT / IS FLAT.
-- SO WHY DOES IT / LOOK LIKE THIS?
-- THAT'S THE BACK / OF THE DISK, / BENT OVER THE TOP / BY GRAVITY.
-- HOVER HERE, / AND THE BLACK HOLE / FILLS EXACTLY / HALF YOUR SKY.
-- AND LIGHT GOES AROUND IT / IN CIRCLES.
-- THAT'S THE BACK / OF YOUR OWN HEAD.
-- NOW HOVER / JUST ABOVE THE EDGE.
-- THE WHOLE UNIVERSE / GETS SQUEEZED / INTO ONE DOT / ABOVE YOUR HEAD.
-- EVERYTHING ELSE? / BLACK HOLE.
+- TO SEE IT, FLY DOWN TO A BLACK HOLE.
+- THE DISK AROUND IT IS FLAT.
+- SO WHY DOES IT LOOK LIKE THIS?
+- THAT'S THE BACK OF THE DISK, / BENT OVER THE TOP BY GRAVITY.
+- HOVER HERE, / AND THE BLACK HOLE FILLS / EXACTLY HALF YOUR SKY.
+- AND LIGHT GOES AROUND IT IN CIRCLES.
+- THAT'S THE BACK OF YOUR OWN HEAD.
+- NOW HOVER JUST ABOVE THE EDGE.
+- THE WHOLE UNIVERSE GETS SQUEEZED / INTO ONE DOT ABOVE YOUR HEAD.
+- EVERYTHING ELSE?
+- "Black hole." is not captioned under the dot. It appears as the gold BLACK HOLE callout with arrows pointing out into the black.
 
-Style: Montserrat Black 92 px (cap height ≈64 px, 3.3% of 1920), white with a soft dark shadow and thin dark stroke. One gold `#FFC24A` key word per line: *universe, black hole* (A only), *flat, this, back, half, circles, head, edge, dot, black hole* (end). Centred at x = 540, max width 780 px, baseline ≈69% of the height. A 0.12 s pop (scale 0.92 → 1.0) per chunk.
+Style: Montserrat Black 80 px (cap height ≈56 px, 2.9% of 1920; shrinks to 60 px at most for a long chunk), white with a soft dark shadow and thin dark stroke. One gold `#FFC24A` key word per line: *universe, black hole* (A only), *flat, this, back, half, circles, head, edge, dot*. Centred at x = 540, max width 780 px (so it clears the right-hand button column), baseline at 69% of the height, clear of the bottom 20%. A 0.12 s pop (scale 0.92 → 1.0) per chunk, and a soft scrim darkens only bright backgrounds behind the caption band.

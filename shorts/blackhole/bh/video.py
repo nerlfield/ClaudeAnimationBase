@@ -9,18 +9,21 @@ from . import overlay as ov
 
 def frame(t, scale=1.0, spp=SPP4, overlays=True, motion_blur=1):
     """Float RGB (h, w, 3) in 0..1.  motion_blur = number of sub-frame samples over a 180-degree shutter."""
+    img = base_frame(t, scale, spp, motion_blur)
+    return overlay_frame(img, t) if overlays else img
+
+
+def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
+    """The rendered picture after post, with no captions or labels (float RGB 0..1)."""
     w, h = int(round(W_FULL * scale)), int(round(H_FULL * scale))
     st = shots.state(t)
-    you = None
     samples = []
     offs = [0.0] if motion_blur <= 1 else [(i + 0.5) / motion_blur - 0.5 for i in range(motion_blur)]
     for o in offs:
         ts = t + o * (0.5 / shots.FPS)
         s2 = shots.state(ts)
         if s2['diagram'] is not None:
-            hdr, info = diagram.render_e(ts, w, h, spp, shade.BB)
-            if abs(o) < 1e-9 or you is None:
-                you = info['you']
+            hdr, _ = diagram.render_e(ts, w, h, spp, shade.BB)
             exp = 0.8
         else:
             hdr = render_hdr(s2['cam'], ts, w, h, spp, tint=s2['tint'], disk_gain=s2['disk_gain'], sky_gain=s2['sky_gain'])
@@ -30,12 +33,16 @@ def frame(t, scale=1.0, spp=SPP4, overlays=True, motion_blur=1):
     if st.get('sweep', 0) > 0 and st['cam'] is not None:
         hdr = line_sweep(hdr, st['cam'], st['sweep'])
     img = post.finish(hdr, exposure=1.0, bloom_amt=st['bloom'], seed=int(round(t * shots.FPS)) + 17)
-    if overlays:
-        if tov.caption_layer(t) is not None:
-            img = scrim(img)
-        if you is not None and scale != 1.0:
-            you = (you[0] / scale, you[1] / scale)
-        img = ov.composite(img, tov.layers(t, you, st))
+    return np.clip(img, 0, 1)
+
+
+def overlay_frame(img, t):
+    """Caption scrim plus every caption and label for time t, on a base frame of any size."""
+    st = shots.state(t)
+    you = diagram.you_px(t) if st['diagram'] is not None else None
+    if tov.caption_layer(t) is not None:
+        img = scrim(img)
+    img = ov.composite(img, tov.layers(t, you, st))
     return np.clip(img, 0, 1)
 
 

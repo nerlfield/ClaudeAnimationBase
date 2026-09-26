@@ -9,6 +9,7 @@ from .shots import T_A, T_B, T_C, T_D, T_E, T_F, T_G, BAR, DUR, state, seg
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
+MID_LEAD = 0.12
 
 # (start, end, text) -- the same lines tools/vo.py speaks
 LINES = [
@@ -41,7 +42,13 @@ def chunks():
     """[(start, end, [words], [hot words])]"""
     if os.path.exists(WORDS_JSON):
         data = json.load(open(WORDS_JSON))
-        return [(c['start'], c['end'], c['words'], c.get('hot', [])) for c in data['chunks']]
+        out = [[c['start'], c['end'], c['words'], c.get('hot', [])] for c in data['chunks']]
+        # a chunk that follows mid-sentence (no pause) switches 0.12 s early: the TTS alignment puts a word's
+        # start at its first letter, which ears (and Whisper) hear slightly before
+        for prev, cur in zip(out, out[1:]):
+            if abs(cur[0] - prev[1]) < 0.02 and not prev[2][-1].endswith(('.', '?', '!')):
+                cur[0] -= MID_LEAD; prev[1] -= MID_LEAD
+        return [tuple(c) for c in out]
     out = []
     for a, b, text in LINES:
         cs = parse(text)
@@ -80,11 +87,11 @@ def layers(t, you_px=None, st=None):
         if t >= 11.15:
             L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - 11.15, f, size=48))
     # depth gauge
-    if 15.0 <= t < T_E or T_F <= t < 33.9:
+    if 15.0 <= t < T_E or T_F <= t < 32.7:
         if t < T_E:
             fade = min(seg(t, 15.0, 15.5), 1.0 - seg(t, T_E - 0.3, T_E))
         else:
-            fade = min(seg(t, T_F, T_F + 0.3), 1.0 - seg(t, 33.3, 33.9))
+            fade = min(seg(t, T_F, T_F + 0.3), 1.0 - seg(t, 32.2, 32.7))
         cam = st['cam']
         r = cam.r0 if cam is not None else 1.5
         hot = '1.5\u00d7' if T_D <= t < T_E else ('HORIZON' if t >= 30.0 else None)
@@ -94,8 +101,8 @@ def layers(t, you_px=None, st=None):
         L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - T_D, fade=1.0 - seg(t, T_D + 1.05, T_D + 1.35)))
     if 26.95 <= t < 27.95:
         L.append(ov.top_label('Looking up \u2191', t - 26.95, fade=1.0 - seg(t, 27.65, 27.95)))
-    if 28.2 <= t < 29.6:
-        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 28.2, fade=1.0 - seg(t, 29.3, 29.6)))
+    if 31.9 <= t < 33.25:
+        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, 32.95, 33.25)))
     # diagram tags
     if T_E <= t < T_F:
         f = min(seg(t, T_E, T_E + 0.3), 1.0 - seg(t, T_F - 0.3, T_F))
@@ -103,9 +110,6 @@ def layers(t, you_px=None, st=None):
         if you_px is not None and 22.5 <= t < 26.3:
             L.append(ov.point_label('you', you_px, t - 22.5, fade=1.0 - seg(t, 26.0, 26.3), dx=80, dy=-90))
     # the dot's label
-    if 32.1 <= t < 33.2:
-        L.append(ov.point_label('starlight: 30\u00d7 bluer', (540, 806 + 250), t - 32.1,
-                                fade=1.0 - seg(t, 32.9, 33.2), dx=-205, dy=0, size=38, line=False))
     if 33.3 <= t < 36.8:
         L.append(ov.point_label('the universe', (540, 806 - 225), t - 33.3, fade=1.0 - seg(t, 36.4, 36.8),
                                 dx=-150, dy=-120, size=46))

@@ -240,6 +240,10 @@ def e_state(t, T_E=22.2, T_F=26.6667, lap0=22.7, lap1=24.0):
     F = norm(-C)
     U = norm(np.array([0.0, 0.0, 1.0]) - np.dot([0.0, 0.0, 1.0], F) * F)
     R = norm(np.cross(F, U))
+    # frame the hole at 40% height once the ring has opened (50% while edge-on, to match D's line at the cuts)
+    yf = kf(t, [(T_E, 0.5), (T_E + 0.8, 0.40), (T_F - 0.4, 0.40), (T_F, 0.5)])
+    off = math.atan((1 - 2 * yf) * math.tan(math.radians(38.0) / 2))
+    F, U = rotate(F, R, -off), rotate(U, R, -off)
     # astronaut on the ring, front-right of the hole, facing +alpha (counter-clockwise)
     a0 = az + math.radians(-14.0)
     Tdir = np.array([-math.sin(a0), math.cos(a0), 0.0])
@@ -325,3 +329,11 @@ def render_e(t, w, h, spp, tab):
             np.array([0.6, 0.85, 1.3], np.float32)[None, None, :] * fade
     you = project(C, F, R, U, tx, ty, w, h, st['A'] + st['Au'] * (0.64 - 0.4 + 0.19) * ASTRO_SCALE)
     return out, dict(you=you)
+
+
+def you_px(t, w=1080, h=1920):
+    """Screen position of the astronaut's helmet in E (for the YOU label), without rendering."""
+    st = e_state(t)
+    ty = math.tan(math.radians(st['vfov']) / 2); tx = ty * w / h
+    return project(st['C'], st['F'], st['R'], st['U'], tx, ty, w, h,
+                   st['A'] + st['Au'] * (0.64 - 0.4 + 0.19) * ASTRO_SCALE)

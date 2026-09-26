@@ -150,7 +150,7 @@ def end_view(tau):
     az = 10.0
     P = pos(60.0, az)
     Fa, Ua = tangent_view(P, az, 6.0)
-    vfov = kf(tau, [(T_F + 0.3, 60.0), (31.0, 34.0)])
+    vfov = kf(tau, [(T_F + 0.3, 60.0), (31.0, 34.0), (DUR + BAR, 31.0)], lambda x: ease(x) if tau < 31.0 else x)
     Fb = P.copy(); Ub = -rotate(np.array([1.0, 0.0, 0.0]), [0, 0, 1], math.radians(az))
     Rb = np.cross(Fb, Ub)
     off = math.atan((1 - 2 * HOLE_Y) * math.tan(math.radians(vfov) / 2))
@@ -159,7 +159,7 @@ def end_view(tau):
     qb = quat_from_basis(None, Ub, Fb)
     q = slerp(qa, qb, ease(seg(tau, T_F, 29.5)))
     R, U, F = quat_to_basis(q)
-    U = rotate(U, F, math.radians(0.35 * (tau - T_F)))
+    U = rotate(U, F, math.radians(0.35 * (tau - T_F) + 1.1 * max(0.0, tau - T_G) ** 1.0))
     gs = 1 / math.sqrt(1 - 1 / r0)
     glow = 1.0 + 1.8 * ease(seg(tau, 29.0, T_G))       # the finished dot glows: all the sky's light in one place
     return Cam(r0, P, F, U, vfov), 0.5 * glow / gs ** 3.3
@@ -174,17 +174,21 @@ def state(t):
         p['shot'] = 'O'
         p['cam'], p['exposure'] = end_view(t + DUR)
         p['bloom'] = 0.16
+        k = seg(t, T_A - 0.1, T_A)
+        p['exposure'] *= 1.0 + 2.5 * k * k; p['bloom'] += 0.12 * k
     elif t < T_C:
         # A + B: hover at ~26 r_s; rise until the disk is a tilted flat ring, then swing back down
         p['shot'] = 'A' if t < T_B else 'B'
         theta = kf(t, [(T_A, 82.0), (5.05, 82.0), (T_B, 83.2), (7.10, 32.0), (8.60, 32.0), (10.45, 84.4), (10.95, 82.0), (T_C, 81.0)])
         r0 = kf(t, [(T_A, 26.2), (T_B, 24.5), (7.10, 34.0), (8.60, 34.0), (10.67, 24.0), (T_C, 20.5)])
-        vfov = kf(t, [(T_A, 46.2), (T_B, 47.5), (7.10, 60.0)])
+        vfov = kf(t, [(T_A, 42.4), (T_B, 44.0), (7.10, 60.0)])
         az = kf(t, [(T_A, 0.0), (7.1, 1.5), (8.6, 4.0), (10.67, 5.0), (T_C, 7.0)])
         roll = 0.6 * math.sin(t * 0.45)
         P = pos(theta, az)
         F, U = look_at_hole(P, theta, az, vfov, HOLE_Y, roll)
         p['cam'] = Cam(r0, P, F, U, vfov)
+        fl = 1.0 - seg(t, T_A, T_A + 0.16)
+        p['exposure'] = 0.55 * (1.0 + 1.6 * fl * fl); p['bloom'] = 0.09 + 0.1 * fl
         p['tint'] = kf(t, [(7.05, 0.0), (7.45, 1.0), (13.5, 1.0), (15.2, 0.0)])
         # label anchors on the disk (unlensed projection is close enough at this distance)
         cam = p['cam']
