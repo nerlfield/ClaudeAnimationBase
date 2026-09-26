@@ -73,7 +73,7 @@ The storyboard sheet from these two rounds gated the render; after round 3, outp
 - **Comment:** "Wait, the dot at the start is what you see right above the horizon?? Rewatched."
 
 **What changed.**
-1. **The dive has a voice:** "Let's get closer. Much closer." (16.1–17.8, same ElevenLabs voice). The other twelve takes were reused bit for bit, and the dive whoosh is sidechained 9 dB under the new line (voice 13 dB above music plus SFX there).
+1. **The dive has a voice:** "Let's get closer. Much closer." (16.1–17.8, same ElevenLabs voice; reworded in round 4, below). The other twelve takes were reused bit for bit, and the dive whoosh is sidechained 9 dB under the new line (voice 13 dB above music plus SFX there).
 2. **The gauge became a big distance counter** at the top that counts down live with the camera: 20× → 1.5× through the dive, landing with a pop on "1.5× / THE PHOTON SPHERE", then 1.2× → 1.001× through the last descent, landing on "1.001× / 0.1% ABOVE THE EDGE". Its sub-label reads "YOUR DISTANCE · HORIZON = 1×". It sits on a soft dark backing so it reads over the disk.
 3. **D:** a gold "BLACK HOLE" tag sits in the black half, just under the line, from "the black hole fills".
 4. **The end and the cold open move:** the sky inside the dot turns 6°/s about the radial axis (the dot stays put) while the camera pushes in (the dot goes from 49% to 54% of the width over G and O). The seam is still the same camera function on both sides. A's opening field of view went from 42.4° to 35.8° so the shadow still matches the dot at the cut (0.538 of the width both sides).
@@ -92,3 +92,69 @@ The storyboard sheet from these two rounds gated the render; after round 3, outp
 - **The one-frame white bloom at 2.6:** the designed flash into A on the downbeat hit.
 - **The astronaut's snap-round at 25.2:** the comedy double take.
 - **The E diagram:** "the astronaut looks like he's sitting on the ball" is fair, but the shot is labelled as a diagram and the pulse lap is visible in motion.
+
+## Round 4: sound design and voice (after the user's note: "very sharp, some of them very-very weird")
+
+I can't listen, so every sound was judged by measurement plus a stand-in ear (`tools/ear.py`). The ear combines signal metrics (attack, crest, share of energy in the harsh 2–5 kHz band, hiss above 6 kHz, sub, and loss through a phone-speaker model) with CLAP (`laion/clap-htsat-unfused`) audio-text similarity against good and bad descriptors ("slide whistle", "glitchy weird electronic sound", "white noise hiss", "harsh piercing"…). The ear agreed with the note before anything changed:
+- the old dive whoosh: 90% of its energy above 6 kHz, "white noise hiss";
+- one whoosh: 99% in 2–5 kHz, "harsh piercing";
+- the zip: "glitchy weird";
+- the reverse swell: "harsh piercing".
+
+**New kit** (`tools/sfx.py`, no Mirelo, only ElevenLabs sound generation and sounds synthesised here):
+1. **Round 1:** 19 synthesised designs plus 27 ElevenLabs takes, ranked per role.
+   - Three fixes after the first ranking:
+     - a matching bug;
+     - hits that were pure sub (a 22–27 LU loss through the phone model, so they vanish on a phone);
+     - ElevenLabs tonal takes out of the music's key (the chime at F6 against the bed's E).
+   - The bed centres on A, E and D (chroma), so every pitched effect now uses only A, D and E, and the chime take was retuned −1.17 semitones.
+   - Hits got a saturated knock and a soft band-noise "skin" (phone loss 10 LU).
+2. **Round 2:** the ear flagged my rising sine for the light's lap as a "slide whistle" (1.00), the swish too (0.76), and the sparkle sweep as "glitchy weird" (0.99). The lap is now a harp glissando up the A-sus notes (0.97 "harp"), the swish is a slice from the peak of a clean ElevenLabs whoosh, the pops and the counter "land" are built on the ElevenLabs bubble pop (0.90–0.97 "bubble pop"), and the sweep was dropped.
+3. **Round 3:** leave-one-out over every flagged window.
+   - Every ElevenLabs long riser ended in a whine, so the synthesised one is used.
+   - The big bass drop's 1.1 s build-up read as weird; it is trimmed to 0.35 s before the hit.
+   - Two whooshes overlapped at the diagram cut; one was removed.
+   - Chime tails rang under the next line; they now fade by 25.4 s.
+   - The saturation had squashed the knock's attack to about 3 ms; the attack is now applied after it.
+4. **Mix:**
+   - Hits are peak-aligned to their cuts.
+   - Every effect shares one warm synthetic room.
+   - Music and effects duck on phrases (300 ms smoothing, 80/600 ms) instead of per syllable. The old sidechain moved the bed by up to 4.5 dB inside one phrase, and the ear heard that pumping as "glitchy".
+   - Hits that land in speech gaps are never ducked.
+
+| effects bus | v1 (Mirelo) | v2 |
+|---|---|---|
+| energy in the harsh 2–5 kHz band | 25.7% | 0.1% |
+| energy above 6 kHz (hiss) | 5.5% | 0.0% |
+| cue windows whose best CLAP label is a bad one | 23 of 34 | 0 of 34 (one borderline mixed window at 43% "bad" whose best label is "shimmering chime"; every sound in it is clean alone) |
+| attack steepness (5 ms envelope, 99.5th percentile) | 1.9 dB/ms | 2.1 dB/ms |
+
+**Voice.** Pitch tracking (pyin) showed that three first takes were off:
+- the hook "This dot is the whole universe." was only 24% voiced at 83 Hz with 1.0 semitone of movement (vocal fry);
+- "Black hole." was 24% voiced and flat;
+- the new dive line was whispered (0% voiced).
+
+`tools/vo_takes.py` generated six to eight seeded takes per suspect line and kept only takes that are at least 40% voiced, sit at 90–145 Hz, move at least 1.5 semitones, fit the slot and transcribe exactly. It then ranked them toward the narrator's usual 115 Hz. Six lines were replaced: the hook, "The disk around it is flat", "So why does it look like this?" (the old take sat at 215 Hz), "Now hover just above the edge" (monotone), "Black hole." and the dive line. The dive line whispered in all six seeds as "Let's get closer. Much closer." and in about half of the takes of any rewording, so it became "Let's fly in. Way closer." (a seeded take at 108 Hz, 56% voiced).
+
+The processing chain:
+- each line matched to −22.5 LUFS, which cut the line-to-line loudness spread from 4.2 to 1.5 LU;
+- 8 ms edges;
+- a light de-esser (at most 4.9 dB, active on 0.69 s of the whole track);
+- 2.5:1 soft-knee compression;
+- the effects' room at −26 dB.
+
+Whisper hears all 13 lines exactly, and captions land between 0.20 s early and 0.10 s late.
+
+**Master:** −14.1 LUFS integrated, −1.4 dBTP true peak (ffmpeg ebur128 on the encoded final.mp4). The voice sits 13 dB or more above the music while speaking, and 15 dB above music plus effects over the dive line.
+
+**Second fresh-eyes critic on the round-3 cut (7/10, "no, not as is"), and what was done.**
+- **Fixed in this pass:**
+  - the gold BLACK HOLE tag sat on the caption "AND THE BLACK HOLE FILLS"; it moved up under the line;
+  - LOOKING UP ↑ was small and grey; it is now 64 px on a backing and held 1.3 s;
+  - the counter dimmed for one frame when it landed; a landing value now pops without fading in;
+  - the dark backing behind the counter smudged the bright disk; it is softer.
+- **Not changed:**
+  - the "dead air" after "Black hole." (the music is composed to 14 bars; the push-in and turning sky now keep the dot moving, and the new reverse swell carries into the loop);
+  - the 19–22 s stretch, now tagged and voiced;
+  - the unlabelled lower image of the disk's far side;
+  - the diagram's art style.

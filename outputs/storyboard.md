@@ -1,6 +1,6 @@
 # Storyboard: "This dot is the whole universe"
 
-*Version 3, after the final-cut critique (round 3 in critique.md): the tiny depth gauge became a big live distance counter, the silent dive got a line ("Let's get closer. Much closer."), the black half in D is tagged BLACK HOLE, the sky inside the end dot turns while the camera pushes in (so the loop never sits still), and A's opening is re-matched to the bigger dot. Version 2 came from two rounds of frames-sheet critique: a cold open on the video's most surprising image that ends on exactly that frame, the G callouts, the arrowed light path in E, whole-phrase captions and B tilted to 58°.*
+*Version 3, after the final-cut critique (round 3 in critique.md): the tiny depth gauge became a big live distance counter, the silent dive got a line ("Let's fly in. Way closer."), the black half in D is tagged BLACK HOLE, the sky inside the end dot turns while the camera pushes in (so the loop never sits still), and A's opening is re-matched to the bigger dot. Version 2 came from two rounds of frames-sheet critique: a cold open on the video's most surprising image that ends on exactly that frame, the G callouts, the arrowed light path in E, whole-phrase captions and B tilted to 58°.*
 
 **Logline.** The viewer thinks a black hole is a black ball that hides what's behind it, but its gravity bends light so hard that on the way down you'd see the back of its disk over the top, then the back of your own head, so if you hovered just above its edge, the whole universe would be one glowing dot over your head and everything else would be black hole.
 
@@ -66,7 +66,7 @@
 - **Event.** 20× → 1.5×, with the counter at the top counting down live.
 - **Camera.** Eased dive in log-radius with a braked arrival on the 18.67 bar; motion blur (3 sub-frames).
 - **Reads.**
-  - 16.00–18.67: we're diving in. VO "Let's get closer. Much closer." (16.1–17.8) over the dive whoosh (ducked 9 dB under the voice). The eye follows the swelling black and the counter.
+  - 16.00–18.67: we're diving in. VO "Let's fly in. Way closer." (16.1–17.7) over the dive rush (sidechained 11 dB under the voice). The eye follows the swelling black and the counter.
 - **Out.** A braked arrival with an impact on the bar; same camera into D.
 
 ### D: The photon sphere · 18.67–22.20 · [in: arrival]

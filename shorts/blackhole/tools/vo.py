@@ -18,6 +18,7 @@ BUILD = os.path.join(HERE, '..', 'build')
 VOICE = 'iP95p4xoKVk53GoZ742B'          # Chris - Charming, Down-to-Earth (premade)
 MODEL = 'eleven_multilingual_v2'
 SR = 44100
+LINE_LUFS = -22.5                   # each line is matched to this before placement
 
 # (start time in the video, latest end, text) -- '|' marks caption chunk breaks, '*' marks gold words
 LINES = [
@@ -34,7 +35,7 @@ LINES = [
     (33.30, 34.30, 0.90, 'Everything else?'),
     (34.90, 35.90, 0.85, 'Black hole.'),
     # added after the final-cut critique (the dive had no voice); appended so the cached takes keep their index
-    (16.10, 17.95, 1.00, "Let's get closer. | Much *closer."),
+    (16.10, 18.30, 1.00, "Let's fly in. | Way *closer."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order
 
@@ -143,6 +144,11 @@ def main():
             if t0 + dur <= t1 + 0.05 or speed >= 1.12:
                 break
             speed = round(min(1.12, speed * (dur / (t1 - t0)) * 1.02), 3)
+        # every line at the same loudness (the takes came out between -21 and -25 LUFS), with 8 ms edges
+        import pyloudnorm as pyln
+        lv = pyln.Meter(SR, block_size=min(0.4, 0.9 * len(pcm) / SR)).integrated_loudness(pcm.astype(np.float64))
+        pcm = (pcm * 10 ** ((LINE_LUFS - lv) / 20)).astype(np.float32)
+        e = int(0.008 * SR); pcm = pcm.copy(); pcm[:e] *= np.linspace(0, 1, e); pcm[-e:] *= np.linspace(1, 0, e)
         a = int(t0 * SR)
         mix[a:a + len(pcm)] += pcm
         # clamp the alignment to the trimmed audio: the last word's end otherwise includes trailing silence

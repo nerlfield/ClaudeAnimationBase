@@ -10,7 +10,7 @@ Alternative, if you'd rather lead with the view: *What You'd Actually See Hoveri
 
 > Hover 0.1% above a black hole's edge and the entire universe shrinks to one glowing dot over your head. Every frame here is simulated: each pixel follows a real light ray through Einstein's curved spacetime around the black hole. On the way down you see the back of the disk, then the back of your own head. Would you go?
 >
-> Voice and music: ElevenLabs. Sound effects: Mirelo AI.
+> Voice, music and sound effects: ElevenLabs, plus sound effects synthesised for this video.
 >
 > #blackhole #physics #space #science #astronomy
 

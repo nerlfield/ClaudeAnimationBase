@@ -123,21 +123,21 @@ def _pop(lay, scale, alpha, center):
     return lay
 
 
-def top_label(text, age=1.0, fade=1.0, plate=False):
+def top_label(text, age=1.0, fade=1.0, plate=False, size=50):
     """Letter-spaced label near the top, e.g. REAL PHYSICS SIMULATION.  plate: a soft dark backing for bright skies."""
-    f = font('Inter-ExtraBold.ttf', 50)
+    f = font('Inter-ExtraBold.ttf', size)
     lay = _layer(); d = ImageDraw.Draw(lay)
     spaced = text.upper()
     tw = f.getlength(spaced) + 3.0 * len(spaced)
     x = W / 2 - tw / 2; y = 236
     if plate:
         pl = _layer()
-        ImageDraw.Draw(pl).rounded_rectangle([x - 34, y - 18, x + tw + 34, y + 96], 40, fill=SHADOW + (190,))
+        ImageDraw.Draw(pl).rounded_rectangle([x - 34, y - 18, x + tw + 34, y + size + 46], 40, fill=SHADOW + (190,))
         lay.alpha_composite(pl.filter(ImageFilter.GaussianBlur(14)))
     for ch in spaced:
         d.text((x, y), ch, font=f, fill=WHITE + (225,))
         x += f.getlength(ch) + 3.0
-    d.line([(W / 2 - 70, y + 78), (W / 2 + 70, y + 78)], fill=ICE + (220,), width=5)
+    d.line([(W / 2 - 70, y + size + 28), (W / 2 + 70, y + size + 28)], fill=ICE + (220,), width=5)
     lay = _shadowed(lay, 6, (0, 3), 0.8)
     return _pop(lay, 1.0, min(1.0, age / 0.25) * fade, (W // 2, y))
 
@@ -149,7 +149,7 @@ def corner_tag(text, fade=1.0):
     return _pop(_shadowed(lay, 5, (0, 2), 0.8), 1.0, fade, (0, 0))
 
 
-def big_value(value, sub, age=1.0, fade=1.0, y=262):
+def big_value(value, sub, age=1.0, fade=1.0, y=262, fade_in=True):
     """The ladder's giant label: e.g. 1.5x with a sub-label.  Digits sit in fixed-width cells so a live
     count (the distance counter) doesn't jitter; age restarts the pop when the value lands."""
     fv = font('Montserrat-Black.ttf', 190); fs = font('Inter-ExtraBold.ttf', 44)
@@ -166,13 +166,14 @@ def big_value(value, sub, age=1.0, fade=1.0, y=262):
     # a soft dark backing so the counter reads over the bright disk too (invisible over black sky)
     hw = max(sum(adv), sw) / 2 + 44
     pl = _layer()
-    ImageDraw.Draw(pl).rounded_rectangle([W / 2 - hw, y - 128, W / 2 + hw, y + 138], 60, fill=SHADOW + (150,))
-    pl = pl.filter(ImageFilter.GaussianBlur(24))
+    ImageDraw.Draw(pl).rounded_rectangle([W / 2 - hw, y - 128, W / 2 + hw, y + 138], 70, fill=SHADOW + (115,))
+    pl = pl.filter(ImageFilter.GaussianBlur(34))
     pl.alpha_composite(_glow(lay, ICE, 22, 0.55))
     lay = pl
     lay = _shadowed(lay, 10, (0, 5), 0.85)
     k = _ease_back(age / 0.16) if age < 0.16 else 1.0
-    return _pop(lay, 0.85 + 0.15 * k, min(1.0, age / 0.08) * fade, (W // 2, y))
+    # a value that lands in place of the live counter pops without fading in (no one-frame dip)
+    return _pop(lay, 0.85 + 0.15 * k, (min(1.0, age / 0.08) if fade_in else 1.0) * fade, (W // 2, y))
 
 
 def distance_text(r):

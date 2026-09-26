@@ -1,6 +1,6 @@
 # Script and beat sheet (v3)
 
-**Voice.** ElevenLabs "Chris – Charming, Down-to-Earth" (premade, American male, casual and conversational), `eleven_multilingual_v2`, stability 0.42, similarity 0.8, style 0.25. The pick: the reference narrators who carry this kind of Short (Vsauce's Michael, Veritasium's Derek) are curious and dry rather than hyped, and Chris was the most conversational, least announcer-like voice in the account's list.
+**Voice.** ElevenLabs "Chris – Charming, Down-to-Earth" (premade, American male, casual and conversational), `eleven_multilingual_v2`, stability 0.42–0.55, similarity 0.8, style 0.2–0.3. Six lines were re-taken (seeded takes, ranked by `tools/vo_takes.py`) after the first takes of the hook and of "Black hole." came out in vocal fry and the dive line came out whispered. Processing (`tools/mix.py`): each line matched to −22.5 LUFS with 8 ms edges, 80 Hz high-pass, a light de-esser (at most 6 dB, on sibilants only), 2.5:1 compression with a soft knee, and a touch of the effects' room at −26 dB. The pick: the reference narrators who carry this kind of Short (Vsauce's Michael, Veritasium's Derek) are curious and dry rather than hyped, and Chris was the most conversational, least announcer-like voice in the account's list.
 
 **Pace.** 94 words over 37.3 s: 2.5 words/s overall, ≈3.3–3.8 words/s inside a line, and the voice stops for every payoff (research.md: the median of the narrated Shorts is ≈3.0 words/s, with real pauses at payoffs as in Vsauce and Veritasium).
 
@@ -18,7 +18,7 @@
 >
 > That's the back of the disk, bent over the top by gravity.
 >
-> Let's get closer. Much closer.
+> Let's fly in. Way closer.
 >
 > Hover here, and the black hole fills exactly half your sky.
 >
@@ -43,7 +43,7 @@ Each line and its reaction:
 - The back of your own head: *lol*.
 - The universe in one dot: *omg*, and a callback to the first line.
 - "Black hole.": a deadpan tag that throws you back to the claim.
-- "Let's get closer. Much closer." (added in round 3): the dive had 3.6 s with no voice, where the final-cut critic said they would swipe. It turns the dive into escalation.
+- "Let's fly in. Way closer." (added in round 3): the dive had 3.6 s with no voice, where the final-cut critic said they would swipe. It turns the dive into escalation. (First written "Let's get closer. Much closer.", which ElevenLabs kept delivering as a whisper; see critique.md round 4.)
 
 ## Beat sheet
 
@@ -60,7 +60,7 @@ Bars at 90 BPM: 0.00, 2.67, 5.33, 8.00, 10.67, 13.33, 16.00, 18.67, 21.33, 24.00
 | 10.67–12.00 | *(silence)* | **the ice arch over the hole** | the arch | deep hit on 10.67 | BACK (on the arch, 10.9) | — |
 | 12.00–15.00 | "That's the back of the disk, bent over the top by gravity." | slow push; ice fades to gold from 13.5 | the arch | music | — | — |
 | 15.30–16.00 | — | settle | the counter | riser | distance counter fades in: 20×, YOUR DISTANCE · HORIZON = 1× | — |
-| 16.00–18.67 | "Let's get closer. Much closer." (16.1–17.8) | the dive 20× → 1.5×, streaks, pitch to the horizon | the swelling black; the counter | big dive whoosh plus rumble, ducked under the voice | the counter counts down live | camera move, braked arrival |
+| 16.00–18.67 | "Let's fly in. Way closer." (16.1–17.7) | the dive 20× → 1.5×, streaks, pitch to the horizon | the swelling black; the counter | big dive whoosh plus rumble, ducked under the voice | the counter counts down live | camera move, braked arrival |
 | 18.67–19.90 | — | half black, half bright sky, a line across the middle | label → line | impact on 18.67 plus shimmer | the counter lands: 1.5× / THE PHOTON SPHERE | arrival |
 | 19.00–21.90 | "Hover here, and the black hole fills exactly half your sky." | yaw; stars zip along the line | the halves | shimmer bed | BLACK HOLE (gold, in the black half, 19.55–22.0) | — |
 | 21.30–22.20 | — | a glow sweeps along the line | the line | rising tone following the sweep | — | — |
@@ -85,7 +85,7 @@ Burned in and word-synced from the TTS character timestamps (`build/words.json`)
 - THE DISK AROUND IT IS FLAT.
 - SO WHY DOES IT LOOK LIKE THIS?
 - THAT'S THE BACK OF THE DISK, / BENT OVER THE TOP BY GRAVITY.
-- LET'S GET CLOSER. / MUCH CLOSER.
+- LET'S FLY IN. / WAY CLOSER.
 - HOVER HERE, / AND THE BLACK HOLE FILLS / EXACTLY HALF YOUR SKY.
 - AND LIGHT GOES AROUND IT IN CIRCLES.
 - THAT'S THE BACK OF YOUR OWN HEAD.

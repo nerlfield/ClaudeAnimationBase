@@ -116,17 +116,17 @@ def layers(t, you_px=None, st=None):
         f = seg(t, 15.3, 15.6)
         L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
     if T_D <= t < T_D + 1.35:
-        L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - T_D, fade=1.0 - seg(t, T_D + 1.05, T_D + 1.35)))
+        L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - T_D, fade=1.0 - seg(t, T_D + 1.05, T_D + 1.35), fade_in=False))
     if 28.3 <= t < 31.9:
         f = seg(t, 28.3, 28.6)
         L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
     if 31.9 <= t < 33.25:
-        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, 32.95, 33.25)))
+        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, 32.95, 33.25), fade_in=False))
     # D: the black half is the black hole
     if 19.55 <= t < 22.0:
-        L.append(ov.disk_tag('BLACK HOLE', (540, 1065), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=60))
-    if 26.95 <= t < 27.95:
-        L.append(ov.top_label('Looking up \u2191', t - 26.95, fade=1.0 - seg(t, 27.65, 27.95), plate=True))
+        L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=64))
+    if 26.95 <= t < 28.25:
+        L.append(ov.top_label('Looking up \u2191', t - 26.95, fade=1.0 - seg(t, 27.95, 28.25), plate=True, size=64))
     # diagram tags
     if T_E <= t < T_F:
         f = min(seg(t, T_E, T_E + 0.3), 1.0 - seg(t, T_F - 0.3, T_F))
