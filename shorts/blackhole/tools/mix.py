@@ -64,10 +64,9 @@ CUES = [
     (9.28, 'whoosh_a', -16, {}),
     (10.67, 'impact_b', -7, {}),
     (10.90, 'tick_b', -20, {}),
-    (11.15, 'tick_b', -22, {}),
     (13.21, 'riser_a', -22, {}),
-    (16.00, 'dive_a', -10, {}),
-    (16.00, 'boom_a', -22, dict(lp=400, fade_in=0.4, fade_out=(18.2, 18.7))),
+    (16.00, 'dive_a', -10, dict(duck=9)),
+    (16.00, 'boom_a', -22, dict(lp=400, fade_in=0.4, fade_out=(18.2, 18.7), duck=6)),
     (18.67, 'impact_b', -7, {}),
     (18.67, 'shimmer_a', -20, dict(fade_out=(21.8, 22.2))),
     (20.79, 'zip_b', -17, {}),
@@ -200,7 +199,13 @@ def main():
             cache[name] = load(os.path.join(A, 'sfx', name + '.wav'))
             if cache[name].shape[1] == 1:
                 cache[name] = np.repeat(cache[name], 2, axis=1)
-        place(sfx, t0, cache[name], g, opts)
+        if 'duck' in opts:
+            # cues that play under speech (the dive) are sidechained to the voice too
+            bus = np.zeros((N, 2), np.float32)
+            place(bus, t0, cache[name], g, opts)
+            sfx += bus * (1.0 - (1.0 - db(-opts['duck'])) * np.clip(env / 0.05, 0, 1))[:, None].astype(np.float32)
+        else:
+            place(sfx, t0, cache[name], g, opts)
 
     mix = vo + mu + sfx
     # ---- master: limiter then linear gain to -14 LUFS, limiter again for the true-peak ceiling
@@ -223,6 +228,10 @@ def main():
     print('integrated %.2f LUFS, true peak %.2f dBTP' % (meter.integrated_loudness(mix), true_peak_db(mix)))
     print('voice minus music while speaking (RMS, 400 ms windows): min %.1f dB, median %.1f dB' % (min(diffs), np.median(diffs)))
     print('music peak amplitude relative to voice peak: %.2f' % (np.abs(mu).max() / np.abs(vo).max()))
+    a, b = int(16.0 * SR), int(17.8 * SR)
+    sp = speech[a:b]
+    print('dive line: voice minus (music + sfx) %.1f dB' % (20 * np.log10(np.sqrt((vo[a:b][sp] ** 2).mean()) /
+                                                               np.sqrt(((mu + sfx)[a:b][sp] ** 2).mean()))))
 
 
 if __name__ == '__main__':

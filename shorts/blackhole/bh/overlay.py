@@ -1,4 +1,4 @@
-"""Captions, labels and the depth gauge, composited over a finished (display-referred) frame.
+"""Captions, labels and the distance counter, composited over a finished (display-referred) frame.
 
 All text is drawn at full resolution with PIL and scaled if the frame is smaller.  Styles follow
 research.md: heavy geometric sans, white with a soft dark shadow, one key word in gold.
@@ -123,13 +123,17 @@ def _pop(lay, scale, alpha, center):
     return lay
 
 
-def top_label(text, age=1.0, fade=1.0):
-    """Letter-spaced label near the top, e.g. REAL PHYSICS SIMULATION."""
+def top_label(text, age=1.0, fade=1.0, plate=False):
+    """Letter-spaced label near the top, e.g. REAL PHYSICS SIMULATION.  plate: a soft dark backing for bright skies."""
     f = font('Inter-ExtraBold.ttf', 50)
     lay = _layer(); d = ImageDraw.Draw(lay)
     spaced = text.upper()
     tw = f.getlength(spaced) + 3.0 * len(spaced)
     x = W / 2 - tw / 2; y = 236
+    if plate:
+        pl = _layer()
+        ImageDraw.Draw(pl).rounded_rectangle([x - 34, y - 18, x + tw + 34, y + 96], 40, fill=SHADOW + (190,))
+        lay.alpha_composite(pl.filter(ImageFilter.GaussianBlur(14)))
     for ch in spaced:
         d.text((x, y), ch, font=f, fill=WHITE + (225,))
         x += f.getlength(ch) + 3.0
@@ -139,26 +143,47 @@ def top_label(text, age=1.0, fade=1.0):
 
 
 def corner_tag(text, fade=1.0):
-    f = font('Inter-ExtraBold.ttf', 26)
+    f = font('Inter-ExtraBold.ttf', 32)
     lay = _layer(); d = ImageDraw.Draw(lay)
     d.text((64, 214), text.upper(), font=f, fill=(210, 214, 224, 200))
     return _pop(_shadowed(lay, 5, (0, 2), 0.8), 1.0, fade, (0, 0))
 
 
 def big_value(value, sub, age=1.0, fade=1.0, y=262):
-    """The ladder's giant label: e.g. 1.5x with a small sub-label."""
-    fv = font('Montserrat-Black.ttf', 190); fs = font('Inter-ExtraBold.ttf', 36)
+    """The ladder's giant label: e.g. 1.5x with a sub-label.  Digits sit in fixed-width cells so a live
+    count (the distance counter) doesn't jitter; age restarts the pop when the value lands."""
+    fv = font('Montserrat-Black.ttf', 190); fs = font('Inter-ExtraBold.ttf', 44)
     lay = _layer(); d = ImageDraw.Draw(lay)
-    tw = fv.getlength(value)
-    d.text((W / 2 - tw / 2, y - 150), value, font=fv, fill=ICE + (255,))
+    cell = max(fv.getlength(c) for c in '0123456789')
+    adv = [cell if c.isdigit() else fv.getlength(c) for c in value]
+    x = W / 2 - sum(adv) / 2
+    for c, a in zip(value, adv):
+        d.text((x + (a - fv.getlength(c)) / 2, y - 150), c, font=fv, fill=ICE + (255,)); x += a
     sw = fs.getlength(sub.upper()) + 2.0 * len(sub)
     x = W / 2 - sw / 2
     for ch in sub.upper():
-        d.text((x, y + 70), ch, font=fs, fill=WHITE + (235,)); x += fs.getlength(ch) + 2.0
-    lay = _glow(lay, ICE, 22, 0.55)
-    lay = _shadowed(lay, 10, (0, 5), 0.8)
+        d.text((x, y + 70), ch, font=fs, fill=WHITE + (240,)); x += fs.getlength(ch) + 2.0
+    # a soft dark backing so the counter reads over the bright disk too (invisible over black sky)
+    hw = max(sum(adv), sw) / 2 + 44
+    pl = _layer()
+    ImageDraw.Draw(pl).rounded_rectangle([W / 2 - hw, y - 128, W / 2 + hw, y + 138], 60, fill=SHADOW + (150,))
+    pl = pl.filter(ImageFilter.GaussianBlur(24))
+    pl.alpha_composite(_glow(lay, ICE, 22, 0.55))
+    lay = pl
+    lay = _shadowed(lay, 10, (0, 5), 0.85)
     k = _ease_back(age / 0.16) if age < 0.16 else 1.0
     return _pop(lay, 0.85 + 0.15 * k, min(1.0, age / 0.08) * fade, (W // 2, y))
+
+
+def distance_text(r):
+    """The counter's reading, in horizon radii, with more decimals the closer you get."""
+    if r >= 9.95:
+        return '%d\u00d7' % round(r)
+    if r >= 1.995:
+        return '%.1f\u00d7' % r
+    if r >= 1.1:
+        return '%.2f\u00d7' % r
+    return '%.3f\u00d7' % max(r, 1.001)
 
 
 def point_label(text, at, age=1.0, fade=1.0, dx=34, dy=-60, size=40, color=ICE, line=True):
@@ -177,43 +202,6 @@ def point_label(text, at, age=1.0, fade=1.0, dx=34, dy=-60, size=40, color=ICE, 
     return _pop(lay, 1.0, min(1.0, age / 0.15) * fade, (int(tx), int(ty)))
 
 
-# gauge: depth ladder on the left edge, sqrt-log scale in distance from the centre (r_s units)
-G_X = 150
-G_TOP, G_BOT = 400, 850
-TICKS = [(25.0, '25\u00d7'), (10.0, '10\u00d7'), (3.0, '3\u00d7'), (1.5, '1.5\u00d7'), (1.0, '1\u00d7 = HORIZON')]
-
-
-def gauge_y(r):
-    """sqrt-log scale: spreads the last stretch above the horizon so the final descent is visible."""
-    f = math.sqrt(max(0.0, math.log(max(r, 1.0))) / math.log(26.0))
-    return G_BOT - min(1.0, f) * (G_BOT - G_TOP)
-
-
-def gauge(r, fade=1.0, hot=None, title=1.0, short=False):
-    """short: the horizon tick reads just '1x' (in F, where the dot sits right of the gauge)."""
-    f = font('Inter-ExtraBold.ttf', 34); fy = font('Inter-ExtraBold.ttf', 32); ft = font('Inter-ExtraBold.ttf', 30)
-    fs = font('Inter-ExtraBold.ttf', 22)
-    lay = _layer(); d = ImageDraw.Draw(lay)
-    if title > 0:
-        d.text((G_X - 96, G_TOP - 78), 'YOUR DISTANCE', font=ft, fill=(240, 240, 245, int(235 * title)))
-    d.line([(G_X, G_TOP - 18), (G_X, G_BOT)], fill=(220, 225, 235, 160), width=4)
-    for rv, lab in TICKS:
-        if short and rv == 1.0:
-            lab = '1\u00d7'
-        y = gauge_y(rv)
-        big = rv == 1.0
-        d.line([(G_X - 12, y), (G_X + 12, y)], fill=(230, 232, 240, 220), width=6 if big else 4)
-        col = (240, 240, 245, 235) if lab != hot else GOLD + (255,)
-        d.text((G_X + 22, y - 20), lab, font=f, fill=col)
-    # YOU marker sits left of the line so it never covers a label; it stays visibly above the horizon
-    y = min(gauge_y(r), G_BOT - 22) if r > 1.0 else G_BOT
-    d.polygon([(G_X - 10, y), (G_X - 30, y - 13), (G_X - 30, y + 13)], fill=ICE + (255,))
-    d.text((G_X - 108, y - 19), 'YOU', font=fy, fill=ICE + (255,))
-    lay = _glow(lay, ICE, 8, 0.35)
-    lay = _shadowed(lay, 5, (0, 2), 0.9)
-    return _pop(lay, 1.0, fade, (0, 0))
-
-
 def disk_tag(text, at, color, age=1.0, fade=1.0, size=64):
     """A bold tag sitting on part of the disk (BACK / FRONT)."""
     if at is None:
@@ -228,19 +216,22 @@ def disk_tag(text, at, color, age=1.0, fade=1.0, size=64):
 
 
 def callout_black(age=1.0, fade=1.0, y=1250):
-    """BLACK HOLE, with arrows pointing out into the surrounding black (not at the dot)."""
-    f = font('Montserrat-Black.ttf', 96)
+    """BLACK HOLE, with four arrows pointing out into the surrounding black (not at the dot)."""
+    f = font('Montserrat-Black.ttf', 88)
     lay = _layer(); d = ImageDraw.Draw(lay)
     text = 'BLACK HOLE'
     tw = f.getlength(text)
-    d.text((W / 2 - tw / 2, y - 60), text, font=f, fill=GOLD + (255,), stroke_width=3, stroke_fill=SHADOW + (160,))
-    # four arrows pointing outward, away from the dot, into the black
-    for (x0, y0, x1, y1) in [(W / 2 - tw / 2 - 16, y + 10, 90, y + 235), (W / 2 + tw / 2 + 16, y + 10, W - 215, y + 235),
-                             (W / 2 - tw / 2 - 16, y - 40, 70, y - 150)]:
-        d.line([(x0, y0), (x1, y1)], fill=GOLD + (230,), width=6)
-        ang = math.atan2(y1 - y0, x1 - x0)
-        for da in (2.6, -2.6):
-            d.line([(x1, y1), (x1 + 34 * math.cos(ang + da), y1 + 34 * math.sin(ang + da))], fill=GOLD + (230,), width=6)
+    d.text((W / 2 - tw / 2, y - 55), text, font=f, fill=GOLD + (255,), stroke_width=3, stroke_fill=SHADOW + (160,))
+    x0 = W / 2 + tw / 2 + 16
+    reach = min(115.0, 0.86 * W - x0)                      # keep the right arrows out of the button column
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            ax, ay = W / 2 + sx * (tw / 2 + 16), y - 12 + sy * 42
+            bx, by = ax + sx * reach, ay + sy * reach
+            d.line([(ax, ay), (bx, by)], fill=GOLD + (235,), width=7)
+            ang = math.atan2(by - ay, bx - ax)
+            for da in (2.55, -2.55):
+                d.line([(bx, by), (bx + 34 * math.cos(ang + da), by + 34 * math.sin(ang + da))], fill=GOLD + (235,), width=7)
     lay = _shadowed(lay, 10, (0, 5), 0.85)
     k = _ease_back(age / 0.16) if age < 0.16 else 1.0
     return _pop(lay, 0.9 + 0.1 * k, min(1.0, age / 0.08) * fade, (W // 2, y))

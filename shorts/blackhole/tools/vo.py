@@ -33,7 +33,10 @@ LINES = [
     (28.90, 32.15, 0.98, 'The whole universe gets squeezed | into one *dot above your head.'),
     (33.30, 34.30, 0.90, 'Everything else?'),
     (34.90, 35.90, 0.85, 'Black hole.'),
+    # added after the final-cut critique (the dive had no voice); appended so the cached takes keep their index
+    (16.10, 17.95, 1.00, "Let's get closer. | Much *closer."),
 ]
+ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order
 
 
 def plain(text):
@@ -116,8 +119,9 @@ def main():
     mix = np.zeros(int(total * SR) + SR, np.float32)
     all_words, chunks, report = [], [], []
     for i, (t0, t1, speed0, text) in enumerate(LINES):
-        prev_text = ' '.join(plain(l[3]) for l in LINES[max(0, i - 2):i])
-        next_text = plain(LINES[i + 1][3]) if i + 1 < len(LINES) else ''
+        k = ORDER.index(i)
+        prev_text = ' '.join(plain(LINES[j][3]) for j in ORDER[max(0, k - 2):k])
+        next_text = plain(LINES[ORDER[k + 1]][3]) if k + 1 < len(ORDER) else ''
         spoken = plain(text)
         cache = os.path.join(BUILD, f'vo_{i:02d}.json')
         speed = speed0
@@ -155,6 +159,7 @@ def main():
                                hot=[w for (w, _, _), (_, h) in zip(c, mc) if h]))
         assert k == len(ws), (text, len(ws), k)
         report.append(f'{t0:6.2f}-{t0 + dur:6.2f} (slot to {t1:5.2f}) speed {speed:.3f}  {len(spoken.split()) / dur:.2f} w/s  {spoken}')
+    chunks.sort(key=lambda c: c['start']); all_words.sort(key=lambda w: w['s'])
     # chunks stay up until the next one starts (or 0.35 s after their last word)
     for j, c in enumerate(chunks):
         nxt = chunks[j + 1]['start'] if j + 1 < len(chunks) else 99

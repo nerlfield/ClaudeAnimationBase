@@ -49,3 +49,45 @@ Each round: what the fresh-eyes critic saw (a subagent given only the frames and
 8. **VO:** explicit per-line speeds (the punchline at 0.88× instead of an auto speed-up to 1.15×).
 
 The storyboard sheet (outputs/storyboard_sheet.jpg) is the result of these two rounds.
+
+## Round 3: the rendered final cut
+
+**My own checks on the render (before the critic).**
+- **Safe zone, every 0.1 s** (`tools/safezone.py`): the top label reached 89% of the width, long captions 88%, and the BLACK HOLE arrows 81% of the height. Captions are now capped at 780 px wide, the top label is 50 px and the arrows are shorter. The check now finds nothing in the bottom 20% or the right-hand button column.
+- **Caption sync against Whisper** on the final audio (`tools/captionsync.py`): chunks that switch mid-sentence came in up to 0.16 s late, because the TTS alignment marks a word's first letter and ears hear it slightly earlier. Those switches now lead by 0.12 s. Every chunk appears between 0.18 s early and 0.04 s late.
+- **One frame per second:** at 19 s and 32 s, "YOUR DISTANCE" sat on the same line as "THE PHOTON SPHERE" / "0.1% ABOVE THE EDGE", and at 31–32.7 s the "1× = HORIZON" tick ran into the dot. This was fixed first and then made moot by the counter below.
+- **Artifacts** (frame-to-frame difference over all 1120 frames): the only jumps are the planned cuts at 2.67 s, 22.2 s and the ring collapse at 26.4–26.6 s. The loop seam (last frame → first) differs less than an average pair of neighbouring frames.
+
+**Fresh-eyes critic** (given only frame sheets, 0.1 s strips and a Whisper transcript), in short:
+- **Hook:** "only just." The claim carries it, but the orb "looks like a marble or an eyeball" and nothing moves for 2.7 s; the caption leaves a gap from 2.0 to 2.7.
+- **Swipe point:** 15.5–18.8. "Bent over the top by gravity" sounds like the end, then there are about 4 s with no voice and a gauge too small to read.
+- **D:** the flat black lower half "looks like a letterbox or caption bar, not the black hole."
+- **Text:**
+  - the gauge, THE PHOTON SPHERE, DIAGRAM NOT TO SCALE and THE UNIVERSE are too small;
+  - LOOKING UP is nearly invisible over the disk streak;
+  - the lower BACK tag is never explained;
+  - the BLACK HOLE callout is lopsided (three arrows, one jammed against the E);
+  - "THE WHOLE UNIVERSE GETS SQUEEZED" is set smaller and has no gold word.
+- **Loop:** the voice ends at 35.4, so across the seam there are about 4.5 s of a still dot.
+- **Understood:** yes. They retold the whole chain correctly (flat disk → far side bent over the top → half the sky at 1.5× → back of your head → the universe as a dot just above the horizon).
+- **Comment:** "Wait, the dot at the start is what you see right above the horizon?? Rewatched."
+
+**What changed.**
+1. **The dive has a voice:** "Let's get closer. Much closer." (16.1–17.8, same ElevenLabs voice). The other twelve takes were reused bit for bit, and the dive whoosh is sidechained 9 dB under the new line (voice 13 dB above music plus SFX there).
+2. **The gauge became a big distance counter** at the top that counts down live with the camera: 20× → 1.5× through the dive, landing with a pop on "1.5× / THE PHOTON SPHERE", then 1.2× → 1.001× through the last descent, landing on "1.001× / 0.1% ABOVE THE EDGE". Its sub-label reads "YOUR DISTANCE · HORIZON = 1×". It sits on a soft dark backing so it reads over the disk.
+3. **D:** a gold "BLACK HOLE" tag sits in the black half, just under the line, from "the black hole fills".
+4. **The end and the cold open move:** the sky inside the dot turns 6°/s about the radial axis (the dot stays put) while the camera pushes in (the dot goes from 49% to 54% of the width over G and O). The seam is still the same camera function on both sides. A's opening field of view went from 42.4° to 35.8° so the shadow still matches the dot at the cut (0.538 of the width both sides).
+5. **Captions:**
+   - "THIS DOT IS" is up from frame 0, and "THE WHOLE UNIVERSE." holds to the cut, closing the 2.0–2.7 gap;
+   - "THE WHOLE UNIVERSE / GETS SQUEEZED" is split into two chunks at full size, with SQUEEZED in gold.
+6. **Labels:**
+   - the lower BACK tag (and its tick) is gone;
+   - LOOKING UP has a soft dark backing;
+   - the BLACK HOLE callout has four symmetric arrows inside the safe zone;
+   - the big-value sub-labels go from 36 to 44 px, THE UNIVERSE from 46 to 56 px and the diagram tag from 26 to 32 px.
+
+**Not changed, and why.**
+- **The cuts into and out of the diagram at 22.2 and 26.67:** they are match cuts on the line and circle. Seen at 0.1 s steps they read as jumps, but in motion they carry the line across.
+- **The one-frame white bloom at 2.6:** the designed flash into A on the downbeat hit.
+- **The astronaut's snap-round at 25.2:** the comedy double take.
+- **The E diagram:** "the astronaut looks like he's sitting on the ball" is fair, but the shot is labelled as a diagram and the pulse lap is visible in motion.

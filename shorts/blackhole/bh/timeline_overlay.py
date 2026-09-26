@@ -10,6 +10,7 @@ from .shots import T_A, T_B, T_C, T_D, T_E, T_F, T_G, BAR, DUR, state, seg
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
 MID_LEAD = 0.12
+DOT_TOP = (540, 806 - 225)       # top rim of the finished dot (measured on the rendered frames)
 
 # (start, end, text) -- the same lines tools/vo.py speaks
 LINES = [
@@ -48,6 +49,13 @@ def chunks():
         for prev, cur in zip(out, out[1:]):
             if abs(cur[0] - prev[1]) < 0.02 and not prev[2][-1].endswith(('.', '?', '!')):
                 cur[0] -= MID_LEAD; prev[1] -= MID_LEAD
+        out = _split_long(out, data['words'])
+        for c in out:
+            if c[0] < 0.3:
+                c[0] = 0.0                                  # the claim is on screen from frame 0
+            if c[2][-1] == 'universe.' and c[1] < 2.67:
+                c[1] = T_A - 0.05                           # hold it to the cut instead of leaving a gap
+            c[3] = c[3] + [w for w in c[2] if w.strip('.,?!').lower() in EXTRA_HOT]
         return [tuple(c) for c in out]
     out = []
     for a, b, text in LINES:
@@ -57,6 +65,24 @@ def chunks():
             out.append((a + i * dt, a + (i + len(c)) * dt + (0.35 if c is cs[-1] else 0), [w for w, _ in c], [w for w, h in c if h]))
             i += len(c)
     return out
+
+
+# a chunk that would need a smaller font is split at a phrase boundary, timed from the TTS word starts
+SPLITS = {('The', 'whole', 'universe', 'gets', 'squeezed'): 3}
+EXTRA_HOT = {'squeezed'}
+
+
+def _split_long(out, words):
+    res = []
+    for c in out:
+        k = SPLITS.get(tuple(c[2]))
+        if k is None:
+            res.append(c); continue
+        ws = [w for w in words if c[0] - 0.2 <= w['s'] < c[1] + 0.05][:len(c[2])]
+        mid = ws[k]['s'] - MID_LEAD
+        res.append([c[0], mid, c[2][:k], [h for h in c[3] if h in c[2][:k]]])
+        res.append([mid, c[1], c[2][k:], [h for h in c[3] if h in c[2][k:]]])
+    return res
 
 
 def caption_layer(t):
@@ -82,30 +108,24 @@ def layers(t, you_px=None, st=None):
         if t >= 7.30:
             L.append(ov.disk_tag('FRONT', lab.get('front'), ov.GOLD, t - 7.30, f))
     if 10.9 <= t < 12.9:
-        f = 1.0 - seg(t, 12.5, 12.9)
-        L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - 10.9, f))
-        if t >= 11.15:
-            L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - 11.15, f, size=48))
-    # depth gauge
-    if 15.0 <= t < T_E or T_F <= t < 32.7:
-        if t < T_E:
-            fade = min(seg(t, 15.0, 15.5), 1.0 - seg(t, T_E - 0.3, T_E))
-        else:
-            fade = min(seg(t, T_F, T_F + 0.3), 1.0 - seg(t, 32.2, 32.7))
-        cam = st['cam']
-        r = cam.r0 if cam is not None else 1.5
-        hot = '1.5\u00d7' if T_D <= t < T_E else ('1\u00d7' if t >= 30.0 else None)
-        # the title steps aside while a big ladder value is up, so the two never read as one line
-        title = 1.0 - max(min(seg(t, T_D - 0.15, T_D), 1.0 - seg(t, T_D + 1.35, T_D + 1.6)),
-                          seg(t, 31.75, 31.9))
-        L.append(ov.gauge(r, fade, hot, title=title, short=t >= T_F))
-    # ladder values
+        L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - 10.9, 1.0 - seg(t, 12.5, 12.9)))
+    # distance counter: counts down live through the dive and the last descent, lands on each ladder value
+    cam = st['cam']
+    if 15.3 <= t < T_D:
+        f = seg(t, 15.3, 15.6)
+        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
     if T_D <= t < T_D + 1.35:
         L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - T_D, fade=1.0 - seg(t, T_D + 1.05, T_D + 1.35)))
-    if 26.95 <= t < 27.95:
-        L.append(ov.top_label('Looking up \u2191', t - 26.95, fade=1.0 - seg(t, 27.65, 27.95)))
+    if 28.3 <= t < 31.9:
+        f = seg(t, 28.3, 28.6)
+        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
     if 31.9 <= t < 33.25:
         L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, 32.95, 33.25)))
+    # D: the black half is the black hole
+    if 19.55 <= t < 22.0:
+        L.append(ov.disk_tag('BLACK HOLE', (540, 1065), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=60))
+    if 26.95 <= t < 27.95:
+        L.append(ov.top_label('Looking up \u2191', t - 26.95, fade=1.0 - seg(t, 27.65, 27.95), plate=True))
     # diagram tags
     if T_E <= t < T_F:
         f = min(seg(t, T_E, T_E + 0.3), 1.0 - seg(t, T_F - 0.3, T_F))
@@ -114,8 +134,8 @@ def layers(t, you_px=None, st=None):
             L.append(ov.point_label('you', you_px, t - 22.5, fade=1.0 - seg(t, 26.0, 26.3), dx=80, dy=-90))
     # the dot's label
     if 33.3 <= t < 36.8:
-        L.append(ov.point_label('the universe', (540, 806 - 225), t - 33.3, fade=1.0 - seg(t, 36.4, 36.8),
-                                dx=-150, dy=-120, size=46))
+        L.append(ov.point_label('the universe', DOT_TOP, t - 33.3, fade=1.0 - seg(t, 36.4, 36.8),
+                                dx=-150, dy=-120, size=56))
     if 34.9 <= t < 36.8:
         L.append(ov.callout_black(t - 34.9, fade=1.0 - seg(t, 36.4, 36.8)))
     L.append(caption_layer(t))
