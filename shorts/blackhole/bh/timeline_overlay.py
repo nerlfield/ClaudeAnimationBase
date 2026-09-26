@@ -10,7 +10,7 @@ from .shots import T_A, T_B, T_C, T_D, T_E, T_F, T_G, BAR, DUR, state, seg
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
 MID_LEAD = 0.12
-DOT_TOP = (540, 806 - 225)       # top rim of the finished dot (measured on the rendered frames)
+DOT_TOP = (530, 526)             # top rim of the finished dot (measured on the rendered frames, 33-37 s)
 
 # (start, end, text) -- the same lines tools/vo.py speaks
 LINES = [
@@ -90,7 +90,8 @@ def caption_layer(t):
         if a >= 34.5:          # "Black hole." is shown as a callout into the black, not as a caption under the dot
             continue
         if a <= t < b:
-            return ov.caption(words, [h.strip('.,?!').upper() for h in hot], t - a)
+            age = t - a if a > 0 else 1.0          # the opening caption is already up on frame 0 (no pop)
+            return ov.caption(words, [h.strip('.,?!').upper() for h in hot], age)
     return None
 
 

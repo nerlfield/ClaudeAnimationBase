@@ -1,6 +1,7 @@
 """Render key stills (full res, final look, captions) and assemble a labelled sheet.
 
     python keysheet.py --out ../../outputs/storyboard_sheet.jpg 1.2:A 5.9:B 9.0:B 14.8:C 17.4:D 21.45:E 30.8:F 34.9:G
+    python keysheet.py --from-frames --cols 5 --out ../../outputs/storyboard_sheet.jpg 1.2:O ...   # stills from build/frames
 """
 import argparse
 import os
@@ -23,6 +24,7 @@ def main():
     ap.add_argument('--scale', type=float, default=1.0)
     ap.add_argument('--cols', type=int, default=4)
     ap.add_argument('--tile', type=int, default=405)
+    ap.add_argument('--from-frames', action='store_true', help='take the stills from the finished frames in build/frames')
     a = ap.parse_args()
     os.makedirs(a.stills, exist_ok=True)
     tiles = []
@@ -30,9 +32,12 @@ def main():
         t, lab = k.split(':')
         t = float(t)
         t0 = time.time()
-        img = video.frame(t, a.scale, SPP4)
         p = os.path.join(a.stills, f'key_{t:05.2f}_{lab}.jpg')
-        cv2.imwrite(p, (img[..., ::-1] * 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 93])
+        if a.from_frames:
+            bgr = cv2.imread(os.path.join(HERE, 'build', 'frames', '%05d.png' % int(round(t * 30))))
+        else:
+            bgr = (video.frame(t, a.scale, SPP4)[..., ::-1] * 255).astype(np.uint8)
+        cv2.imwrite(p, bgr, [cv2.IMWRITE_JPEG_QUALITY, 93])
         print(f'{lab} t={t} {time.time() - t0:.1f}s -> {p}', flush=True)
         tiles.append((t, lab, p))
     tw = a.tile; th = int(tw * 16 / 9)

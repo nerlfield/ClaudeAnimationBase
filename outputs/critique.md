@@ -48,7 +48,7 @@ Each round: what the fresh-eyes critic saw (a subagent given only the frames and
 7. **B:** the tilt is now 58° above the disk (from 50°) so it reads as a flat ring, and a second BACK tag marks the lensed underside below the shadow.
 8. **VO:** explicit per-line speeds (the punchline at 0.88× instead of an auto speed-up to 1.15×).
 
-The storyboard sheet (outputs/storyboard_sheet.jpg) is the result of these two rounds.
+The storyboard sheet from these two rounds gated the render; after round 3, outputs/storyboard_sheet.jpg shows the v3 key stills taken from the final frames (the v2 sheet is in git history).
 
 ## Round 3: the rendered final cut
 
@@ -81,6 +81,7 @@ The storyboard sheet (outputs/storyboard_sheet.jpg) is the result of these two r
    - "THIS DOT IS" is up from frame 0, and "THE WHOLE UNIVERSE." holds to the cut, closing the 2.0–2.7 gap;
    - "THE WHOLE UNIVERSE / GETS SQUEEZED" is split into two chunks at full size, with SQUEEZED in gold.
 6. **Labels:**
+   - the opening caption is fully up on frame 0 (no pop), so the first frame reads;
    - the lower BACK tag (and its tick) is gone;
    - LOOKING UP has a soft dark backing;
    - the BLACK HOLE callout has four symmetric arrows inside the safe zone;
