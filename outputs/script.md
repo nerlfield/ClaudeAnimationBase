@@ -58,7 +58,7 @@ Bars at 90 BPM: 0.00, 2.67, 5.33, 8.00, 10.67, 13.33, 16.00, 18.67, 21.33, 24.00
 | 8.60–10.67 | "So why does it look like this?" (9.0–10.6) | swing down to the side | the ice half | whoosh down plus a riser | labels fade at 9.0 | — |
 | 10.67–12.00 | *(silence)* | **the ice arch over the hole** | the arch | deep boom on 10.67 | BACK (on the arch, 10.9) | — |
 | 12.00–15.00 | "That's the back of the disk, bent over the top by gravity." | slow push; ice fades to gold from 13.5 | the arch | music | — | — |
-| 15.00–16.00 | — | settle | the gauge | riser | gauge: DISTANCE (HORIZON = 1×), YOU at 22× | — |
+| 15.00–16.00 | — | settle | the gauge | riser | gauge: YOUR DISTANCE, ticks down to 1× = HORIZON, YOU at 22× | — |
 | 16.00–18.67 | *(no voice)* | the dive 22× → 1.5×, streaks, pitch to the horizon | the swelling black; YOU sliding | big dive whoosh plus rumble, braking | gauge marker slides | camera move, braked arrival |
 | 18.67–19.90 | — | half black, half bright sky, a line across the middle | label → line | impact on 18.67 plus shimmer | big 1.5× / PHOTON SPHERE | arrival |
 | 19.00–21.90 | "Hover here, and the black hole fills exactly half your sky." | yaw; stars zip along the line | the halves | shimmer bed | — | — |
@@ -73,7 +73,7 @@ Bars at 90 BPM: 0.00, 2.67, 5.33, 8.00, 10.67, 13.33, 16.00, 18.67, 21.33, 24.00
 | 32.00–33.30 | *(silence)* | **the dot**, as in frame 0 | the dot | hit on 32.00; music drops to one high tone | 1.001× / 0.1% ABOVE THE EDGE (31.9–33.2) | — |
 | 33.30–34.25 | "Everything else?" | creep | the dot | near silence | THE UNIVERSE (ice leader on the dot, 33.3) | — |
 | 34.90–35.70 | "Black hole." | — | out into the black | low soft hit | BLACK HOLE (gold, arrows pointing into the black, 34.9); not captioned under the dot | — |
-| 35.70–37.33 | — | hold; gauge fades (36.3–36.9) | the dot | swell resolves into O's shimmer | — | **seamless loop** into frame 0 |
+| 35.70–37.33 | — | hold; labels fade (36.4–36.8) | the dot | swell resolves into O's shimmer | — | **seamless loop** into frame 0 |
 
 ## Captions
 

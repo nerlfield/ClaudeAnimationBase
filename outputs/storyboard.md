@@ -22,7 +22,7 @@
 
 **Tools.** O, A–D and F–G: a custom Schwarzschild ray tracer in numba. Per frame, it integrates a table of null geodesics for the camera's radius; each pixel then looks up its disk crossings (with Doppler and gravitational shift) and its escape direction (lensed stars with an image-space point spread, so magnified stars brighten instead of bloating). E: the same star and disk shaders unlensed, a raymarched signed-distance-field astronaut, and the light pulse. Post: bloom, hue-preserving filmic tone curve, faint chromatic fringe, vignette, per-frame grain, temporal supersampling on fast moves, and a caption scrim that darkens bright backgrounds under the captions. Every frame is a pure function of t.
 
-**HUD: the depth gauge.** A vertical ladder at the left edge (x 60–260, y 330–1080, clear of captions and the right-side UI), titled "DISTANCE" with a small "(HORIZON = 1×)". Ticks at 25×, 10×, 3×, 1.5× and 1× HORIZON, labels 34 px. An ice "YOU ▸" marker sits on the left of the line (so it never covers a label) and slides during the moves, never touching the HORIZON tick until the very end. Visible 15.0–22.2 and 26.67–32.7; it fades once YOU reaches the horizon, so the dot's labels and the loop frame are clean.
+**HUD: the depth gauge.** A vertical ladder at the left edge (x 50–330, y 320–850, clear of captions and the right-side UI), titled "YOUR DISTANCE". Ticks at 25×, 10×, 3×, 1.5× and "1× = HORIZON" (just "1×" in F, where the dot sits beside it; gold from 30.0 s), labels 34 px. An ice "YOU ▸" marker sits on the left of the line (so it never covers a label) and slides during the moves, never touching the horizon tick. Visible 15.0–22.2 and 26.67–32.7; the title steps aside while a big ladder value (1.5×, 1.001×) is up so the two never read as one line, and the gauge fades out at 32.2–32.7 once the 1.001× takes over, so the dot's labels and the loop frame are clean.
 
 ---
 
@@ -74,7 +74,7 @@
 - **Event.** A slow yaw; stars that pass behind the hole zip along the line. At 21.3 a glow sweeps along the line from left to right and it brightens (lead the eye).
 - **Camera.** 6° yaw drift, 0.4° roll wobble.
 - **Reads.**
-  - 18.67–19.90: half black, half light. A big "1.5×" with "PHOTON SPHERE" pops in the upper third, then shrinks into the gauge by 20.0. The eye goes label → line.
+  - 18.67–19.90: half black, half light. A big "1.5×" with "PHOTON SPHERE" pops in the upper third, then fades by 20.0. The eye goes label → line.
   - 19.00–21.90: VO "Hover here, and the black hole fills exactly half your sky." The eye moves between the halves.
   - 21.30–22.20: the sweep along the line. The eye is on the line.
 - **Out.** Match cut on the line: E opens exactly edge-on, so the bright line continues across the cut before it opens into a circle.
@@ -104,7 +104,7 @@
 
 ### G: Everything else · 32.00–37.33 · [out: the loop, this frame continues into O]
 - **Seen.** The dot, the same framing as frame 0, creeping smaller as we inch down. "1.001×" with "0.1% ABOVE THE EDGE" pops at the top (31.9–33.2) as the gauge's YOU marker reaches the horizon; then "THE UNIVERSE" labels the dot (33.3) and "BLACK HOLE" appears with arrows pointing out into the black (34.9), word-synced to the VO.
-- **Event.** The last creep; the gauge fades out (36.3–36.9) so the final frames are identical to O's.
+- **Event.** The last creep; the gauge has already faded (32.2–32.7), so the final frames are identical to O's.
 - **Camera.** The same continuous function as O (G at time t equals O at time t − 37.33), so the loop has no seam.
 - **Reads.**
   - 32.00–33.30: **the dot, the whole universe, held 1.3 s**, with its 1.001× label.

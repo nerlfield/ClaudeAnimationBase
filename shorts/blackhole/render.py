@@ -106,7 +106,7 @@ def main():
         out = a.out or os.path.join(HERE, '..', '..', 'outputs', 'final.mp4')
         subprocess.run(['ffmpeg', '-y', '-v', 'error', '-framerate', str(shots.FPS), '-i', os.path.join(FRAMES, '%05d.png'),
                         '-i', os.path.join(HERE, 'build', 'mix.wav'),
-                        '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-profile:v', 'high',
+                        '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-profile:v', 'high',
                         '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '256k', '-ar', '48000', '-shortest',
                         '-movflags', '+faststart', out], check=True)
         print('->', out)

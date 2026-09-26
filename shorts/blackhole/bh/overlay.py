@@ -189,13 +189,17 @@ def gauge_y(r):
     return G_BOT - min(1.0, f) * (G_BOT - G_TOP)
 
 
-def gauge(r, fade=1.0, hot=None):
+def gauge(r, fade=1.0, hot=None, title=1.0, short=False):
+    """short: the horizon tick reads just '1x' (in F, where the dot sits right of the gauge)."""
     f = font('Inter-ExtraBold.ttf', 34); fy = font('Inter-ExtraBold.ttf', 32); ft = font('Inter-ExtraBold.ttf', 30)
     fs = font('Inter-ExtraBold.ttf', 22)
     lay = _layer(); d = ImageDraw.Draw(lay)
-    d.text((G_X - 96, G_TOP - 78), 'YOUR DISTANCE', font=ft, fill=(240, 240, 245, 235))
+    if title > 0:
+        d.text((G_X - 96, G_TOP - 78), 'YOUR DISTANCE', font=ft, fill=(240, 240, 245, int(235 * title)))
     d.line([(G_X, G_TOP - 18), (G_X, G_BOT)], fill=(220, 225, 235, 160), width=4)
     for rv, lab in TICKS:
+        if short and rv == 1.0:
+            lab = '1\u00d7'
         y = gauge_y(rv)
         big = rv == 1.0
         d.line([(G_X - 12, y), (G_X + 12, y)], fill=(230, 232, 240, 220), width=6 if big else 4)

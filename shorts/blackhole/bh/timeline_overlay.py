@@ -94,8 +94,11 @@ def layers(t, you_px=None, st=None):
             fade = min(seg(t, T_F, T_F + 0.3), 1.0 - seg(t, 32.2, 32.7))
         cam = st['cam']
         r = cam.r0 if cam is not None else 1.5
-        hot = '1.5\u00d7' if T_D <= t < T_E else ('HORIZON' if t >= 30.0 else None)
-        L.append(ov.gauge(r, fade, hot))
+        hot = '1.5\u00d7' if T_D <= t < T_E else ('1\u00d7' if t >= 30.0 else None)
+        # the title steps aside while a big ladder value is up, so the two never read as one line
+        title = 1.0 - max(min(seg(t, T_D - 0.15, T_D), 1.0 - seg(t, T_D + 1.35, T_D + 1.6)),
+                          seg(t, 31.75, 31.9))
+        L.append(ov.gauge(r, fade, hot, title=title, short=t >= T_F))
     # ladder values
     if T_D <= t < T_D + 1.35:
         L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - T_D, fade=1.0 - seg(t, T_D + 1.05, T_D + 1.35)))
