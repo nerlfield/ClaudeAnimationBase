@@ -326,3 +326,24 @@ The ending and the cold open share one steady camera clock, so the loop point st
 - Nothing is in the bottom 20% or the button column.
 - Every effect sits at least 5.4 LU under the voice, and the music at least 12.8 dB under it.
 - Master: −14.1 LUFS, −1.4 dBTP.
+
+## Round 12: shorter pauses (the user: "Text is much better, but sometimes it's way too large pause in between phrases. Try to make them a bit shorter")
+
+**The pauses and where they came from.**
+- **The read's own pauses between lines:** kept up to 1.1 s. Now capped at 0.55 s.
+- **The "..." beats inside lines:** 1.0–1.2 s ("up over the top... and under the bottom", "all the way around... and come back to you", "Stay for one minute... and half an hour"). Every pause inside a line is now cut to at most 0.45 s, from its middle, with a 30 ms crossfade inside the read's own room noise. The letter times are carried through the cut, so the captions stay on the words.
+- **Picture waits (2.1 s before "See?", 1.5 s before "The black hole bends"):**
+  - the rise now starts on "at it from above" instead of after it, and takes 1.5 s;
+  - the swing down takes 1.55 s;
+  - the reveal, the dive and the dot landing each wait 0.1–0.2 s less.
+
+  Every camera move still finishes before the line about its result.
+
+**Result.**
+- **Gaps:** 0.25–0.55 s between lines, and about 1 s only at the five camera moves.
+- **The end:** 1.4 s of quiet before the loop.
+- **Length:** the same words in 68.67 s instead of 74.67 s.
+
+**The picture follows automatically now.** The time map from video time to the animation's clock was hand-set in round 11. It is now computed from the placed words by rules (`tools/vo_flow.py` `AFTER` and `warp_knots`) and written to `bh/warp.json`, which `bh/shots.py` reads. If the voice moves, the picture moves with it. The music re-arrangement follows the dot's new landing time. All 2,060 frames are re-rendered.
+
+**A caption fix on the way.** After the "top..." pause was shortened, a lone 5 ms noise blip inside it made the onset finder start "and under the bottom" 0.44 s early. A voice onset now has to last 15 ms, and every caption is within 0.14 s of its word.

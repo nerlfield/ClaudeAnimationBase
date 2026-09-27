@@ -1,4 +1,4 @@
-# Upload pack (round 11 cut, 74.7 s)
+# Upload pack (round 12 cut, 68.7 s)
 
 Everything to paste into YouTube Studio (or the mobile app) for this Short. The choices come from the reference
 channels' own Shorts: yt-dlp metadata for 90 Shorts, the top 10 by views of each channel's newest 80 plus every
@@ -51,7 +51,7 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 | Licence | Standard YouTube Licence | |
 | Remixing | Allow | Remixes and Shorts that sample it are free reach. |
 | Comments | On, sorted by Top | |
-| Cover frame (chosen in the app) | **0:24.3**: the ice-blue arch of the disk's back half over the black hole, with no caption on screen | It's the clearest "what is that?" image in the video. Second choice: 0:18.6 (the flat disk from above, back half ice, "BACK"). |
+| Cover frame (chosen in the app) | **0:22.2**: the ice-blue arch of the disk's back half over the black hole, with no caption on screen | It's the clearest "what is that?" image in the video. Second choice: 0:17.5 (the flat disk from above, back half ice, BACK and FRONT). |
 
 ## Pinned comment
 
