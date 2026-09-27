@@ -210,3 +210,37 @@ Only "So why does it look like this?" is tightened, by 5%.
 - Nothing is in the bottom 20% or the button column.
 - The voice sits at least 13.6 dB above the music.
 - Master: −14.1 LUFS, −1.4 dBTP.
+
+## Round 7: the ghost frame, the ending, and speech that sounds spoken (the user: "there is artifact right after you show the back of the head"; "the ending… feels not like the proper ending"; "we need to make speech more natural during the whole video")
+
+- **The ghost frame.** Frame 800 (26.67 s, the pull-out after the self-view) showed a faint copy of the diagram for one frame. One of its motion-blur samples was taken a fraction of a frame earlier, which fell in the diagram shot. Blur samples now never cross a shot boundary, and the pull-out is rendered from E2's own camera.
+- **Speech that sounds spoken.** Every line was rewritten to point at what is on screen and to say why we move on:
+  - "This dot? It's the whole universe." → "See this dot? That's the whole universe."
+  - "To see it, fly down to a black hole. The disk is flat, its inner edge racing at half the speed of light." → "Here's how. This is a black hole. That disk is actually flat. Back half, front half." The disk line now arrives as the camera shows the flat ring, which is the user's own example. The half-light-speed fact was cut: it was the one fact with nothing on screen to point at.
+  - "And light goes around it in circles." → "Here, light goes in circles."
+  - "That's the back of your own head." → "That line? The back of your own head.", said while we look along the line and it opens.
+  - "Now hover just above the edge." → "Now hover just above the horizon, and…"
+- **The ending.** "Everything else? Black hole." sounded like a tag, not an ending. It is now "All that darkness around it? That's the black hole.", the answer the whole video builds to. THE UNIVERSE labels the dot on "around it", and the BLACK HOLE arrows pop on "That's the black hole". Then the loop runs into "See this dot?".
+- **Labels on words.** BACK and FRONT pop on "Back half, front half", the lower BACK on "and under", and 32× on the time line. Each label's time is read from the caption words, so it follows the voice.
+
+## Round 8: transitions (the user: "it feels like transitions in speech and video feels super unnatural and sharp")
+
+**Speech.** Two causes, both fixed by `tools/vo_flow.py`:
+- **Lines came from different performances.** Each line had been picked from whichever of eight reads did it best, so neighbours didn't match: one line sat at 99 Hz and the next at 146 Hz, with different energy. The narration is now **one read of the whole script** (seed 179 of sixteen, stability 0.0). It was chosen because every line in it is heard exactly by Whisper, none is in fry, and it fits the picture with the least squeezing. Inside a line nothing is changed. Only the silent middle of a pause gets longer or shorter, and four lines are tightened by 1–6%.
+- **Every line faded in from digital silence.** A read's pauses carry faint room sound. Cutting lines out and dropping them onto silence switched that sound on and off at every line. A bed of the read's own room tone now runs under the whole track, made from its quiet stretches (no breaths) joined with 25 ms crossfades. Each line keeps up to 0.38 s of its breath before and 0.45 s of tail after, and crossfades into the bed over most of that.
+- **One reworded line.** "Out there, time's in fast-forward" is heard, by Whisper and by ear, as "times and fast forward". It is now "Out there, time is on fast-forward." Rather than change the whole performance, that line is re-read with the same voice, seed and stability, with three lines of run-up before it. That matches its pace (16.8 characters/s against the neighbours' 18.2) and pitch (111 Hz against 116). It is then level-matched (+1.6 dB) and spliced in.
+
+**Picture.**
+- **Dissolves.** The cuts at 2.67 (dot → shadow, 0.16 s), 22.2 (line → diagram, 0.24 s) and 24.55 (diagram → first person, 0.24 s) are now dissolves. Both shots are rendered and blended in linear light with a smoothstep curve. The rest of the seams were already continuous camera moves.
+- **Captions and labels.** Captions ease in (a fade with scale 0.965 → 1). A caption followed by a pause fades out over 0.12 s, and one followed straight away by the next cross-fades into it over 0.08 s. The labels and the big numbers ease in and out the same way, instead of snapping.
+- **Sound follows the labels.** The BACK and FRONT ticks had stayed at their old times (7.10 and 7.30 s) when the tags moved onto the words (7.50 and 8.25 s). They now use the same word-timed cue as the tags.
+
+**Captions.** Chunk starts come from Whisper's word timings on the finished voice track, refined to the voice's own onset. The onset rule is shared by `tools/caption_align.py` and the checker, `tools/captionsync.py`. It now also walks back when Whisper squashes a word to zero length: "This is a black hole" had shown 0.19 s late.
+
+**Checks:**
+- Whisper on the final mix hears all 12 lines exactly.
+- Captions land between 0.12 s early and 0.13 s late. The checker flags "and the whole universe" as 0.32 s late, but Whisper merged "horizon, and" across a 40 ms dip there. The energy trace puts the caption 0.04 s ahead of the voice.
+- No stray frames: no frame differs from both neighbours more than they differ from each other.
+- Nothing is in the bottom 20% or the button column.
+- The voice sits at least 12.9 dB above the music.
+- Master: −14.2 LUFS integrated, −1.3 dBTP after AAC encoding.
