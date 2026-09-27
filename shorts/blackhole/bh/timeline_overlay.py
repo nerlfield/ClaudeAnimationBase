@@ -15,8 +15,9 @@ WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
 MID_LEAD = 0.12
 # top of the finished dot's rim against the end camera's clock (tau), measured on the rendered frames: the push-in
 # carries it up and left a little
-DOT_RIM = [(33.0, 533, 538), (36.0, 529, 533), (39.3, 526, 528), (40.5, 525, 526), (41.5, 524, 524), (42.5, 522, 522),
-           (43.3, 522, 521)]
+DOT_RIM = [(32.45, 533, 539), (33.79, 532, 537), (35.58, 530, 534), (37.37, 528, 532), (38.71, 526, 531),
+           (39.61, 526, 529), (40.5, 524, 528), (41.39, 524, 527), (42.29, 522, 526), (43.01, 522, 525), (43.27, 522, 524),
+           (44.23, 521, 523), (46.02, 520, 520)]           # (tau, x, y), round 11 frames
 
 
 def dot_top(t):
@@ -175,8 +176,11 @@ def layers(t, you_px=None, st=None):
     if T_D <= u < T_D + 1.35:
         L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - unwarp(T_D), fade=1.0 - seg(u, T_D + 1.05, T_D + 1.35),
                               fade_in=False))
-    if 28.3 <= u < 31.9:
-        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, seg(u, 28.3, 28.6)))
+    # the counter comes back for the last descent once LOOKING UP (same place, top centre) has gone
+    t_up = chunk_time(['Then', 'look'], after=40.0, default=56.6)
+    t_c0 = max(unwarp(28.3), t_up + 1.3)
+    if t >= t_c0 and u < 31.9:
+        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, seg(t, t_c0, t_c0 + 0.3)))
     # "And down here, time runs slower. Stay for one minute... and half an hour goes by out there."
     # To a hovering observer at 1.001x the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast: one minute
     # here is 31.6 minutes out there.  1 MIN pops on "Stay for one minute", then counts up to 32 on "half an hour".
@@ -194,9 +198,8 @@ def layers(t, you_px=None, st=None):
     if 19.55 <= u < 22.0:
         L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - unwarp(19.55), 1.0 - seg(u, 21.7, 22.0), size=64))
     # F: LOOKING UP on "Then look up."
-    t_up = chunk_time(['Then', 'look'], after=40.0, default=56.6)
-    if t_up <= t < t_up + 1.6:
-        L.append(ov.top_label('Looking up \u2191', t - t_up, fade=1.0 - seg(t, t_up + 1.3, t_up + 1.6), plate=True, size=64))
+    if t_up <= t < t_up + 1.3:
+        L.append(ov.top_label('Looking up \u2191', t - t_up, fade=1.0 - seg(t, t_up + 1.0, t_up + 1.3), plate=True, size=64))
     # diagram tags
     if T_E <= u < T_E2:
         f = min(seg(u, T_E, T_E + 0.3), 1.0 - seg(u, T_E2 - 0.3, T_E2))

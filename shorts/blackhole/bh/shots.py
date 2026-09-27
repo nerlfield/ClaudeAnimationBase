@@ -98,8 +98,9 @@ def unwarp(s):
 
 
 def dot_tau(t):
-    """The end camera's clock for video time t in the ending (t >= T_G_REAL) or the cold open (t < T_A_REAL)."""
-    return STORY_DUR + DOT_RATE * t if t < T_A_REAL else T_G + DOT_RATE * (t - T_G_REAL)
+    """The end camera's clock for video time t in the cold open (first half of the video: it runs on past the
+    cut while the dissolve into A still shows it) or in the ending (second half)."""
+    return STORY_DUR + DOT_RATE * t if t < DUR / 2 else T_G + DOT_RATE * (t - T_G_REAL)
 
 
 # ---------------------------------------------------------------- easing
