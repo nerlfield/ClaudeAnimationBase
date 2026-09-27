@@ -264,3 +264,5 @@ Only "So why does it look like this?" is tightened, by 5%.
 - **Trimmed 2–3 dB:** the visor chime at 24.0 s (now −8.7 LU), the dive rush at 16.0 s, the dot's shimmer chain, and the soft hit on "That's the black hole".
 - **Unchanged:** the pops, whooshes and risers, already 10–20 LU under the voice.
 - **Master:** still −14.2 LUFS integrated and −1.3 dBTP after encoding, with the voice at least 12.9 dB above the music.
+
+**THE UNIVERSE label** (the user: "at the end, this arrow is incorrectly placed"). The label sat up and to the left of the dot, and its leader ran to the label's left end at mid-height, straight through the "T". Labels now centre over their point when asked, and every leader runs to the nearest edge of the lettering and stops 12 px short. THE UNIVERSE sits centred above the dot, with a short vertical leader that starts on the rim itself. The rim's position is measured on the rendered frames and followed as the push-in carries it up 7 px. The diagram's YOU label uses the same rule.

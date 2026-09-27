@@ -203,17 +203,25 @@ def distance_text(r):
     return '%.3f\u00d7' % max(r, 1.001)
 
 
-def point_label(text, at, age=1.0, fade=1.0, dx=34, dy=-60, size=40, color=ICE, line=True):
-    """A small label with a leader line to a screen point."""
+def point_label(text, at, age=1.0, fade=1.0, dx=34, dy=-60, size=40, color=ICE, line=True, center=False, inset=10):
+    """A small label with a leader line to a screen point.  The label's left edge (or, with center=True, its
+    centre) sits dx, dy from the point; the leader runs from the point to the nearest edge of the lettering and
+    stops short of it (it used to end at the label's left end, and cut through the first letter).  inset: how far
+    from the point the leader starts."""
     if at is None:
         return None
     f = font('Inter-ExtraBold.ttf', size)
     lay = _layer(); d = ImageDraw.Draw(lay)
     ax, ay = at
     tx, ty = ax + dx, ay + dy
+    if center:
+        tx -= f.getlength(text.upper()) / 2
+    x0, y0, x1, y1 = d.textbbox((tx, ty - size * 0.1), text.upper(), font=f)
     if line:
-        L = math.hypot(dx, dy) or 1.0
-        d.line([(ax + dx / L * 10, ay + dy / L * 10), (tx - 4, ty + size * 0.55)], fill=color + (230,), width=4)
+        gap = 12
+        px, py = min(max(ax, x0 - gap), x1 + gap), min(max(ay, y0 - gap), y1 + gap)
+        L = math.hypot(px - ax, py - ay) or 1.0
+        d.line([(ax + (px - ax) / L * inset, ay + (py - ay) / L * inset), (px, py)], fill=color + (230,), width=4)
     d.text((tx, ty - size * 0.1), text.upper(), font=f, fill=color + (255,))
     lay = _shadowed(lay, 6, (0, 3), 0.85)
     return _pop(lay, 1.0, _smooth(age / 0.25) * fade, (int(tx), int(ty)))

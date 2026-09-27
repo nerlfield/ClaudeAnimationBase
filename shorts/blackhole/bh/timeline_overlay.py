@@ -4,6 +4,8 @@ import json
 import math
 import os
 
+import numpy as np
+
 from . import overlay as ov
 from .overlay import _ease_out
 from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, state, seg
@@ -11,7 +13,14 @@ from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, state, seg
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
 MID_LEAD = 0.12
-DOT_TOP = (530, 526)             # top rim of the finished dot (measured on the rendered frames, 33-37 s)
+# top of the finished dot's rim, measured on the rendered frames: the push-in carries it up and left a little
+DOT_RIM = [(33.0, 533, 538), (36.0, 529, 533), (39.3, 526, 528), (40.5, 525, 526), (41.5, 524, 524), (42.5, 522, 522),
+           (43.3, 522, 521)]
+
+
+def dot_top(t):
+    ts, xs, ys = zip(*DOT_RIM)
+    return float(np.interp(t, ts, xs)), float(np.interp(t, ts, ys))
 
 # (start, end, text) -- the same lines tools/vo.py speaks
 LINES = [
@@ -196,8 +205,8 @@ def layers(t, you_px=None, st=None):
     # the last frames are the clean dot of frame 0
     t_uni = chunk_time(['All', 'that'], default=DUR - 4.9)
     if t_uni <= t < DUR - 0.3:
-        L.append(ov.point_label('the universe', DOT_TOP, t - t_uni, fade=1.0 - seg(t, DUR - 0.75, DUR - 0.3),
-                                dx=-150, dy=-120, size=56))
+        L.append(ov.point_label('the universe', dot_top(t), t - t_uni, fade=1.0 - seg(t, DUR - 0.75, DUR - 0.3),
+                                dx=0, dy=-130, size=56, center=True, inset=2))       # the leader touches the rim
     t_bh = black_hole_time()
     if t_bh <= t < DUR - 0.3:
         L.append(ov.callout_black(t - t_bh, fade=1.0 - seg(t, DUR - 0.75, DUR - 0.3)))
