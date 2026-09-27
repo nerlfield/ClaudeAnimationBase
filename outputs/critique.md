@@ -244,3 +244,14 @@ Only "So why does it look like this?" is tightened, by 5%.
 - Nothing is in the bottom 20% or the button column.
 - The voice sits at least 12.9 dB above the music.
 - Master: −14.2 LUFS integrated, −1.3 dBTP after AAC encoding.
+
+## Round 9: the time line, and a breath before the loop (the user: the time line "sounds fast and is not natural… maybe explain it a bit more. I think it's okay if the short will be a bit longer"; "the video ends exactly on phrase end… can you make the phrase end, then wait a moment and then end the video?")
+
+- **The time line.** "Out there, time is on fast-forward." packed the whole idea into five quick words, 2.1 s. It is now two sentences with a concrete example: "And down here, time runs slower. Stay for one minute... and half an hour goes by out there." (a minute at 1.001× is 31.6 minutes far away). On screen, 1 MIN / DOWN HERE pops on "Stay for one minute", then counts up to 32 MIN / OUT THERE on "and half an hour". The 32× label it replaces said the same number more abstractly.
+- **Recording.** The two lines are re-read together by the same voice, seed and stability as the rest of the narration. The read includes three lines of run-up and the line after, and the take is chosen from eight. Pace now counts against a take only if it is quicker than the lines around it, not slower. The first pick ran "Stay one minute and half an hour…" together in 2.5 s, with no beat before the payoff. An ellipsis ("Stay for one minute...") gets a half-second beat there, and that take was chosen: 103 and 115 Hz against the neighbours' 116 Hz.
+- **Length.** 37.33 → 43.33 s (65 beats). Everything up to the dot landing at 32.0 is unchanged. The dot then holds through the two new lines, "All that darkness around it? That's the black hole.", and 1.35 s of quiet. The labels stay through the quiet and fade out over its last half-second, so the last frames are frame 0's clean dot. The music's final decay is time-stretched to fill the longer ending, the dot's shimmer is chained to carry it, and the reverse swell still ends exactly on the loop.
+- **Fitting.** When a line didn't fit its window with its natural pause, the planner used to drop that pause to the 0.14 s minimum. It now gives up only as much pause as it needs to fit. That stopped "All that darkness" arriving 0.2 s after "out there" (and squeezed by 8%); it now comes 0.5 s later, unsqueezed. The same rule moved lines 1–4 later by 0.07–0.13 s, keeping more of their natural pauses.
+- **Checks:**
+  - Whisper on the final mix hears all 13 lines exactly.
+  - Captions land within 0.12 s of the voice, except the checker's known false alarm on "and the whole universe" (see round 8).
+  - The music decays smoothly to silence by 41 s, and the final pause sits at −35 dB (shimmer and swell).

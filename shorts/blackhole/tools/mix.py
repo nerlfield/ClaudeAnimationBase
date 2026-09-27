@@ -18,7 +18,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 B = os.path.join(HERE, '..', 'build')
 A = os.path.join(B, 'audio')
 SR = 44100
-DUR = 14 * 4 * 60 / 90.0          # 37.333 s
+DUR = 65 * 60 / 90.0              # 43.333 s (65 beats)
 N = int(round(DUR * SR))
 MUSIC_SHIFT = 0.06                 # the music's bar lines sit 60 ms late; pull it earlier
 
@@ -94,11 +94,15 @@ CUES = [
     # G: the dot lands; "Black hole."; the swell back into the loop
     (32.00, 'el/boom_big_1', -14, dict(noduck=True, align='peak', trim_pre=0.35)),
     (32.00, 'sfx2/syn_boom_big', -12, dict(noduck=True, align='peak')),
+    # the dot's shimmer, chained (5.2 s each) to carry the longer ending; each takes over under the last one's fade
     (32.00, 'sfx2/syn_shimmer_long', -19, dict(fade_out=(36.4, 37.0))),
-    ('THIRTY', 'el/pop_1', -20, {}),
+    (36.30, 'sfx2/syn_shimmer_long', -20, dict(fade_in=0.7, fade_out=(40.8, 41.4))),
+    (40.60, 'sfx2/syn_shimmer_long', -21, dict(fade_in=0.8, fade_out=(DUR - 0.9, DUR - 0.3))),
+    ('MINUTE', 'sfx2/syn_pop_low2', -21, {}),
+    ('HOUR', 'el/pop_1', -19, {}),
     ('BLACK_HOLE', 'el/boom_2', -17, dict(align='peak', trim_pre=0.1)),
     ('BLACK_HOLE', 'sfx2/syn_pop_low2', -21, {}),
-    (37.33, 'sfx2/syn_reverse_long', -21, dict(align='end')),
+    (DUR, 'sfx2/syn_reverse_long', -21, dict(align='end')),
 ]
 
 
@@ -256,6 +260,19 @@ def main():
     # ---- music: pull onto the bar grid, set 9 dB under the voice, duck under speech
     mu = decode(os.path.join(A, 'music_v2.mp3'))
     mu = mu[int(MUSIC_SHIFT * SR):]
+    # the music was composed for 14 bars (37.33 s) and ends on a hit at 32.0 that decays to silence.  Since round 9
+    # the video runs to 43.33 s, so the decay after the hit's first second is stretched to fill it (a tone and its
+    # room tail, which stretch cleanly; the hit itself is untouched)
+    T_HOLD, T_OLD = 33.0, 14 * 4 * 60 / 90.0
+    if N > int(T_OLD * SR):
+        import librosa
+        a, b = int(T_HOLD * SR), int(T_OLD * SR)
+        tail = np.stack([librosa.effects.time_stretch(np.ascontiguousarray(mu[a:b, c]), rate=(b - a) / (N - a))
+                         for c in range(mu.shape[1])], axis=1).astype(np.float32)
+        xf = int(0.05 * SR)
+        w = np.linspace(0, 1, xf)[:, None]
+        tail[:xf] = mu[a:a + xf] * (1 - w) + tail[:xf] * w
+        mu = np.concatenate([mu[:a], tail])
     mu = np.pad(mu, ((0, max(0, N - len(mu))), (0, 0)))[:N]
     mu_l = meter.integrated_loudness(mu)
     mu *= db(-16.0 - 9.0 - mu_l)
@@ -288,14 +305,14 @@ def main():
     cache = {}
     import sys as _sys
     _sys.path.insert(0, os.path.join(HERE, '..'))
-    from bh.timeline_overlay import back_front_times, black_hole_time, chunk_time
+    from bh.timeline_overlay import back_front_times, black_hole_time, minute_times
     for t0, name, g, opts in CUES:
         if t0 == 'BLACK_HOLE':
             t0 = black_hole_time()                             # the hit lands with "That's the black hole."
         elif t0 in ('BACK', 'FRONT'):
             t0 = back_front_times()[t0 == 'FRONT']              # the tag pops land with "Back half, front half."
-        elif t0 == 'THIRTY':
-            t0 = chunk_time(['time', 'is'], default=32.7)       # the 32x pop lands on "time is on fast-forward"
+        elif t0 in ('MINUTE', 'HOUR'):
+            t0 = minute_times()[t0 == 'HOUR']                   # 1 MIN pops, then counts up to 32 MIN
         if name not in cache:
             cache[name] = load(os.path.join(A, name + '.wav'))
             if cache[name].shape[1] == 1:

@@ -160,16 +160,21 @@ def corner_tag(text, fade=1.0):
     return _pop(_shadowed(lay, 5, (0, 2), 0.8), 1.0, fade, (0, 0))
 
 
-def big_value(value, sub, age=1.0, fade=1.0, y=262, fade_in=True):
-    """The ladder's giant label: e.g. 1.5x with a sub-label.  Digits sit in fixed-width cells so a live
-    count (the distance counter) doesn't jitter; age restarts the pop when the value lands."""
-    fv = font('Montserrat-Black.ttf', 190); fs = font('Inter-ExtraBold.ttf', 44)
+def big_value(value, sub, age=1.0, fade=1.0, y=262, fade_in=True, unit=''):
+    """The ladder's giant label: e.g. 1.5x with a sub-label, and an optional smaller unit after the number
+    ("1 MIN").  Digits sit in fixed-width cells so a live count (the distance counter) doesn't jitter; age
+    restarts the pop when the value lands."""
+    fv = font('Montserrat-Black.ttf', 190); fs = font('Inter-ExtraBold.ttf', 44); fu = font('Montserrat-Black.ttf', 96)
     lay = _layer(); d = ImageDraw.Draw(lay)
     cell = max(fv.getlength(c) for c in '0123456789')
     adv = [cell if c.isdigit() else fv.getlength(c) for c in value]
-    x = W / 2 - sum(adv) / 2
+    uw = fu.getlength(unit) + 22 if unit else 0.0
+    x = W / 2 - (sum(adv) + uw) / 2
     for c, a in zip(value, adv):
         d.text((x + (a - fv.getlength(c)) / 2, y - 150), c, font=fv, fill=ICE + (255,)); x += a
+    if unit:
+        d.text((x + 22, y - 150 + fv.getmetrics()[0]), unit, font=fu, fill=ICE + (255,), anchor='ls')
+    adv = adv + [uw]
     sw = fs.getlength(sub.upper()) + 2.0 * len(sub)
     x = W / 2 - sw / 2
     for ch in sub.upper():

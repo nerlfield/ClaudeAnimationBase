@@ -35,9 +35,13 @@ LINES = [
     (22.22, 24.45, 1.00, 'Here, light goes | in *circles.'),
     (24.42, 26.66, 1.00, 'That line? | The back of your own *head.'),
     (26.70, 32.10, 1.00, 'Now hover just above the horizon, | and the whole universe | shrinks to one *dot overhead.'),
-    # to a hovering observer at 1.001x, everything outside runs 1/sqrt(1 - 1/1.001) = 31.6x fast (shown as 32x)
-    (32.10, 34.40, 1.00, "Out there, | time is on *fast-forward."),
-    (34.40, 37.20, 1.00, "All that *darkness around it? | That's the black hole."),
+    # to a hovering observer at 1.001x, everything outside runs 1/sqrt(1 - 1/1.001) = 31.6x fast: one minute
+    # down here is 31.6 minutes out there (said "half an hour", shown as 1 min -> 32 min)
+    (32.10, 35.60, 1.00, "And down here, | time runs *slower."),
+    # (the ellipsis makes v3 take a beat before the payoff: read with a comma, it ran on in 2.5 s)
+    (34.00, 38.90, 1.00, "Stay for one *minute... | and half an *hour goes by out there."),
+    # the last word ends 1.35 s before the loop point (43.33), so the ending breathes before "See this dot?"
+    (38.90, 41.98, 1.00, "All that *darkness around it? | That's the black hole."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order
 
@@ -118,7 +122,7 @@ def chunk_words(words, maxw=4):
 
 def main():
     os.makedirs(BUILD, exist_ok=True)
-    total = 37.3333
+    total = 65 * 60 / 90.0
     mix = np.zeros(int(total * SR) + SR, np.float32)
     all_words, chunks, report = [], [], []
     for i, (t0, t1, speed0, text) in enumerate(LINES):

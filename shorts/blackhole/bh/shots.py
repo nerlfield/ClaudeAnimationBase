@@ -10,9 +10,9 @@ from .geodesic import B_CRIT
 
 BPM = 90.0
 BAR = 4 * 60.0 / BPM
-DUR = 14 * BAR                     # 37.333 s
+DUR = 65 * BAR / 4                 # 43.333 s = 65 beats (14 bars until round 9; 2.25 more let the ending breathe)
 FPS = 30
-N_FRAMES = int(round(DUR * FPS))   # 1120
+N_FRAMES = int(round(DUR * FPS))   # 1300
 
 # shot boundaries (v2 storyboard)
 T_A, T_B, T_C, T_D, T_E, T_F, T_G = BAR, 2 * BAR, 6 * BAR, 7 * BAR, 22.2, 10 * BAR, 12 * BAR

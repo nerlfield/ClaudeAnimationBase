@@ -1,10 +1,10 @@
 # Storyboard: "This dot is the whole universe"
 
-*Version 5 (rounds 7–8): the narration is conversational and points at what is on screen ("See this dot?", "That disk is actually flat. Back half, front half.", "That line? The back of your own head.", "All that darkness around it? That's the black hole."), and it is one continuous voice take. The cuts at 2.67, 22.2 and 24.55 are short dissolves, captions and labels ease in and out, and every label pops on the word that names it. The ghost frame after the self-view is gone. Version 4 (round 6): after "That's the back of your own head" the video now shows it. A first-person shot (E2) opens the photon-sphere line into a magnified image of the back of your helmet. The narration carries three more facts: the disk's inner edge at half the speed of light, the far side imaged under the bottom as well as over the top, and the universe in 31.6× fast-forward just above the horizon. Version 3 (round 3): the live distance counter, the dive line, the BLACK HOLE tag in D, and the turning, pushing end dot. Version 2: the cold open on the dot, whole-phrase captions and the G callouts.*
+*Version 6 (round 9): the time-dilation beat is two unhurried sentences with an example ("And down here, time runs slower. Stay for one minute... and half an hour goes by out there.", with 1 MIN counting up to 32 MIN), and the video runs 43.33 s so the last line has 1.35 s of quiet before the loop. Version 5 (rounds 7–8): the narration is conversational and points at what is on screen ("See this dot?", "That disk is actually flat. Back half, front half.", "That line? The back of your own head.", "All that darkness around it? That's the black hole."), and it is one continuous voice take. The cuts at 2.67, 22.2 and 24.55 are short dissolves, captions and labels ease in and out, and every label pops on the word that names it. The ghost frame after the self-view is gone. Version 4 (round 6): after "That's the back of your own head" the video now shows it. A first-person shot (E2) opens the photon-sphere line into a magnified image of the back of your helmet. The narration carries three more facts: the disk's inner edge at half the speed of light, the far side imaged under the bottom as well as over the top, and the universe in 31.6× fast-forward just above the horizon. Version 3 (round 3): the live distance counter, the dive line, the BLACK HOLE tag in D, and the turning, pushing end dot. Version 2: the cold open on the dot, whole-phrase captions and the G callouts.*
 
 **Logline.** The viewer thinks a black hole is a black ball that hides what's behind it, but its gravity bends light so hard that on the way down you'd see the back of its disk over the top, then the back of your own head, so if you hovered just above its edge, the whole universe would be one glowing dot over your head and everything else would be black hole.
 
-**Length.** 37.33 s = 14 bars at 90 BPM (one bar = 2.667 s); cuts and payoffs sit on bar lines. 30 fps, 1080×1920. The last frame is the first frame, so it loops seamlessly.
+**Length.** 43.33 s = 65 beats at 90 BPM (one bar = 2.667 s); cuts and payoffs up to the dot's landing (32.0) sit on bar lines, and the ending holds on the dot for 11.3 s of narration and one quiet breath. 30 fps, 1080×1920. The last frame is the first frame, so it loops seamlessly.
 
 **World.** One non-spinning black hole with a thin, hot accretion disk (inner edge at the last stable orbit, 3× the horizon radius; outer edge 12×), seen by an observer hovering on rockets. All light is emissive: the disk (blackbody colours, Doppler-beamed, gravitationally shifted) and the lensed star field and Milky Way. No lamps.
 
@@ -112,16 +112,17 @@
   - 32.00: the dot lands.
 - **Out.** Continuous into G.
 
-### G: All that darkness · 32.00–37.33 · [out: the loop, this frame continues into O]
-- **Seen.** The dot, the same framing as frame 0, the camera pushing in slowly while the sky inside it turns. The counter lands on "1.001×" / "0.1% ABOVE THE EDGE" (31.9–32.77). Then "32×" / "HOW FAST TIME RUNS OUT THERE" pops on "time is" (32.77–34.35), then "THE UNIVERSE" labels the dot (34.4), and "BLACK HOLE" appears with four arrows pointing out into the black on "That's the black hole" (36.0).
+### G: All that darkness · 32.00–43.33 · [out: the loop, this frame continues into O]
+- **Seen.** The dot, the same framing as frame 0, the camera pushing in slowly while the sky inside it turns. The counter lands on "1.001×" / "0.1% ABOVE THE EDGE" (31.9–35.57). "1 MIN" / "DOWN HERE" pops on "Stay for one minute" (35.57) and counts up to "32 MIN" / "OUT THERE" on "and half an hour" (37.09–39.24). Then "THE UNIVERSE" labels the dot (39.34), and "BLACK HOLE" appears with four arrows pointing out into the black on "That's the black hole" (40.87).
 - **Event.** The push-in and the turning sky carry straight on into O; the labels fade by 37.15, so the final frames are identical to O's.
-- **Camera.** The same continuous function as O (G at time t equals O at time t − 37.33), so the loop has no seam.
+- **Camera.** The same continuous function as O (G at time t equals O at time t − 43.33), so the loop has no seam.
 - **Reads.**
   - 32.00–32.30: **the dot lands** on the hit.
-  - 32.10–34.18: VO "Out there, time is on fast-forward." To a hovering observer here, everything outside runs 31.6× fast (1/√(1 − 1/1.001), shown rounded as 32×), and the number pops on "time is".
-  - 34.40–35.8: VO "All that darkness around it?" THE UNIVERSE labels the dot, so "it" is the universe.
-  - 36.00–37.12: VO "That's the black hole." The gold callout's arrows push the eye out into the black around the dot.
-  - 37.12–37.33: the labels are gone and the loop runs straight into "See this dot? That's the whole universe."
+  - 32.68–34.87: VO "And down here, time runs slower." The 1.001× on screen says where "down here" is.
+  - 35.49–38.75: VO "Stay for one minute... and half an hour goes by out there." To a hovering observer here, everything outside runs 31.6× fast (1/√(1 − 1/1.001)): 1 MIN counts up to 32 MIN as the voice says "half an hour".
+  - 39.26–40.7: VO "All that darkness around it?" THE UNIVERSE labels the dot, so "it" is the universe.
+  - 40.87–41.98: VO "That's the black hole." The gold callout's arrows push the eye out into the black around the dot.
+  - 41.98–43.33: quiet. The labels hold, then fade (42.58–43.03), and the loop runs into "See this dot? That's the whole universe."
 
 ---
 
@@ -133,5 +134,5 @@
 - **Every seam has a transition, and they vary.** Seamless loop (G→O), inverted match cut as a 0.16 s dissolve (O→A), camera move (A→B→C), braked arrival (C→D), match cut line → circle as a 0.24 s dissolve (D→E), a 0.24 s dissolve after the flash to first person (E→E2), continuous with a whip pull-out (E2→F), continuous (F→G). No hard cut is left: the round-8 note was that the transitions felt "super unnatural and sharp".
 - **The ending rhymes with the opening.** It *is* the opening frame: the dot, now understood.
 - **Every setup pays off on screen.** The dot claim (O) pays off in F–G; the BACK tag in B pays off as the arch; the line in D is explained in E; the counter's "HORIZON = 1×" is approached to 1.001× in F; "hover" (said in D and F) is the condition the dot needs.
-- **On-screen text never restates the image.** REAL PHYSICS SIMULATION, BACK/FRONT, the distance counter, 1.5× PHOTON SPHERE, the BLACK HOLE tag in D, YOU, * DIAGRAM, NOT TO SCALE, * MAGNIFIED ILLUSTRATION, LOOKING UP ↑, 1.001× 0.1% ABOVE THE EDGE, 32× HOW FAST TIME RUNS OUT THERE, THE UNIVERSE and the BLACK HOLE arrows each add something the picture and VO don't say.
+- **On-screen text never restates the image.** REAL PHYSICS SIMULATION, BACK/FRONT, the distance counter, 1.5× PHOTON SPHERE, the BLACK HOLE tag in D, YOU, * DIAGRAM, NOT TO SCALE, * MAGNIFIED ILLUSTRATION, LOOKING UP ↑, 1.001× 0.1% ABOVE THE EDGE, 1 MIN DOWN HERE → 32 MIN OUT THERE, THE UNIVERSE and the BLACK HOLE arrows each add something the picture and VO don't say.
 - **Safe zone.** Captions sit at 60–73% of the height and labels in the upper third; nothing below 80% or in the right-hand button column (checked every 0.1 s by `tools/safezone.py`).

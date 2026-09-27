@@ -14,7 +14,7 @@ import soundfile as sf
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.path.join(HERE, '..', 'build')
-NUMS = {'30': 'thirty', '32': 'thirtytwo'}
+NUMS = {'30': 'thirty', '32': 'thirtytwo', '1': 'one'}
 
 
 def norm(w):

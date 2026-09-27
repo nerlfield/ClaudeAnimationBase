@@ -5,6 +5,7 @@ import math
 import os
 
 from . import overlay as ov
+from .overlay import _ease_out
 from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, state, seg
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -99,6 +100,13 @@ def back_front_times():
             min(8.5, chunk_time(['front', 'half'], after=5.0, default=7.30)))
 
 
+def minute_times():
+    """When 1 MIN pops ("Stay for one minute"), when it counts up to 32 ("and half an hour"), and when it goes."""
+    t_min = chunk_time(['Stay', 'for'], default=35.4)
+    t_hour = chunk_time(['and', 'half'], default=36.5)
+    return t_min, t_hour, chunk_time(['All', 'that'], default=39.2) - 0.1
+
+
 def black_hole_time():
     """When the voice says "That's the black hole." (the callout pops with it)."""
     return chunk_time(["That's", 'the', 'black'], default=35.65)
@@ -158,13 +166,18 @@ def layers(t, you_px=None, st=None):
     if 28.3 <= t < 31.9:
         f = seg(t, 28.3, 28.6)
         L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
-    t30 = chunk_time(['time', 'is'], default=32.7)
-    if 31.9 <= t < t30:
-        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, t30 - 0.25, t30), fade_in=False))
-    if t30 <= t < 34.35:
-        # to a hovering observer here, the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast (shown as 32x);
-        # it pops as the voice says "time is on fast-forward"
-        L.append(ov.big_value('32\u00d7', 'how fast time runs out there', t - t30, fade=1.0 - seg(t, 34.05, 34.35)))
+    # "And down here, time runs slower. Stay for one minute... and half an hour goes by out there."
+    # To a hovering observer at 1.001x the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast: one minute
+    # here is 31.6 minutes out there.  1 MIN pops on "Stay for one minute", then counts up to 32 on "half an hour".
+    t_min, t_hour, t_end = minute_times()
+    if 31.9 <= t < t_min:
+        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, t_min - 0.25, t_min), fade_in=False))
+    if t_min <= t < t_hour:
+        L.append(ov.big_value('1', 'down here', t - t_min, unit='MIN'))
+    if t_hour <= t < t_end:
+        n = 1 + round(31 * _ease_out(seg(t, t_hour, t_hour + 0.9)))
+        L.append(ov.big_value('%d' % n, 'out there', t - t_hour, fade=1.0 - seg(t, t_end - 0.3, t_end), fade_in=False,
+                              unit='MIN'))
     # D: the black half is the black hole
     if 19.55 <= t < 22.0:
         L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=64))
@@ -179,11 +192,14 @@ def layers(t, you_px=None, st=None):
     if 24.95 <= t < 26.45:
         L.append(ov.corner_tag('* magnified illustration', min(seg(t, 24.95, 25.2), 1.0 - seg(t, 26.2, 26.45))))
     # the dot's label
-    if 34.4 <= t < 37.15:
-        L.append(ov.point_label('the universe', DOT_TOP, t - 34.4, fade=1.0 - seg(t, 36.9, 37.15),
+    # the dot's label and the black-hole callout: they stay through the pause after the last word, then fade so
+    # the last frames are the clean dot of frame 0
+    t_uni = chunk_time(['All', 'that'], default=DUR - 4.9)
+    if t_uni <= t < DUR - 0.3:
+        L.append(ov.point_label('the universe', DOT_TOP, t - t_uni, fade=1.0 - seg(t, DUR - 0.75, DUR - 0.3),
                                 dx=-150, dy=-120, size=56))
     t_bh = black_hole_time()
-    if t_bh <= t < 37.2:
-        L.append(ov.callout_black(t - t_bh, fade=1.0 - seg(t, 36.95, 37.2)))
+    if t_bh <= t < DUR - 0.3:
+        L.append(ov.callout_black(t - t_bh, fade=1.0 - seg(t, DUR - 0.75, DUR - 0.3)))
     L.append(caption_layer(t))
     return L

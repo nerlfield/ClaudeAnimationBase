@@ -23,17 +23,18 @@ import vo_takes  # noqa: E402
 import vo_v3  # noqa: E402
 
 SR = vo.SR
-TOTAL = 37.3333
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+from bh.shots import DUR as TOTAL  # noqa: E402
 MIN_GAP = 0.14            # shortest pause between lines
 MAX_KEEP_GAP = 1.1        # longest natural pause kept before the picture's window takes over
 MAX_SQUEEZE = 0.92
 LEAD, TAIL = 0.38, 0.45   # at most this much breath before / decay after each line comes from the read
 # the chosen performance (from `python tools/vo_flow.py --search`), kept under the script it was read from
 PIN = (179, 0.0)
-# lines reworded after the read was chosen: re-read in their neighbours' company with the pinned read's settings
-# (seeds tried in turn) and spliced in.  Line 10 was "Out there, time's in fast-forward.", which by ear (and to
-# Whisper) is "times and fast forward".
-PATCH = {10: [179, 7, 19, 31, 43, 59, 71, 83]}
+# lines reworded after the read was chosen: re-read together, in their neighbours' company, with the pinned read's
+# settings (seeds tried in turn) and spliced in.  The pinned read said "Out there, time's in fast-forward." here:
+# heard as "times and fast forward" and, even reworded, too quick to land (round 9).
+PATCH = {(10, 11): [179, 7, 19, 31, 43, 59, 71, 83]}
 
 
 def tokens(text):
@@ -42,7 +43,7 @@ def tokens(text):
     out = []
     for w in text.lower().replace('-', ' ').split():
         w = w.strip('.,?!')
-        w = {'32': 'thirty two', '30': 'thirty'}.get(w, w).replace('disc', 'disk')
+        w = {'32': 'thirty two', '30': 'thirty', '1': 'one'}.get(w, w).replace('disc', 'disk')
         out += [re.sub(r"[^a-z]", '', x) for x in w.split()]
     return [x for x in out if x]
 
@@ -136,7 +137,8 @@ def plan(segs):
         start = max(w0, prev_end + min(max(natural, MIN_GAP), MAX_KEEP_GAP))
         ratio = 1.0
         if start + dur > w1:
-            start = max(w0, prev_end + MIN_GAP)
+            # give up only as much of the pause as it takes to fit; squeeze only if even the shortest pause won't do
+            start = max(w0, prev_end + MIN_GAP, w1 - dur)
             ratio = min(1.0, (w1 - start) / dur)
             if ratio < MAX_SQUEEZE:
                 return None
@@ -187,43 +189,55 @@ def speech_level(pcm, g):
     return float(np.sqrt((r[r > r.max() * 0.1] ** 2).mean()))
 
 
+def keys_for(read):
+    """The script line each of a read's text lines is (by its words); a line since reworded gets an 'old' key."""
+    by_text = {vo.plain(vo.LINES[i][3]): i for i in vo_v3.order()}
+    return [by_text.get(t, 'old%d' % n) for n, t in enumerate(read['text'].split('\n'))]
+
+
 def patch(segs, pcm, whisper):
-    """Replace each PATCH line with the best of its context re-reads: heard exactly, spoken voice, and closest in
-    pitch and pace to the pinned read's neighbouring lines."""
+    """Replace each PATCH group of lines with the best of its context re-reads: every line heard exactly, spoken
+    voice, and closest in pitch and pace to the pinned read's lines either side."""
     idx = vo_v3.order()
-    for i, seeds in PATCH.items():
-        k = idx.index(i)
-        near = [j for j in idx[max(0, k - 1):k + 2] if j != i]
+    for group, seeds in PATCH.items():
+        k0, k1 = idx.index(group[0]), idx.index(group[-1])
+        near = [idx[k] for k in (k0 - 1, k1 + 1) if 0 <= k < len(idx)]
         ref = [vo_takes.measure(pcm[int(segs[j]['s0'] * SR):int(segs[j]['s1'] * SR)], segs[j]['text'], whisper) for j in near]
         f0_ref = float(np.mean([m['f0'] for m in ref]))
         level_ref = float(np.mean([speech_level(pcm, segs[j]) for j in near]))
         rate_ref = float(np.mean([len(segs[j]['text']) / (segs[j]['s1'] - segs[j]['s0']) for j in near]))
         best = None
-        # read with one line either side, or with three before (more run-up: closer to the full read's pace)
-        for seed, back in [(sd, b) for b in (1, 3) for sd in seeds]:
-            ctx = idx[max(0, k - back):k + 2]
+        # read with three lines of run-up before (closer to the full read's pace) and the next line after
+        for seed in seeds:
+            ctx = idx[max(0, k0 - 3):k1 + 2]
             d = vo_v3.fetch(seed, PIN[1], '\n'.join(vo.plain(vo.LINES[j][3]) for j in ctx))
             pp = vo_v3.decode(d['audio'])
             sp, _ = segment(d, pp, whisper, idx=ctx)
             if sp is None:
-                print('  patch %d s%-3d  lines not found' % (i, seed)); continue
-            g = sp[i]
-            m = vo_takes.measure(pp[int(g['s0'] * SR):int(g['s1'] * SR)], g['text'], whisper)
-            dur = g['s1'] - g['s0']
-            rate = len(g['text']) / dur
-            ok = g['exact'] and m['exact'] and m['voiced'] >= 0.3 and dur * MAX_SQUEEZE <= vo.LINES[i][1] - vo.LINES[i][0]
-            cost = abs(12 * np.log2(max(m['f0'], 1) / f0_ref)) + 3 * abs(np.log(rate / rate_ref)) - 0.1 * min(m['spread'], 4)
-            print('  patch %d s%-3d -%d  %-6s heard "%s"  %.2fs  f0 %3.0f (neighbours %3.0f)  rate %.1f (%.1f) c/s  cost %.2f' % (
-                i, seed, back, 'ok' if ok else 'reject', m['heard'], dur, m['f0'], f0_ref, rate, rate_ref, cost))
+                print('  patch %s s%-3d  lines not found' % (group, seed)); continue
+            cost, ok, rows = 0.0, True, []
+            for i in group:
+                g = sp[i]
+                m = vo_takes.measure(pp[int(g['s0'] * SR):int(g['s1'] * SR)], g['text'], whisper)
+                dur = g['s1'] - g['s0']
+                rate = len(g['text']) / dur
+                ok &= bool(g['exact'] and m['exact'] and m['voiced'] >= 0.3 and dur * MAX_SQUEEZE <= vo.LINES[i][1] - vo.LINES[i][0])
+                # pace: never quicker than the lines around it (the user: "it sounds fast"), and not drawn out either
+                pace = 3 * max(0.0, np.log(rate / rate_ref)) + 3 * max(0.0, np.log(0.7 * rate_ref / rate))
+                cost += abs(12 * np.log2(max(m['f0'], 1) / f0_ref)) + pace - 0.1 * min(m['spread'], 4)
+                rows.append('"%s" %.2fs f0 %3.0f rate %.1f' % (m['heard'], dur, m['f0'], rate))
+            print('  patch %s s%-3d  %-6s cost %5.2f  (neighbours f0 %3.0f, rate %.1f c/s)  %s' % (
+                group, seed, 'ok' if ok else 'reject', cost, f0_ref, rate_ref, ' | '.join(rows)))
             if ok and (best is None or cost < best[0]):
-                best = (cost, '%d -%d' % (seed, back), dict(g, pcm=pp, gain=level_ref / speech_level(pp, g)), sp)
+                gain = level_ref / float(np.mean([speech_level(pp, sp[i]) for i in group]))
+                best = (cost, seed, {i: dict(sp[i], pcm=pp, gain=gain) for i in group}, sp, gain)
         if best is None:
-            raise SystemExit('no re-read of line %d passes: add seeds to PATCH' % i)
-        cost, seed, g, sp = best
-        segs[i] = g
-        if k + 1 < len(idx):
-            segs[idx[k + 1]]['gap'] = sp[idx[k + 1]]['gap']        # the pause after it, as the re-read has it
-        print('  patch %d: using s%s (gain %+.1f dB)' % (i, seed, 20 * np.log10(g['gain'])))
+            raise SystemExit('no re-read of lines %s passes: add seeds to PATCH' % (group,))
+        cost, seed, new, sp, gain = best
+        segs.update(new)
+        if k1 + 1 < len(idx):
+            segs[idx[k1 + 1]]['gap'] = sp[idx[k1 + 1]]['gap']      # the pause after them, as the re-read has it
+        print('  patch %s: using s%d (gain %+.1f dB)' % (group, seed, 20 * np.log10(gain)))
 
 
 def main():
@@ -233,7 +247,7 @@ def main():
     if '--search' not in sys.argv:
         d = json.load(open(os.path.join(vo_v3.READS, 'read_s%d_st%.1f.json' % PIN)))
         pcm = vo_v3.decode(d['audio'])
-        segs, rms = segment(d, pcm, whisper)
+        segs, rms = segment(d, pcm, whisper, idx=keys_for(d))
         patch(segs, pcm, whisper)
         p = plan(segs)
         if not p:
@@ -321,7 +335,7 @@ def build(seed, stab, pcm, segs, rms, p):
     subprocess.run(['ffmpeg', '-y', '-v', 'error', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i',
                     os.path.join(vo.BUILD, 'vo.f32'), os.path.join(vo.BUILD, 'vo.wav')], check=True)
     json.dump(dict(words=words_all, chunks=chunks, read='s%d/st%.1f' % (seed, stab),
-                   patched={str(i): 'context re-read' for i in PATCH} if '--search' not in sys.argv else {}),
+                   patched={str(i): 'context re-read' for g in PATCH for i in g} if '--search' not in sys.argv else {}),
               open(os.path.join(vo.BUILD, 'words.json'), 'w'), indent=1)
 
 
