@@ -23,10 +23,14 @@ import vo_takes  # noqa: E402
 import vo_v3  # noqa: E402
 
 SR = vo.SR
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-from bh.shots import DUR as TOTAL  # noqa: E402
+import math  # noqa: E402
 MIN_GAP = 0.14            # shortest pause between lines
-MAX_KEEP_GAP = 1.1        # longest natural pause kept before the picture's window takes over
+MAX_KEEP_GAP = 0.55       # longest natural pause kept between lines (round 12, the user: "sometimes it's way too
+                          # large pause in between phrases"; it was 1.1)
+MAX_INNER = 0.45          # longest pause kept inside a line (the "..." beats ran 1.0-1.2 s)
+END_QUIET = 1.3           # quiet after the last word before the loop
+BEAT = 60.0 / 90.0
+WARP_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'bh', 'warp.json')
 MAX_SQUEEZE = 0.92
 LEAD, TAIL = 0.38, 0.45   # at most this much breath before / decay after each line comes from the read
 # the chosen performance (from `python tools/vo_flow.py --search`), kept under the script it was read from
@@ -126,29 +130,121 @@ def segment(read, pcm, whisper, idx=None):
 _last_fit = [None]
 
 
+def tighten(g, pcm):
+    """The line's own audio (its pause before and after included), with every pause inside the speech longer than
+    MAX_INNER cut down to it from the middle (30 ms crossfade, inside the read's own room noise); letter times are
+    carried through the cuts."""
+    src = g.get('pcm', pcm)
+    a = g['g0']
+    x = src[int(a * SR):int(g['g1'] * SR)].astype(np.float32) * g.get('gain', 1.0)
+    hop = int(0.01 * SR)
+    r = np.sqrt(np.convolve(x.astype(np.float64) ** 2, np.ones(hop) / hop, 'same'))[::hop]
+    k0, k1 = int((g['s0'] - a) * 100), int((g['s1'] - a) * 100)
+    quiet = r <= r[k0:k1].max() * 10 ** (-35 / 20)
+    cuts, k = [], k0
+    while k < k1:
+        if quiet[k]:
+            j = k
+            while j < k1 and quiet[j]:
+                j += 1
+            if (j - k) / 100.0 > MAX_INNER:
+                rem = (j - k) / 100.0 - MAX_INNER
+                cuts.append(((k + j) / 200.0 - rem / 2, rem))
+            k = j
+        else:
+            k += 1
+    xf = int(0.03 * SR)
+    fade = np.linspace(0, 1, xf, dtype=np.float32)
+    marks = []                                   # (time in x after which everything moves earlier, by how much)
+    for c0, rem in sorted(cuts, reverse=True):
+        i0, i1 = int(c0 * SR), int((c0 + rem) * SR)
+        x = np.concatenate([x[:i0 - xf], x[i0 - xf:i0] * (1 - fade) + x[i1:i1 + xf] * fade, x[i1 + xf:]])
+        marks.append((c0, (i1 - i0 + xf) / SR))
+
+    def remap(t):
+        t = t - a
+        for c0, d in marks:
+            if t > c0:
+                t = max(c0 - xf / SR, t - d)
+        return t
+    out = dict(g, pcm=x, gain=1.0, g0=0.0, g1=len(x) / SR, s0=remap(g['s0']), s1=remap(g['s1']),
+               cs=[remap(t) for t in g['cs']], ce=[remap(t) for t in g['ce']])
+    out['inner_cut'] = sum(d for _, d in marks)
+    return out
+
+
+class Placed:
+    """Times on the video of lines already placed: line starts/ends and a word's first letter."""
+    def __init__(self, segs):
+        self.segs, self.start = segs, {}
+
+    def end(self, i):
+        g = self.segs[i]
+        return self.start[i] + g['s1'] - g['s0']
+
+    def word(self, i, token):
+        g = self.segs[i]
+        text = ''.join(g['chars'])
+        pos = 0
+        for w in text.split(' '):
+            if w.strip('.,?!').lower() == token.lower():
+                return self.start[i] + g['cs'][pos] - g['s0']
+            pos += len(w) + 1
+        raise KeyError('%r not in line %d' % (token, i))
+
+
+# where the picture needs time before a line may start (the voice waits for it; round 11's windows, as rules)
+AFTER = {
+    2: lambda P: P.end(1) + 0.60,          # the black hole appears 0.25 s after "why.", then 0.35 s to see it
+    4: lambda P: P.word(3, 'at') + 1.75,    # the rise runs from "at it from above" (1.5 s) before "See?"
+    7: lambda P: P.word(6, 'as') + 1.95,    # the swing down from "as we go back down" (1.55 s) lands the arch, then 0.4 s
+    9: lambda P: P.word(8, 'fly') + 2.80,   # the dive from "fly in" (2.45 s) arrives before "If you hover"
+    12: lambda P: P.word(11, 'you') + 0.85,  # the visor flash on "you", then first person again
+    13: lambda P: P.end(12) + 0.60,        # the lens closes and the view pulls out
+    15: lambda P: P.end(14) + 0.60,        # the dot lands 0.15 s after "above you.", then a beat
+}
+
+
 def plan(segs):
+    """Place every line after the last: its natural pause before it, between MIN_GAP and MAX_KEEP_GAP, and no
+    earlier than the picture allows (AFTER).  -> ([(i, start, 1.0)], Placed)"""
     _last_fit[0] = None
-    """Place every line in its window, keeping the read's own pauses where the picture allows.
-    -> [(i, start, ratio)] or None if the read can't be fitted."""
     idx = vo_v3.order()
+    P = Placed(segs)
     placed, prev_end, prev = [], 0.0, None
     for i in idx:
-        w0, w1 = vo.LINES[i][0], vo.LINES[i][1]
         g = segs[i]
-        dur = g['s1'] - g['s0']
         natural = g['gap'] if prev is not None else 0.0
-        start = max(w0, prev_end + min(max(natural, MIN_GAP), MAX_KEEP_GAP))
-        ratio = 1.0
-        if start + dur > w1:
-            # give up only as much of the pause as it takes to fit; squeeze only if even the shortest pause won't do
-            start = max(w0, prev_end + MIN_GAP, w1 - dur)
-            ratio = min(1.0, (w1 - start) / dur)
-            if ratio < MAX_SQUEEZE:
-                return None
-        placed.append((i, start, ratio))
+        start = max(vo.LINES[i][0], prev_end + min(max(natural, MIN_GAP), MAX_KEEP_GAP))
+        if i in AFTER:
+            start = max(start, AFTER[i](P))
+        P.start[i] = start
+        placed.append((i, start, 1.0))
         _last_fit[0] = i
-        prev_end, prev = start + dur * ratio, i
-    return placed
+        prev_end, prev = start + g['s1'] - g['s0'], i
+    return placed, P
+
+
+def warp_knots(P):
+    """Video time -> story time knots for bh/shots.py, read off the placed words (round 11's hand-set knots, as
+    rules), plus the video's length and the dot's fast-forward window."""
+    reveal = P.end(1) + 0.25
+    R0 = P.word(3, 'at')
+    K = [(0.0, 0.0), (reveal, 8 / 3.0),                                   # T_A: the black hole appears
+         (R0 - 0.35, 5.05), (R0, 16 / 3.0), (R0 + 1.50, 7.10),           # dip, rise on "at it from above"
+         (P.word(5, 'back') - 0.10, 7.50), (P.word(5, 'back') + 0.30, 7.80),   # the back half turns ice
+         (P.word(6, 'as'), 8.60), (P.word(6, 'as') + 1.55, 10.67),        # swing down, the arch
+         (P.end(7) + 0.10, 13.50), (P.word(8, 'fly'), 16.0), (P.word(8, 'fly') + 2.45, 56 / 3.0),   # dive
+         (P.start[10] + 0.15, 21.30), (P.word(10, "That's") - 0.10, 22.20), (P.word(10, "That's") + 0.90, 23.00),
+         (P.word(11, 'you') + 0.10, 24.00),                               # the lap ends in the visor on "you"
+         (P.start[12] - 0.20, 24.55), (P.start[12] + 0.35, 24.90), (P.word(12, 'you') + 0.10, 25.50),
+         (P.end(12) - 0.45, 25.95), (P.end(12) + 0.15, 26.30), (P.end(12) + 0.70, 80 / 3.0),
+         (P.word(13, 'Then') - 0.10, 27.80), (P.word(14, 'universe') + 0.20, 29.50), (P.end(14) + 0.15, 32.0)]
+    for (a0, b0), (a1, b1) in zip(K, K[1:]):
+        assert a1 > a0 + 0.05 and b1 > b0, ('warp knots out of order', (a0, b0), (a1, b1))
+    dur = math.ceil((P.end(17) + END_QUIET) / BEAT - 1e-6) * BEAT
+    ff = (P.word(16, 'and') - 0.15, P.end(16) + 0.05)
+    return K, dur, ff
 
 
 def room_tone(pcm, rms, seconds):
@@ -283,10 +379,14 @@ def main():
         pcm = vo_v3.decode(d['audio'])
         segs, rms = segment(d, pcm, whisper, idx=keys_for(d))
         patch(segs, pcm, whisper)
-        p = plan(segs)
-        if not p:
-            raise SystemExit('the pinned read no longer fits the windows (after line %s)' % _last_fit[0])
-        build(PIN[0], PIN[1], pcm, segs, rms, p)
+        segs = {i: (tighten(g, pcm) if not isinstance(i, str) else g) for i, g in segs.items()}
+        p, P = plan(segs)
+        K, dur, ff = warp_knots(P)
+        json.dump(dict(knots=[[round(a, 3), round(b, 4)] for a, b in K], dur=round(dur, 4), ff_window=[round(ff[0], 3), round(ff[1], 3)],
+                       note='written by tools/vo_flow.py from the placed narration; read by bh/shots.py'),
+                  open(WARP_JSON, 'w'), indent=1)
+        print('video %.2f s; the dot lands at %.2f; warp -> %s' % (dur, K[-1][0], os.path.relpath(WARP_JSON)))
+        build(PIN[0], PIN[1], pcm, segs, rms, p, dur)
         return
     candidates = []
     for seed, stab in vo_v3.TAKES:
@@ -305,7 +405,7 @@ def main():
         f0s = [ms[i]['f0'] for i in idx if ms[i]['voiced'] >= 0.3 and ms[i]['f0'] > 0]
         centre = float(np.median(f0s)) if f0s else 0
         fry = [i for i in idx if ms[i]['f0'] < 0.72 * centre]
-        p = plan(segs)
+        p, _ = plan(segs)
         if not p:
             j = vo_v3.order()[vo_v3.order().index(_last_fit[0]) + 1] if _last_fit[0] is not None else vo_v3.order()[0]
             print('      line %d needs %.2f s; window %.2f s' % (j, segs[j]['s1'] - segs[j]['s0'], vo.LINES[j][1] - vo.LINES[j][0]))
@@ -322,12 +422,12 @@ def main():
         raise SystemExit('no single read carries the whole script: add seeds to vo_v3.TAKES or loosen a window')
     score, seed, stab, d, pcm, segs, rms, p = max(candidates, key=lambda c: c[0])
     print('using read s%d st%.1f (pin it in PIN)' % (seed, stab))
-    build(seed, stab, pcm, segs, rms, p)
+    build(seed, stab, pcm, segs, rms, p, 43.3333)
 
 
-def build(seed, stab, pcm, segs, rms, p):
-    n = int(TOTAL * SR)
-    track = room_tone(pcm, rms, TOTAL) * 1.0
+def build(seed, stab, pcm, segs, rms, p, total):
+    n = int(total * SR)
+    track = room_tone(pcm, rms, total) * 1.0
     words_all, chunks = [], []
     starts = {i: s for i, s, _ in p}
     for k, (i, start, ratio) in enumerate(p):
@@ -357,9 +457,9 @@ def build(seed, stab, pcm, segs, rms, p):
             c = ws[q:q + len(mc)]; q += len(mc)
             chunks.append(dict(start=round(c[0][1], 3), end=round(c[-1][2], 3), words=[w for w, _, _ in c],
                                hot=[w for (w, _, _), (_, h) in zip(c, mc) if h]))
-        print('  line %2d  %6.2f-%6.2f  (window %.2f-%.2f)%s  %s' % (
-            i, start, start + (g['s1'] - g['s0']) * ratio, vo.LINES[i][0], vo.LINES[i][1],
-            '  squeeze x%.3f' % ratio if ratio < 1 else '', g['text']))
+        print('  line %2d  %6.2f-%6.2f%s%s  %s' % (
+            i, start, start + (g['s1'] - g['s0']) * ratio, '  squeeze x%.3f' % ratio if ratio < 1 else '',
+            '  (inner pauses -%.2f s)' % g['inner_cut'] if g.get('inner_cut', 0) > 0.01 else '', g['text']))
     chunks.sort(key=lambda c: c['start'])
     for j, c in enumerate(chunks):
         nxt = chunks[j + 1]['start'] if j + 1 < len(chunks) else 99

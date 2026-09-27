@@ -5,7 +5,10 @@ below are story times).  Since round 11 the video runs 74.67 s around a slower, 
 takes VIDEO time and maps it to story time through WARP: holds stretch to fit the lines about them, a camera move
 finishes before the line about its result starts, and cuts land where the words need them.
 """
+import json
 import math
+import os
+
 import numpy as np
 
 from .frame import Cam, norm, rotate
@@ -14,43 +17,29 @@ from .geodesic import B_CRIT
 BPM = 90.0
 BAR = 4 * 60.0 / BPM
 STORY_DUR = 65 * BAR / 4           # the animation's own clock: 43.333 s (the whole video until round 10)
-DUR = 112 * BAR / 4                 # 74.667 s = 112 beats: the video since round 11, re-timed around the narration
+DUR = 112 * BAR / 4                 # round 11's 74.667 s; bh/warp.json (below) sets it from the narration
 FPS = 30
-N_FRAMES = int(round(DUR * FPS))   # 2240
 
 # shot boundaries (v2 storyboard)
 T_A, T_B, T_C, T_D, T_E, T_F, T_G = BAR, 2 * BAR, 6 * BAR, 7 * BAR, 22.2, 10 * BAR, 12 * BAR
 T_E2 = 24.55                      # E2: first person again, the line opens into the back of your own head
 HOLE_Y = 0.42                      # the black hole (and the final dot) sit at 42% of frame height
 
-# video time -> story time, knot by knot, read off the placed narration (build/words.json, round 11):
-WARP = [
-    (0.00, 0.000),
-    (5.35, T_A),      # the black hole appears just after "Let me show you why."
-    (11.55, 5.05),    # A holds through "This is a black hole. And this bright ring is hot gas, spinning around it."
-    (12.05, T_B),     # "Let's look at it from above." ... the rise starts as the sentence ends
-    (14.00, 7.10),    # the rise is over before "See? The disk is actually flat." (14.3)
-    (17.80, 7.50),    # the back half turns ice on "This is the *back half" (tint 7.50 -> 7.80)
-    (18.20, 7.80),
-    (22.10, 8.60),    # the swing down starts on "as we go back down"
-    (24.00, 10.67),   # the arch lands; 0.66 s of silence before "The black hole bends its light"
-    (30.10, 13.50),   # the arch (ice) holds through "...and under the bottom", then fades to gold
-    (31.80, T_C),     # the dive starts on "fly in"
-    (34.50, T_D),     # arrival at the photon sphere, 0.5 s before "If you hover right here"
-    (40.00, 21.30),   # the glow sweeps along the line on "And see this thin line?"
-    (41.40, T_E),     # the line opens into the diagram's circle on "That's light, going around..."
-    (42.40, 23.00),
-    (48.00, 24.00),   # the light's lap ends in the visor flash on "...and come back to you."
-    (48.75, T_E2),    # first person again for "So in this line,"
-    (49.30, 24.90),   # the line opens...
-    (50.30, 25.50),   # ...onto the back of your head for "you see the back of your own head"
-    (51.60, 25.95),
-    (52.20, 26.30),
-    (52.80, T_F),     # pull-out done as "Now let's go lower" starts
-    (56.50, 27.80),   # sinking (the bright sky shrinks) through "...hover just above the edge."
-    (58.90, 29.50),   # "Then look up." ... straight up by "The whole universe shrinks"
-    (62.00, T_G),     # the dot lands after "...into one small dot above you."
-]
+# video time -> story time, knot by knot, read off the placed narration by tools/vo_flow.py (bh/warp.json), with
+# the video's length and the dot's fast-forward window.  The fallback is round 11's hand-set map.
+_WJ = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'warp.json')
+if os.path.exists(_WJ):
+    _w = json.load(open(_WJ))
+    WARP = [tuple(k) for k in _w['knots']]
+    DUR = _w['dur']
+    FF_WINDOW = tuple(_w['ff_window'])
+else:
+    WARP = [(0.00, 0.000), (5.35, T_A), (11.55, 5.05), (12.05, T_B), (14.00, 7.10), (17.80, 7.50), (18.20, 7.80),
+            (22.10, 8.60), (24.00, 10.67), (30.10, 13.50), (31.80, T_C), (34.50, T_D), (40.00, 21.30), (41.40, T_E),
+            (42.40, 23.00), (48.00, 24.00), (48.75, T_E2), (49.30, 24.90), (50.30, 25.50), (51.60, 25.95),
+            (52.20, 26.30), (52.80, T_F), (56.50, 27.80), (58.90, 29.50), (62.00, T_G)]
+    FF_WINDOW = (67.25, 69.40)
+N_FRAMES = int(round(DUR * FPS))
 T_G_REAL = WARP[-1][0]
 T_A_REAL = WARP[1][0]
 # after the dot lands (and in the cold open, which continues it) the ending runs on its own steady clock, so the
@@ -97,12 +86,10 @@ def unwarp(s):
     return 0.5 * (lo + hi)
 
 
-# "...and half an hour goes by out there": the sky inside the dot sweeps one extra full turn while the counter runs
-# 1 -> 32 MIN, like a clock hand racing.  (A first try sped up the disk's own clock instead; at that distance its
-# gas is too blurred to show it: frame-to-frame change inside the dot didn't move.)  A whole turn ends where it
-# started, so everything after it, and the loop, is unchanged.  Video times: "and half an hour goes by out there."
-# runs 67.23-69.36 (build/words.json).
-FF_WINDOW = (67.25, 69.40)
+# "...and half an hour goes by out there": the sky inside the dot sweeps one extra full turn (FF_WINDOW, from
+# bh/warp.json) while the counter runs 1 -> 32 MIN, like a clock hand racing.  (A first try sped up the disk's own
+# clock instead; at that distance its gas is too blurred to show it.)  A whole turn ends where it started, so
+# everything after it, and the loop, is unchanged.
 
 
 def ff_u(t):

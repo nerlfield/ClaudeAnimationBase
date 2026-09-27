@@ -31,7 +31,7 @@ def onset_at(rms, thr, a, b):
         q = np.nonzero(quiet)[0]
         if len(q):
             on[:q[0] + 12] = False
-    k = np.nonzero(on)[0]
+    k = np.nonzero(np.convolve(on, np.ones(3), 'valid') == 3)[0]    # on for 15 ms: a lone 5 ms blip isn't speech
     if not len(k):
         return a
     t = i0 + k[0]

@@ -124,13 +124,17 @@ def peak_time(y):
 # downbeat is the dot landing (62.0 s); the reveal, the arch and the visor flash fall on beats of the same grid.
 # Bar 4-5, the steady arpeggio groove, loops under the explanations; the build (bars 6-11) runs from the light's lap
 # to the dot.  After the drop's first second, its decay is stretched to fill the ending (a tone and its room tail).
-MUSIC_BARS = [0, 1, 2, 3] + [4, 5] * 6 + [4] + [6, 7, 8, 9, 10, 11]
+def music_bars():
+    """As many whole bars as fit before the drop: the opening four, the groove looped, the six-bar build."""
+    n = int(shots.T_G_REAL // (4 * 60 / 90.0))
+    return [0, 1, 2, 3] + [4, 5] * ((n - 10) // 2) + [4] * ((n - 10) % 2) + [6, 7, 8, 9, 10, 11]
 
 
 def arrange_music(mu):
     bar = int(round(4 * 60 / 90.0 * SR)); xf = int(0.04 * SR)
     ramp = np.linspace(0, 1, xf)[:, None].astype(np.float32)
-    start = int(round((shots.T_G_REAL - len(MUSIC_BARS) * 4 * 60 / 90.0) * SR))     # 0.667 s: one beat in
+    MUSIC_BARS = music_bars()
+    start = int(round((shots.T_G_REAL - len(MUSIC_BARS) * 4 * 60 / 90.0) * SR))     # under a bar in
     out = np.zeros((N + 2 * bar, mu.shape[1]), np.float32)
     pos = start
     for k, b in enumerate(MUSIC_BARS):

@@ -27,29 +27,29 @@ LINE_LUFS = -22.5                   # each line is matched to this before placem
 LINES = [
     # Round 11 (the user: "imagine you explaining it to a 3 year old… smooth, clear, direct, clean"; "you're using too
     # little of phrases like: this is, there is"): plain words, one idea per sentence, each line pointing at what is
-    # on screen, and every camera move finished before the line about its result starts.  The first number is the
-    # earliest a line may start (the picture is then re-timed around the voice: bh/shots.py WARP); none must end
-    # by a deadline, so no line is squeezed.
-    (0.15, 99, 1.00, "See this glowing *dot? | That's the whole *universe."),
-    (3.75, 99, 1.00, "Let me show you *why."),
-    (5.80, 99, 1.00, "This is a *black *hole. | And this bright ring is hot *gas, | spinning around it."),
-    (11.10, 99, 1.00, "Let's look at it from *above."),
-    (14.30, 99, 1.00, "See? | The disk is actually *flat."),
-    (17.20, 99, 1.00, "This is the *back half. | And this is the *front half."),
-    (20.80, 99, 1.00, "Now watch the *back half, | as we go back down."),
-    (24.60, 99, 1.00, "The black hole *bends its light, | up over the *top... | and under the *bottom."),
-    (30.30, 99, 1.00, "Now let's fly in *closer. | Much *closer."),
-    (34.90, 99, 1.00, "If you hover right here, | the black hole fills | exactly *half your sky."),
-    (38.90, 99, 1.00, "And see this thin *line? | That's light, | going around the black hole in a *circle."),
-    (43.70, 99, 1.00, "Light can go all the way *around... | and come back to *you."),
-    (48.10, 99, 1.00, "So in this line, | you see the back of your own *head."),
-    (52.00, 99, 1.00, "Now let's go lower, | and hover just above the *edge. | Then look *up."),
-    (56.90, 99, 1.00, "The whole universe *shrinks | into one small *dot above you."),
+    # on screen, and every camera move finished before the line about its result starts.  Lines are placed one after
+    # another at their own pace; where the picture needs time first, tools/vo_flow.py AFTER says so, and the picture
+    # is then re-timed around the voice (bh/warp.json).  The first number is only a floor; none is squeezed.
+    (0.00, 99, 1.00, "See this glowing *dot? | That's the whole *universe."),
+    (0.00, 99, 1.00, "Let me show you *why."),
+    (0.00, 99, 1.00, "This is a *black *hole. | And this bright ring is hot *gas, | spinning around it."),
+    (0.00, 99, 1.00, "Let's look at it from *above."),
+    (0.00, 99, 1.00, "See? | The disk is actually *flat."),
+    (0.00, 99, 1.00, "This is the *back half. | And this is the *front half."),
+    (0.00, 99, 1.00, "Now watch the *back half, | as we go back down."),
+    (0.00, 99, 1.00, "The black hole *bends its light, | up over the *top... | and under the *bottom."),
+    (0.00, 99, 1.00, "Now let's fly in *closer. | Much *closer."),
+    (0.00, 99, 1.00, "If you hover right here, | the black hole fills | exactly *half your sky."),
+    (0.00, 99, 1.00, "And see this thin *line? | That's light, | going around the black hole in a *circle."),
+    (0.00, 99, 1.00, "Light can go all the way *around... | and come back to *you."),
+    (0.00, 99, 1.00, "So in this line, | you see the back of your own *head."),
+    (0.00, 99, 1.00, "Now let's go lower, | and hover just above the *edge. | Then look *up."),
+    (0.00, 99, 1.00, "The whole universe *shrinks | into one small *dot above you."),
     # to a hovering observer at 1.001x, everything outside runs 1/sqrt(1 - 1/1.001) = 31.6x fast: one minute
     # down here is 31.6 minutes out there (said "half an hour", shown as 1 min -> 32 min)
-    (62.80, 99, 1.00, "And down here, | time runs *slower."),
-    (64.40, 99, 1.00, "Stay for one *minute... | and half an *hour goes by out there."),
-    (69.90, 99, 1.00, "And all this *darkness around the dot? | That's the black hole."),
+    (0.00, 99, 1.00, "And down here, | time runs *slower."),
+    (0.00, 99, 1.00, "Stay for one *minute... | and half an *hour goes by out there."),
+    (0.00, 99, 1.00, "And all this *darkness around the dot? | That's the black hole."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order
 
