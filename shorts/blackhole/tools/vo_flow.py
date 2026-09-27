@@ -38,7 +38,7 @@ PIN = (163, 0.0)         # v2 (round 13): the audition winner (s19 read v1; s179
 # lines reworded after the read was chosen: re-read together, in their neighbours' company, with the pinned read's
 # settings (seeds tried in turn) and spliced in.  The pinned read said "Out there, time's in fast-forward." here:
 # heard as "times and fast forward" and, even reworded, too quick to land (round 9).
-PATCH = {}
+# v2 after the fresh-eyes critic (round 13): three lines reworded, re-read in context with the pinned voice
 # round 11: a new script, so a new read.  Reads auditioned (python tools/vo_flow.py --audition); the picture is then
 # re-timed around the chosen one (bh/shots.py WARP), so the voice keeps its own pace.
 AUDITION = [(19, 0.5), (179, 0.0), (163, 0.0)]     # v2 (round 13): the three best voices of round 11's audition
@@ -195,19 +195,28 @@ class Placed:
         raise KeyError('%r not in line %d' % (token, i))
 
 
-# where the picture needs time before a line may start (the voice waits for it).  Version 2 line numbers.
+def L(opening):
+    """The script line that starts with these words (rules below name lines by their words, not their numbers)."""
+    return next(i for i, l in enumerate(vo.LINES) if vo.plain(l[3]).startswith(opening))
+
+
+# v2 after the fresh-eyes critic (round 13): three lines reworded, re-read in context with the pinned voice
+PATCH = {(L('This is the first real photo'), L("It's as heavy")): [163, 179, 19, 7], (L('Even GPS'),): [163, 179, 19, 7]}
+
+# where the picture needs time before a line may start (the voice waits for it)
 AFTER = {
-    6: lambda P: P.word(5, 'at') + 1.75,    # the rise runs from "at it from above" (1.5 s) before "See?"
-    10: lambda P: max(P.start[9] + 1.55, P.end(9) + 0.10) + 0.35,   # the swing down (from "As we go back down")
-                                                                     # lands the arch, then "But gravity bends"
-    14: lambda P: P.word(13, 'fly') + 2.80,  # the dive from "fly in" (2.45 s) arrives before "If you hover"
-    16: lambda P: P.word(15, 'you') + 0.85,  # the visor flash on "you", then first person again
-    17: lambda P: P.end(16) + 0.60,        # the lens closes and the view pulls out
-    19: lambda P: P.end(18) + 0.60,        # the dot lands 0.15 s after "above you.", then a beat
+    L('And up close'): lambda P: P.word(L("It's as heavy"), 'circle') + 1.40,   # the solar-system circle holds
+    L('See? The disk'): lambda P: P.word(L("Let's look at it"), 'at') + 1.75,    # the rise (1.5 s) before "See?"
+    L('But gravity'): lambda P: max(P.start[L('As we go')] + 1.55, P.end(L('As we go')) + 0.10) + 0.35,   # swing, arch
+    L('If you hover'): lambda P: P.word(L("Now let's fly"), 'fly') + 2.80,       # the dive (2.45 s) arrives first
+    L('So in this line'): lambda P: P.word(L('And see this thin'), 'you') + 0.85,   # the visor flash, then first person
+    L("Now let's go lower"): lambda P: P.end(L('So in this line')) + 0.45,       # the lens closes, the view pulls out
+    L('And down here'): lambda P: P.end(L('The whole universe')) + 0.60,        # the dot lands, then a beat
+    L('Even GPS'): lambda P: P.end(L('Stay for one')) + 0.45,                  # the Earth card comes in
+    L('And all this darkness'): lambda P: P.end(L('Even GPS')) + 0.50,          # back to the dot
 }
-# the real photo (inserts in bh/inserts.py) covers the cut from the dot to the black hole: it is fully in from
-# PHOTO_IN after "look at this" until "And up close"
-PHOTO_IN = lambda P: P.word(1, 'this') + 0.35
+# the real photo (bh/inserts.py) covers the cut from the dot to the black hole: fully in from PHOTO_IN
+PHOTO_IN = lambda P: P.word(L('To see why'), 'this') + 0.35
 
 
 def plan(segs):
@@ -232,25 +241,29 @@ def plan(segs):
 
 def warp_knots(P):
     """Video time -> story time knots for bh/shots.py, read off the placed words, plus the video's length and the
-    dot's fast-forward window (version 2 line numbers)."""
-    photo_mid = 0.5 * (PHOTO_IN(P) + P.start[4])     # the cut from the dot to the black hole, hidden under the photo
-    R0 = P.word(5, 'at')
-    arch = max(P.start[9] + 1.55, P.end(9) + 0.10)
-    K = [(0.0, 0.0), (photo_mid, 8 / 3.0),                              # T_A under the photo
-         (R0 - 0.35, 5.05), (R0, 16 / 3.0), (R0 + 1.50, 7.10),           # A holds; dip, rise on "at it from above"
-         (P.word(7, 'back') - 0.10, 7.50), (P.word(7, 'back') + 0.30, 7.80),   # the back half turns ice
-         (P.start[9], 8.60), (arch, 10.67),                              # swing down through "you'd expect it to hide"
-         (P.end(12) + 0.10, 13.50), (P.word(13, 'fly'), 16.0), (P.word(13, 'fly') + 2.45, 56 / 3.0),   # dive
-         (P.start[15] + 0.15, 21.30), (P.word(15, "It's") - 0.10, 22.20), (P.word(15, "It's") + 0.90, 23.00),
-         (P.word(15, 'you') + 0.10, 24.00),                               # the lap ends in the visor on "you"
-         (P.start[16] - 0.20, 24.55), (P.start[16] + 0.35, 24.90), (P.word(16, 'you') + 0.10, 25.50),
-         (P.end(16) - 0.45, 25.95), (P.end(16) + 0.15, 26.30), (P.end(16) + 0.70, 80 / 3.0),
-         (P.word(17, 'Then') - 0.10, 27.80), (P.word(18, 'universe') + 0.20, 29.50), (P.end(18) + 0.15, 32.0)]
+    dot's fast-forward window."""
+    photo_mid = 0.5 * (PHOTO_IN(P) + P.start[L('And up close')])   # the dot -> black hole cut, under the photo
+    R0 = P.word(L("Let's look at it"), 'at')
+    down = L('As we go')
+    arch = max(P.start[down] + 1.55, P.end(down) + 0.10)
+    fly = P.word(L("Now let's fly"), 'fly')
+    thin, head = L('And see this thin'), L('So in this line')
+    K = [(0.0, 0.0), (photo_mid, 8 / 3.0),                                   # T_A under the photo
+         (R0 - 0.35, 5.05), (R0, 16 / 3.0), (R0 + 1.50, 7.10),                # A holds; the rise on "at it from above"
+         (P.word(L('This is the back'), 'back') - 0.10, 7.50), (P.word(L('This is the back'), 'back') + 0.30, 7.80),
+         (P.start[down], 8.60), (arch, 10.67),                                # swing down through "you'd expect it to hide"
+         (P.start[L('In 1979')] + 0.20, 13.50), (fly, 16.0), (fly + 2.45, 56 / 3.0),   # gold again; the dive
+         (P.start[thin] + 0.15, 21.30), (P.word(thin, "It's") - 0.10, 22.20), (P.word(thin, "It's") + 0.90, 23.00),
+         (P.word(thin, 'you') + 0.10, 24.00),                                 # the lap ends in the visor on "you"
+         (P.start[head] - 0.20, 24.55), (P.start[head] + 0.35, 24.90), (P.word(head, 'you') + 0.10, 25.50),
+         (P.end(head) - 0.45, 25.95), (P.end(head) + 0.15, 26.30), (P.end(head) + 0.70, 80 / 3.0),
+         (P.word(L("Now let's go lower"), 'Then') - 0.10, 27.80),
+         (P.word(L('The whole universe'), 'universe') + 0.20, 29.50), (P.end(L('The whole universe')) + 0.15, 32.0)]
     for (a0, b0), (a1, b1) in zip(K, K[1:]):
         assert a1 > a0 + 0.05 and b1 > b0, ('warp knots out of order', (a0, b0), (a1, b1))
     last = max(P.start)
     dur = math.ceil((P.end(last) + END_QUIET) / BEAT - 1e-6) * BEAT
-    ff = (P.word(20, 'and') - 0.15, P.end(20) + 0.05)
+    ff = (P.word(L('Stay for one'), 'and') - 0.15, P.end(L('Stay for one')) + 0.05)
     return K, dur, ff
 
 

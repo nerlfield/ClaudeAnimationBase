@@ -32,13 +32,13 @@ LINES = [
     # another at the read's own pace; tools/vo_flow.py AFTER says where the picture needs time first.
     (0.00, 99, 1.00, "See this glowing *dot? | That's the whole *universe."),
     (0.00, 99, 1.00, "To see why, | look at *this."),
-    (0.00, 99, 1.00, "This is the first real *photo of a black hole, | released in *2019. | It took telescopes | all over the *Earth."),
-    (0.00, 99, 1.00, "It's *huge. | Our whole solar system | is this tiny *circle."),
+    (0.00, 99, 1.00, "This is the first real *photo of a black hole, | released in *2019."),
+    # M87*: 6.5 billion solar masses (EHT 2019); Pluto's orbit drawn to scale inside the ring (sources.md)
+    (0.00, 99, 1.00, "It's as heavy as | six and a half *billion Suns. | And our whole solar system | is this tiny *circle."),
     (0.00, 99, 1.00, "And up *close, | it would look like this. | The bright ring is hot *gas, | spinning around it."),
     (0.00, 99, 1.00, "Let's look at it from *above."),
     (0.00, 99, 1.00, "See? | The disk is actually *flat."),
     (0.00, 99, 1.00, "This is the *back half. | And this is the *front half."),
-    (0.00, 99, 1.00, "Now watch the *back half."),
     (0.00, 99, 1.00, "As we go back down, | you'd expect it to *hide | behind the black hole."),
     (0.00, 99, 1.00, "But gravity *bends its light, | up over the *top... | and under the *bottom."),
     (0.00, 99, 1.00, "In *1979, | Jean-Pierre Luminet drew this by *hand, | dot by dot."),
@@ -55,7 +55,7 @@ LINES = [
     (0.00, 99, 1.00, "Stay for one *minute... | and half an *hour goes by out there."),
     # GPS: +45 us/day from weaker gravity in orbit, -7 us/day from orbital speed, net +38 us/day; uncorrected, fixes
     # drift about 10 km a day (Ashby 2003; sources.md)
-    (0.00, 99, 1.00, "It even happens on *Earth. | GPS clocks up in orbit | run *fast. | Without a fix, | your map would drift | *ten kilometers a day."),
+    (0.00, 99, 1.00, "Even *GPS feels this. | Up in orbit, | clocks run *fast, | and without a fix, | your map would drift | *ten kilometers a day."),
     (0.00, 99, 1.00, "And all this *darkness around the dot? | That's the black hole."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order

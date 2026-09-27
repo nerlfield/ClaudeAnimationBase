@@ -62,12 +62,12 @@ def times():
     """Every insert's key times (video seconds)."""
     t_photo = word_at('this', after=3.0, default=4.3) + 0.35          # fully in (as in tools/vo_flow.py PHOTO_IN)
     t_close = chunk_at(['And', 'up', 'close'], after=10.0, default=16.3) + 0.10
-    t_circle = chunk_at(['is', 'this', 'tiny'], after=8.0, default=14.4) + 0.55
+    t_circle = chunk_at(['is', 'this', 'tiny'], after=5.0, default=13.5) + 0.30
     t_1979 = chunk_at(['In', '1979'], after=30.0, default=40.5) - 0.10
     t_inter = chunk_at(['And', "Interstellar's"], after=30.0, default=45.5)
     t_fly = chunk_at(['Now', "let's", 'fly'], after=30.0, default=48.9)
-    t_earth = chunk_at(['It', 'even'], after=60.0, default=82.0) - 0.10
-    t_fast = chunk_at(['run', 'fast'], after=60.0, default=84.9)
+    t_earth = chunk_at(['Even', 'GPS'], after=60.0, default=81.2) - 0.10
+    t_fast = chunk_at(['clocks', 'run', 'fast'], after=60.0, default=83.5)
     t_km = chunk_at(['ten', 'kilometers'], after=60.0, default=88.3)
     t_dark = chunk_at(['And', 'all', 'this'], after=60.0, default=90.3)
     return dict(photo_in0=t_photo - 0.55, photo_in1=t_photo, photo_out0=t_close, photo_out1=t_close + 0.6,
@@ -98,9 +98,10 @@ def _photo_frame(push):
 def _stipple(img, t):
     """The frame redrawn as white ink dots on black, denser where it is brighter (Luminet's 1979 way of drawing)."""
     h, w = img.shape[:2]
-    step = max(2, int(round(3 * w / W)))
+    step = max(2, int(round(4 * w / W)))
     lum = cv2.resize(img.mean(axis=2), (w // step, h // step), interpolation=cv2.INTER_AREA)
-    lum = 0.62 * np.clip(lum / max(1e-3, np.percentile(lum, 99.5)), 0, 1) ** 1.1     # at most 62% ink: gradation
+    lum = np.clip(lum / max(1e-3, np.percentile(lum, 99.5)), 0, 1)
+    lum = 0.62 * np.clip((lum - 0.10) / 0.90, 0, 1) ** 1.1      # at most 62% ink; the dark sky stays clean paper
     rng = np.random.default_rng(1979)                  # the same dot pattern every frame: the drawing holds still
     thr = rng.random(lum.shape).astype(np.float32)
     dots = (lum > thr).astype(np.float32)
@@ -144,14 +145,14 @@ def _circle(r, age, fade):
     """Pluto's orbit at M87*'s scale, with its label."""
     k = ov._ease_out(age / 0.3)
     lay = ov._layer(); d = ImageDraw.Draw(lay)
-    rr = r * (0.6 + 0.4 * k)
-    d.ellipse([CX - rr, CY - rr, CX + rr, CY + rr], outline=ov.GOLD + (255,), width=4)
+    rr = r * (0.6 + 0.4 * k) + 18 * math.exp(-age / 0.25) * k                      # a small overshoot pop
+    d.ellipse([CX - rr, CY - rr, CX + rr, CY + rr], outline=ov.GOLD + (255,), width=6)
     d.ellipse([CX - 4, CY - 4, CX + 4, CY + 4], fill=ov.GOLD + (255,))           # the Sun
     d.line([(CX, CY - rr - 8), (CX, CY - 150)], fill=ov.GOLD + (230,), width=3)          # leader up to the label
-    f1 = ov.font('Montserrat-Black.ttf', 44); f2 = ov.font('Inter-ExtraBold.ttf', 30)
+    f1 = ov.font('Montserrat-Black.ttf', 52); f2 = ov.font('Inter-ExtraBold.ttf', 32)
     for txt, f, c, y in (('OUR SOLAR SYSTEM', f1, ov.GOLD, CY - 250), ("(PLUTO'S ORBIT, TO SCALE)", f2, ov.WHITE, CY - 196)):
         d.text((CX - f.getlength(txt) / 2, y), txt, font=f, fill=c + (255,))
-    return ov._pop(ov._shadowed(lay, 8, (0, 3), 0.9), 1.0, fade * ov._smooth(age / 0.2), (CX, CY))
+    return ov._pop(ov._glow(ov._shadowed(lay, 8, (0, 3), 0.9), ov.GOLD, 10, 0.6), 1.0, fade * ov._smooth(age / 0.2), (CX, CY))
 
 
 def _earth_card(t, t0):
@@ -159,7 +160,7 @@ def _earth_card(t, t0):
     R = 150.0
     base = np.zeros((H, W, 3), np.float32)          # the Earth goes in between the two halves of the orbit (apply)
     lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
-    a, b, tilt = 4.2 * R * 0.78, 4.2 * R * 0.22, math.radians(-12)
+    a, b, tilt = 390.0, 110.0, math.radians(-12)                    # drawn smaller than true (4.2 R) to fit
 
     def pt(th):
         x, y = a * math.cos(th), b * math.sin(th)
@@ -175,7 +176,7 @@ def _earth_card(t, t0):
     target.ellipse([sx - 9, sy - 9, sx + 9, sy + 9], fill=ov.WHITE + (255,))
     target.line([(sx - 26, sy), (sx + 26, sy)], fill=ov.ICE + (255,), width=6)   # solar panels
     f = ov.font('Inter-ExtraBold.ttf', 30)
-    df.text((sx + 22, sy - 44), 'GPS', font=f, fill=ov.WHITE + (235,))
+    df.text((sx + 22 if sx < CX else sx - 22 - f.getlength('GPS'), sy - 46), 'GPS', font=f, fill=ov.WHITE + (235,))
     return base, lay, lay_front
 
 
@@ -206,8 +207,8 @@ def apply(img, t):
         img = img * (1 - a) + _stipple(img, t) * a
         layers.append(_text([('1979 · JEAN-PIERRE LUMINET', 'Montserrat-Black.ttf', 54, ov.WHITE),
                              ('THE FIRST PICTURE OF THIS, COMPUTED', 'Inter-ExtraBold.ttf', 32, ov.ICE),
-                             ('ON AN IBM 7040 AND DRAWN BY HAND', 'Inter-ExtraBold.ttf', 32, ov.ICE)], 200, a))
-        layers.append(ov.corner_tag('* our simulation, redrawn in dots', a))
+                             ('ON AN IBM 7040 AND DRAWN BY HAND', 'Inter-ExtraBold.ttf', 32, ov.ICE),
+                             ('* OUR SIMULATION, REDRAWN IN DOTS HIS WAY', 'Inter-ExtraBold.ttf', 26, (200, 204, 214))], 200, a))
     # Interstellar
     if T['inter0'] <= t < T['inter1']:
         a = min(ov._smooth(seg(t, T['inter0'], T['inter0'] + 0.3)), 1.0 - ov._smooth(seg(t, T['inter1'] - 0.3, T['inter1'])))
@@ -235,7 +236,7 @@ def apply(img, t):
             base = cv2.resize(base, (w, h), interpolation=cv2.INTER_AREA)
         img = img * (1 - a) + (img * 0.15 + base) * a
         if t >= T['fast'] and (T['km'] is None or t < T['km']):
-            layers.append(ov.big_value('+38', 'GPS clocks run fast, every day', t - T['fast'], a, unit='μs'))
+            layers.append(ov.big_value('FASTER', 'where gravity is weaker', t - T['fast'], a))
         if T['km'] is not None and t >= T['km']:
             layers.append(ov.big_value('10', 'map drift a day, if not fixed', t - T['km'], a, unit='KM'))
         layers.append(_credit('Earth: NASA, Apollo 17, 1972', a))

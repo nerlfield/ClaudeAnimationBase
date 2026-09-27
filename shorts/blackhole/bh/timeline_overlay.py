@@ -116,7 +116,7 @@ def minute_times():
     """When 1 MIN pops ("Stay for one minute"), when it counts up to 32 ("and half an hour"), and when it goes."""
     t_min = chunk_time(['Stay', 'for'], default=65.4)
     t_hour = chunk_time(['and', 'half'], default=67.3)
-    return t_min, t_hour, chunk_time(['It', 'even'], after=60.0, default=82.0) - 0.1     # v2: GPS comes next
+    return t_min, t_hour, chunk_time(['Even', 'GPS'], after=60.0, default=81.2) - 0.1     # v2: GPS comes next
 
 
 def black_hole_time():
@@ -184,10 +184,11 @@ def layers(t, you_px=None, st=None):
         L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(t, t_under_end - 0.35, t_under_end), size=48))
     # distance counter: counts down live through the dive and the last descent, lands on each ladder value
     cam = st['cam']
-    if 15.3 <= u < T_D:
-        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, seg(u, 15.3, 15.6)))
+    t_cnt = max(unwarp(15.3), IT['inter1'])                        # after the Interstellar card (same place)
+    if t >= t_cnt and u < T_D:
+        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, seg(t, t_cnt, t_cnt + 0.3)))
     if T_D <= u < T_D + 1.35:
-        L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - unwarp(T_D), fade=1.0 - seg(u, T_D + 1.05, T_D + 1.35),
+        L.append(ov.big_value('1.5\u00d7', 'light can orbit here', t - unwarp(T_D), fade=1.0 - seg(u, T_D + 1.05, T_D + 1.35),
                               fade_in=False))
     # the counter comes back as the last descent starts ("Now let's go lower"), so going lower shows
     t_c0 = chunk_time(['Now', "let's", 'go'], after=40.0, default=53.0) + 0.3
@@ -212,7 +213,7 @@ def layers(t, you_px=None, st=None):
     # "And see this thin line?": a pointer to the hairline where the halves meet (it tilts: y 921 at x 300, 896 at x 780)
     t_line = chunk_time(['And', 'see', 'this'], after=30.0, default=39.9)
     if t_line <= t and u < 22.1:
-        L.append(ov.point_label('light', (700, 903), t - t_line, fade=1.0 - seg(u, 21.8, 22.1), dx=0, dy=-150, size=52,
+        L.append(ov.point_label('light', (700, 903), t - t_line, fade=1.0 - seg(u, 21.8, 22.1), dx=0, dy=-170, size=66,
                                 center=True, inset=6))
     # diagram tags
     if T_E <= u < T_E2:
