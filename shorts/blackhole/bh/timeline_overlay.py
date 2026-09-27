@@ -93,19 +93,38 @@ def chunk_time(first_words, after=30.0, default=None):
     return default
 
 
+def back_front_times():
+    """When BACK and FRONT pop on the flat disk: as the voice says "Back half, front half." (the pops' sounds too)."""
+    return (min(8.4, chunk_time(['Back', 'half'], after=5.0, default=7.10)),
+            min(8.5, chunk_time(['front', 'half'], after=5.0, default=7.30)))
+
+
 def black_hole_time():
     """When the voice says "That's the black hole." (the callout pops with it)."""
     return chunk_time(["That's", 'the', 'black'], default=35.65)
 
 
 def caption_layer(t):
-    for a, b, words, hot in chunks():
-        if a > 30 and words[:3] == ["That's", 'the', 'black']:   # shown as the callout into the black, not under the dot
-            continue
+    """The caption(s) on screen at t: each fades in softly; one followed by a gap fades out over 0.12 s, and one
+    followed straight away by the next cross-fades into it over 0.08 s."""
+    cs = [c for c in chunks() if not (c[0] > 30 and c[2][:3] == ["That's", 'the', 'black'])]   # that one is the callout
+    out = []
+    for n, (a, b, words, hot) in enumerate(cs):
+        nxt = cs[n + 1][0] if n + 1 < len(cs) else 99.0
+        joined = nxt - b < 0.05
+        hot_u = [h.strip('.,?!').upper() for h in hot]
         if a <= t < b:
-            age = t - a if a > 0 else 1.0          # the opening caption is already up on frame 0 (no pop)
-            return ov.caption(words, [h.strip('.,?!').upper() for h in hot], age)
-    return None
+            age = t - a if a > 0 else 1.0          # the opening caption is already up on frame 0 (no fade)
+            fo = 1.0 if joined else min(1.0, max(0.0, (b - t) / 0.12))
+            out.append(ov.caption(words, hot_u, age, fo))
+        elif joined and b <= t < b + 0.08:
+            out.append(ov.caption(words, hot_u, 1.0, 1.0 - (t - b) / 0.08))
+    if not out:
+        return None
+    lay = out[0]
+    for extra in out[1:]:
+        lay.alpha_composite(extra)
+    return lay
 
 
 def layers(t, you_px=None, st=None):
@@ -116,13 +135,19 @@ def layers(t, you_px=None, st=None):
         L.append(ov.top_label('Real physics simulation', t - 0.6, fade=1.0 - seg(t, 2.25, 2.55)))
     # disk tags
     lab = st.get('labels') or {}
-    if 7.10 <= t < 9.10 and lab:
+    # BACK / FRONT pop as the voice says "Back half, front half."
+    t_back, t_front = back_front_times()
+    if t_back <= t < 9.10 and lab:
         f = 1.0 - seg(t, 8.8, 9.1)
-        L.append(ov.disk_tag('BACK', lab.get('back'), ov.ICE, t - 7.10, f))
-        if t >= 7.30:
-            L.append(ov.disk_tag('FRONT', lab.get('front'), ov.GOLD, t - 7.30, f))
+        L.append(ov.disk_tag('BACK', lab.get('back'), ov.ICE, t - t_back, f))
+        if t >= t_front:
+            L.append(ov.disk_tag('FRONT', lab.get('front'), ov.GOLD, t - t_front, f))
     if 10.9 <= t < 12.9:
         L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - 10.9, 1.0 - seg(t, 12.5, 12.9)))
+    # "…and under the bottom": the lower image of the disk's far side gets its own tag
+    t_under = chunk_time(['and', 'under'], after=10.0, default=14.5)
+    if t_under <= t < 16.0:
+        L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(t, 15.65, 16.0), size=48))
     # distance counter: counts down live through the dive and the last descent, lands on each ladder value
     cam = st['cam']
     if 15.3 <= t < T_D:
@@ -133,12 +158,13 @@ def layers(t, you_px=None, st=None):
     if 28.3 <= t < 31.9:
         f = seg(t, 28.3, 28.6)
         L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
-    t30 = chunk_time(['thirty'], default=32.7)
+    t30 = chunk_time(['time', 'is'], default=32.7)
     if 31.9 <= t < t30:
         L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, t30 - 0.25, t30), fade_in=False))
-    if t30 <= t < 34.3:
-        # to a hovering observer here, the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast; pops on "thirty"
-        L.append(ov.big_value('31.6\u00d7', 'the universe, in fast-forward', t - t30, fade=1.0 - seg(t, 34.0, 34.3)))
+    if t30 <= t < 34.35:
+        # to a hovering observer here, the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast (shown as 32x);
+        # it pops as the voice says "time is on fast-forward"
+        L.append(ov.big_value('32\u00d7', 'how fast time runs out there', t - t30, fade=1.0 - seg(t, 34.05, 34.35)))
     # D: the black half is the black hole
     if 19.55 <= t < 22.0:
         L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=64))

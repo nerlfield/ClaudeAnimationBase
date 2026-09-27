@@ -15,10 +15,12 @@ import numpy as np
 import soundfile as sf
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bh import timeline_overlay as tov  # noqa: E402
+import caption_align  # noqa: E402  (same onset rule: Whisper's word spans swallow pauses and squash words)
 
 
-NUMS = {'30': 'thirty'}
+NUMS = {'30': 'thirty', '32': 'thirtytwo'}
 
 
 def norm(w):
@@ -33,18 +35,7 @@ def onset_finder():
     rms = np.sqrt((x ** 2).mean(axis=1))
     thr = rms.max() * 10 ** (-32 / 20)
 
-    def onset(a, b):
-        i0, i1 = int(a / 0.005), int((b + 0.3) / 0.005)
-        on = rms[i0:i1] > thr
-        if b - a > 0.6:
-            # a span this long swallowed a pause (and maybe the previous word's tail): start after the pause
-            quiet = np.convolve(~on, np.ones(12), 'valid') == 12          # 60 ms of silence
-            q = np.nonzero(quiet)[0]
-            if len(q):
-                on[:q[0] + 12] = False
-        k = np.nonzero(on)[0]
-        return (i0 + k[0]) * 0.005 if len(k) else a
-    return onset
+    return lambda a, b: caption_align.onset_at(rms, thr, a, b)
 
 
 def main():

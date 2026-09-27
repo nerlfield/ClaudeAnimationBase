@@ -171,18 +171,42 @@ def end_view(tau):
     return Cam(r0, P, F, U, vfov), 0.5 * glow / gs ** 3.3
 
 
-def state(t):
-    """Everything the renderer needs at time t: a camera (or None for the diagram shot) and parameters."""
+# cuts that dissolve instead of cutting hard: (time, shot before, shot after, dissolve length in s)
+DISSOLVES = [(T_A, 'O', 'A', 0.16), (T_E, 'D', 'E', 0.24), (T_E2, 'E', 'E2', 0.24)]
+
+
+def group_at(t):
+    """Which branch of state() owns time t."""
+    if t < T_A:
+        return 'O'
+    if t < T_C:
+        return 'AB'
+    if t < T_D:
+        return 'C'
+    if t < T_E:
+        return 'D'
+    if t < T_E2:
+        return 'E'
+    if t < T_F:
+        return 'E2'
+    return 'FG'
+
+
+def state(t, force=None):
+    """Everything the renderer needs at time t: a camera (or None for the diagram shot) and parameters.
+    force: evaluate a given shot's branch ('O', 'AB', 'C', 'D', 'E', 'E2', 'FG') even outside its time range
+    (used to render both sides of a dissolve)."""
     p = dict(t=t, tint=0.0, exposure=0.55, disk_gain=1.0, sky_gain=1.0, shot='A', bloom=0.09, cam=None,
              diagram=None, labels={}, selfview=None)
-    if t < T_A:
+    g = force or group_at(t)
+    if g == 'O':
         # O: the cold open is the end of the journey, continued past the loop point
         p['shot'] = 'O'
         p['cam'], p['exposure'] = end_view(t + DUR)
         p['bloom'] = 0.16
         k = seg(t, T_A - 0.1, T_A)
         p['exposure'] *= 1.0 + 2.5 * k * k; p['bloom'] += 0.12 * k
-    elif t < T_C:
+    elif g == 'AB':
         # A + B: hover at ~26 r_s; rise until the disk is a tilted flat ring, then swing back down
         p['shot'] = 'A' if t < T_B else 'B'
         theta = kf(t, [(T_A, 82.0), (5.05, 82.0), (T_B, 83.2), (7.10, 32.0), (8.60, 32.0), (10.45, 84.4), (10.95, 82.0), (T_C, 81.0)])
@@ -201,7 +225,7 @@ def state(t):
         far = np.array([0.0, 7.5, 0.0]); near = np.array([0.0, -5.0, 0.0])
         far = rotate(far, [0, 0, 1], math.radians(az)); near = rotate(near, [0, 0, 1], math.radians(az))
         p['labels'] = dict(back=cam.project(far - r0 * P), front=cam.project(near - r0 * P))
-    elif t < T_D:
+    elif g == 'C':
         # C: the dive, 20.5 -> 1.5 r_s, turning from "hole ahead" to "hole below"
         p['shot'] = 'C'
         s = seg(t, T_C, T_D)
@@ -216,7 +240,7 @@ def state(t):
         R, U, F = quat_to_basis(q)
         p['cam'] = Cam(r0, P, F, U, 60.0)
         p['exposure'] = kf(t, [(T_C, 0.55), (T_D, 0.5)])
-    elif t < T_E:
+    elif g == 'D':
         # D: hovering at the photon sphere, looking along the horizon
         p['shot'] = 'D'
         az = 10.0
@@ -225,25 +249,25 @@ def state(t):
         p['cam'] = Cam(1.5, P, F, U, 60.0)
         p['exposure'] = 0.5
         p['sweep'] = seg(t, 21.3, T_E)
-    elif t < T_E2:
+    elif g == 'E':
         p['shot'] = 'E'
         p['diagram'] = dict(t=t)
-    elif t < T_F:
+    elif g == 'E2':
         # E2: back at the photon sphere in first person, with F's opening camera.  The view pushes in on the line
         # while it opens into a (magnified) image of the back of your own helmet, then snaps back out into F.
         p['shot'] = 'E2'
         cam, p['exposure'] = end_view(T_F)
-        vfov = kf(t, [(T_E2, 44.0), (25.35, 30.0), (26.2, 29.0), (T_F, 60.0)],
+        vfov = kf(t, [(T_E2, 44.0), (25.35, 30.0), (26.0, 29.5), (T_F, 60.0)],
                   lambda x: ease(x))
         # look ~3 degrees down while zoomed in, so the line (and the lens that opens from it) sits at ~40% of the
         # frame height, clear of the captions; eased out again for the hand-off to F
-        a = math.radians(3.1) * min(ease(seg(t, T_E2, 25.3)), 1.0 - ease(seg(t, 26.25, T_F)))
+        a = math.radians(3.1) * min(ease(seg(t, T_E2, 25.3)), 1.0 - ease(seg(t, 26.0, T_F)))
         F2 = math.cos(a) * cam.F - math.sin(a) * cam.U
         U2 = math.sin(a) * cam.F + math.cos(a) * cam.U
         p['cam'] = Cam(cam.r0, cam.P, F2, U2, vfov)
         p['bloom'] = 0.09
-        p['selfview'] = dict(open=min(ease(seg(t, 24.9, 25.5)), 1.0 - ease(seg(t, 26.1, 26.4))),
-                             turn=0.45 * math.sin(math.pi * seg(t, 25.6, 26.1)))
+        p['selfview'] = dict(open=min(ease(seg(t, 24.9, 25.5)), 1.0 - ease(seg(t, 25.95, 26.3))),
+                             turn=0.45 * math.sin(math.pi * seg(t, 25.5, 25.95)))
     else:
         p['shot'] = 'F' if t < T_G else 'G'
         p['cam'], p['exposure'] = end_view(t)

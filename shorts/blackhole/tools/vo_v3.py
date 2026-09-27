@@ -11,6 +11,7 @@ doesn't fit may be tightened by WSOLA, at most 8% (more would itself sound proce
 The API key is read from ELEVENLABS_API_KEY and never written anywhere.
 """
 import base64
+import hashlib
 import json
 import os
 import subprocess
@@ -26,7 +27,8 @@ import vo_takes  # noqa: E402
 SR = vo.SR
 READS = os.path.join(vo.BUILD, 'vo_v3', vo.VOICE)
 # (seed, stability): v3 accepts 0.0 (creative), 0.5 (natural) or 1.0 (robust)
-TAKES = [(7, 0.5), (19, 0.5), (31, 0.5), (43, 0.5), (59, 0.0), (71, 0.0), (83, 0.5), (97, 0.0)]
+TAKES = [(7, 0.5), (19, 0.5), (31, 0.5), (43, 0.5), (59, 0.0), (71, 0.0), (83, 0.5), (97, 0.0),
+         (101, 0.5), (113, 0.5), (127, 0.5), (131, 0.5), (149, 0.5), (157, 0.5), (163, 0.0), (179, 0.0)]
 MAX_SQUEEZE = 0.92
 PRE, POST = 0.35, 0.28              # breath before, natural decay after (never into a neighbouring line)
 
@@ -49,7 +51,8 @@ CONTEXT = {"All that darkness around it? That's the black hole.":
 def fetch(seed, stability, text=None):
     os.makedirs(READS, exist_ok=True)
     text = text or script()
-    tag = '' if text == script() else '_ctx%08x' % (abs(hash(text)) % 0xffffffff)
+    # (a stable digest: Python's hash() of a str changes every run, so the cache never hit)
+    tag = '' if text == script() else '_ctx' + hashlib.sha1(text.encode()).hexdigest()[:8]
     path = os.path.join(READS, f'read_s{seed}_st{stability}{tag}.json')
     if os.path.exists(path):
         d = json.load(open(path))

@@ -64,8 +64,8 @@ CUES = [
     (2.67, 'sfx2/syn_boom', -12, dict(noduck=True, align='peak')),
     # B: rise, labels, swing down, the arch
     (6.20, 'sfx2/syn_whoosh_long', -21, dict(align='peak')),
-    (7.10, 'el/pop_1', -19, {}),
-    (7.30, 'sfx2/syn_pop_low2', -20, {}),
+    ('BACK', 'el/pop_1', -19, {}),
+    ('FRONT', 'sfx2/syn_pop_low2', -20, {}),
     (9.60, 'el/whoosh_1', -17, dict(align='peak', fade_in=0.03)),
     (10.67, 'el/boom_big_1', -13, dict(noduck=True, align='peak', trim_pre=0.35)),
     (10.67, 'sfx2/syn_boom_big', -11, dict(noduck=True, align='peak')),
@@ -288,12 +288,14 @@ def main():
     cache = {}
     import sys as _sys
     _sys.path.insert(0, os.path.join(HERE, '..'))
-    from bh.timeline_overlay import black_hole_time, chunk_time
+    from bh.timeline_overlay import back_front_times, black_hole_time, chunk_time
     for t0, name, g, opts in CUES:
         if t0 == 'BLACK_HOLE':
             t0 = black_hole_time()                             # the hit lands with "That's the black hole."
+        elif t0 in ('BACK', 'FRONT'):
+            t0 = back_front_times()[t0 == 'FRONT']              # the tag pops land with "Back half, front half."
         elif t0 == 'THIRTY':
-            t0 = chunk_time(['thirty'], default=32.7)          # the 31.6x pop lands on "thirty"
+            t0 = chunk_time(['time', 'is'], default=32.7)       # the 32x pop lands on "time is on fast-forward"
         if name not in cache:
             cache[name] = load(os.path.join(A, name + '.wav'))
             if cache[name].shape[1] == 1:

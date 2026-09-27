@@ -28,6 +28,16 @@ def font(name, size):
     return ImageFont.truetype(os.path.join(FONTS, name), size)
 
 
+def _ease_out(x):
+    x = min(1.0, max(0.0, x))
+    return 1 - (1 - x) ** 3
+
+
+def _smooth(x):
+    x = min(1.0, max(0.0, x))
+    return x * x * (3 - 2 * x)
+
+
 def _ease_back(x, s=1.4):
     x = min(1.0, max(0.0, x)) - 1.0
     return x * x * ((s + 1) * x + s) + 1.0
@@ -73,7 +83,7 @@ def _wrap(f, words, maxw):
     return lines
 
 
-def caption(words, hot=(), age=1.0):
+def caption(words, hot=(), age=1.0, out=1.0):
     """One caption chunk (a whole phrase), at most two lines; the font shrinks to fit rather than wrapping to 3."""
     words = [w.upper() for w in words]
     size = CAP_SIZE
@@ -105,9 +115,10 @@ def caption(words, hot=(), age=1.0):
             d.text((x, y0 + li * lh), w, font=f, fill=col + (255,), stroke_width=3, stroke_fill=SHADOW + (150,))
             x += f.getlength(w) + space
     lay = _shadowed(lay, blur=12, offset=(0, 6), opacity=0.85)
-    k = _ease_back(age / 0.12) if age < 0.12 else 1.0
-    alpha = min(1.0, age / 0.06)
-    return _pop(lay, k * 0.08 + 0.92, alpha, (W // 2, CAP_Y - size // 3))
+    # a soft arrival: fade in over 0.12 s while settling from 96.5% scale, no overshoot; `out` fades it away
+    k = _ease_out(age / 0.18)
+    alpha = _smooth(age / 0.12) * out
+    return _pop(lay, 0.965 + 0.035 * k, alpha, (W // 2, CAP_Y - size // 3))
 
 
 def _pop(lay, scale, alpha, center):
@@ -171,9 +182,9 @@ def big_value(value, sub, age=1.0, fade=1.0, y=262, fade_in=True):
     pl.alpha_composite(_glow(lay, ICE, 22, 0.55))
     lay = pl
     lay = _shadowed(lay, 10, (0, 5), 0.85)
-    k = _ease_back(age / 0.16) if age < 0.16 else 1.0
-    # a value that lands in place of the live counter pops without fading in (no one-frame dip)
-    return _pop(lay, 0.85 + 0.15 * k, (min(1.0, age / 0.08) if fade_in else 1.0) * fade, (W // 2, y))
+    k = _ease_out(age / 0.25)
+    # a value that lands in place of the live counter settles without fading in (no one-frame dip)
+    return _pop(lay, 0.94 + 0.06 * k, (_smooth(age / 0.18) if fade_in else 1.0) * fade, (W // 2, y))
 
 
 def distance_text(r):
@@ -200,7 +211,7 @@ def point_label(text, at, age=1.0, fade=1.0, dx=34, dy=-60, size=40, color=ICE, 
         d.line([(ax + dx / L * 10, ay + dy / L * 10), (tx - 4, ty + size * 0.55)], fill=color + (230,), width=4)
     d.text((tx, ty - size * 0.1), text.upper(), font=f, fill=color + (255,))
     lay = _shadowed(lay, 6, (0, 3), 0.85)
-    return _pop(lay, 1.0, min(1.0, age / 0.15) * fade, (int(tx), int(ty)))
+    return _pop(lay, 1.0, _smooth(age / 0.25) * fade, (int(tx), int(ty)))
 
 
 def disk_tag(text, at, color, age=1.0, fade=1.0, size=64):
@@ -212,8 +223,8 @@ def disk_tag(text, at, color, age=1.0, fade=1.0, size=64):
     tw = f.getlength(text)
     d.text((at[0] - tw / 2, at[1] - 40), text, font=f, fill=color + (255,), stroke_width=3, stroke_fill=SHADOW + (170,))
     lay = _shadowed(lay, 10, (0, 5), 0.85)
-    k = _ease_back(age / 0.14) if age < 0.14 else 1.0
-    return _pop(lay, 0.8 + 0.2 * k, min(1.0, age / 0.07) * fade, (int(at[0]), int(at[1])))
+    k = _ease_out(age / 0.25)
+    return _pop(lay, 0.9 + 0.1 * k, _smooth(age / 0.18) * fade, (int(at[0]), int(at[1])))
 
 
 def callout_black(age=1.0, fade=1.0, y=1250):
@@ -234,8 +245,8 @@ def callout_black(age=1.0, fade=1.0, y=1250):
             for da in (2.55, -2.55):
                 d.line([(bx, by), (bx + 34 * math.cos(ang + da), by + 34 * math.sin(ang + da))], fill=GOLD + (235,), width=7)
     lay = _shadowed(lay, 10, (0, 5), 0.85)
-    k = _ease_back(age / 0.16) if age < 0.16 else 1.0
-    return _pop(lay, 0.9 + 0.1 * k, min(1.0, age / 0.08) * fade, (W // 2, y))
+    k = _ease_out(age / 0.25)
+    return _pop(lay, 0.95 + 0.05 * k, _smooth(age / 0.18) * fade, (W // 2, y))
 
 
 def composite(img, layers):

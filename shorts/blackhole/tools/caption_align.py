@@ -14,12 +14,35 @@ import soundfile as sf
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.path.join(HERE, '..', 'build')
-NUMS = {'30': 'thirty'}
+NUMS = {'30': 'thirty', '32': 'thirtytwo'}
 
 
 def norm(w):
     w = w.lower().strip('.,?!')
     return re.sub(r"[^a-z']", '', NUMS.get(w, w)).replace('disc', 'disk')
+
+
+def onset_at(rms, thr, a, b):
+    """The voice's own onset for a word Whisper puts at [a, b] (rms: 5 ms frames, thr: 'voice on' level)."""
+    i0, i1 = int(a / 0.005), min(len(rms), int((b + 0.3) / 0.005))
+    on = rms[i0:i1] > thr
+    if b - a > 0.45:                         # a span this long swallowed a pause: start after it
+        quiet = np.convolve(~on, np.ones(12), 'valid') == 12
+        q = np.nonzero(quiet)[0]
+        if len(q):
+            on[:q[0] + 12] = False
+    k = np.nonzero(on)[0]
+    if not len(k):
+        return a
+    t = i0 + k[0]
+    if k[0] == 0:                            # already speaking at Whisper's start (it can squash a word to 0 s):
+        j, run = t, 0                        # walk back, over dips shorter than 60 ms, to the pause the word
+        while j > 0 and t - j < 70 and run < 12:     # starts from; none within 0.35 s: keep Whisper's time
+            j -= 1
+            run = run + 1 if rms[j] <= thr else 0
+        if run == 12:
+            t = j + 12
+    return t * 0.005
 
 
 def main():
@@ -36,16 +59,7 @@ def main():
     rms = np.sqrt((xr.astype(np.float64) ** 2).mean(axis=1))
     thr = rms.max() * 10 ** (-32 / 20)
 
-    def onset(a, b):
-        i0, i1 = int(a / 0.005), min(len(rms), int((b + 0.3) / 0.005))
-        on = rms[i0:i1] > thr
-        if b - a > 0.45:                         # a span this long swallowed a pause: start after it
-            quiet = np.convolve(~on, np.ones(12), 'valid') == 12
-            q = np.nonzero(quiet)[0]
-            if len(q):
-                on[:q[0] + 12] = False
-        k = np.nonzero(on)[0]
-        return (i0 + k[0]) * 0.005 if len(k) else a
+    onset = lambda a, b: onset_at(rms, thr, a, b)
 
     data = json.load(open(os.path.join(BUILD, 'words.json')))
     old_starts = [c['start'] for c in data['chunks']]

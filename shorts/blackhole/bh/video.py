@@ -13,18 +13,17 @@ def frame(t, scale=1.0, spp=SPP4, overlays=True, motion_blur=1):
     return overlay_frame(img, t) if overlays else img
 
 
-def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
-    """The rendered picture after post, with no captions or labels (float RGB 0..1)."""
-    w, h = int(round(W_FULL * scale)), int(round(H_FULL * scale))
-    st = shots.state(t)
+GROUP_OF = {'O': 'O', 'A': 'AB', 'D': 'D', 'E': 'E', 'E2': 'E2'}
+
+
+def _render_group(t, g, w, h, spp, motion_blur):
+    """Exposed HDR of one shot branch at time t (motion-blur samples stay inside that branch)."""
+    st = shots.state(t, force=g)
     samples = []
     offs = [0.0] if motion_blur <= 1 else [(i + 0.5) / motion_blur - 0.5 for i in range(motion_blur)]
     for o in offs:
         ts = t + o * (0.5 / shots.FPS)
-        s2 = shots.state(ts)
-        if s2['shot'] != st['shot']:
-            # never let a blur sample fall across a cut (frame 800 once caught a ghost of the previous shot)
-            ts, s2 = t, st
+        s2 = shots.state(ts, force=g)
         if s2['diagram'] is not None:
             hdr, _ = diagram.render_e(ts, w, h, spp, shade.BB)
             exp = 0.8
@@ -37,7 +36,33 @@ def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
         hdr = selfview.composite(hdr, st['cam'], st['selfview']['open'], st['selfview']['turn'])
     if st.get('sweep', 0) > 0 and st['cam'] is not None:
         hdr = line_sweep(hdr, st['cam'], st['sweep'])
-    img = post.finish(hdr, exposure=1.0, bloom_amt=st['bloom'], seed=int(round(t * shots.FPS)) + 17)
+    return hdr, st
+
+
+def dissolve_at(t):
+    """(group before, group after, weight of the after-shot) if t is inside a dissolve, else None."""
+    for T, a, b, d in shots.DISSOLVES:
+        if T - d / 2 <= t < T + d / 2:
+            u = (t - (T - d / 2)) / d
+            return GROUP_OF[a], GROUP_OF[b], u * u * (3 - 2 * u)
+    return None
+
+
+def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
+    """The rendered picture after post, with no captions or labels (float RGB 0..1).  Inside a dissolve both
+    shots are rendered and blended in HDR, so the cut becomes a short, soft cross-fade."""
+    w, h = int(round(W_FULL * scale)), int(round(H_FULL * scale))
+    dz = dissolve_at(t)
+    if dz:
+        ga, gb, k = dz
+        ha, sa = _render_group(t, ga, w, h, spp, 1)
+        hb, sb = _render_group(t, gb, w, h, spp, 1)
+        hdr = ha * (1 - k) + hb * k
+        bloom = sa['bloom'] * (1 - k) + sb['bloom'] * k
+    else:
+        hdr, st = _render_group(t, shots.group_at(t), w, h, spp, motion_blur)
+        bloom = st['bloom']
+    img = post.finish(hdr, exposure=1.0, bloom_amt=bloom, seed=int(round(t * shots.FPS)) + 17)
     return np.clip(img, 0, 1)
 
 

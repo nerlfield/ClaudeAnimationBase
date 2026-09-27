@@ -22,23 +22,22 @@ SR = 44100
 LINE_LUFS = -22.5                   # each line is matched to this before placement
 
 # (start time in the video, latest end, text) -- '|' marks caption chunk breaks, '*' marks gold words
-# Round 7: rewritten as one person talking you through it: each line picks up from the last or points at the
-# picture ("That disk…", "Now let's…", "…edge, and the whole universe…"), and the ending closes the loop.
+# Round 8: one person talking you through the picture, read as ONE continuous performance (tools/vo_flow.py).
+# (start, end) is each line's window on the beat sheet: the earliest it may start and the latest it must end.
 LINES = [
-    (0.15, 2.55, 1.00, "See this dot? | That's the whole *universe."),
-    (2.85, 5.30, 1.00, "Here's how. | Let's fly to a *black *hole."),
-    (5.35, 8.80, 1.00, 'That disk is actually *flat, | its inner edge racing | at half the speed of light.'),
-    (8.90, 10.62, 1.00, 'So why does it look like *this?'),
-    (11.55, 16.00, 1.00, "That's the *back of the disk, | bent over the top by gravity, | and under the bottom."),
-    (18.80, 22.15, 1.00, 'Hover here, | and the black hole fills | exactly *half your sky.'),
-    (22.28, 24.50, 1.00, 'And light goes around it in *circles.'),
-    (24.78, 26.55, 1.00, "That's the back of your own *head."),
-    (26.85, 29.00, 1.00, 'Now hover just above the *edge,'),
-    (29.05, 32.05, 1.00, 'and the whole universe | shrinks to one *dot overhead.'),
-    (34.35, 37.15, 1.00, "All that *darkness around it? | That's the black hole."),
-    (16.05, 18.62, 1.00, "Now let's fly in. | Way *closer."),
-    # to a hovering observer here, the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast
-    (32.25, 34.20, 1.00, "It's all playing | *thirty times fast."),
+    (0.10, 2.66, 1.00, "See this dot? | That's the whole *universe."),
+    (2.78, 5.30, 1.00, "Here's how. | This is a *black *hole."),
+    (5.25, 8.90, 1.00, 'That disk is actually *flat. | *Back half, | *front half.'),
+    (8.92, 10.64, 1.00, 'So why does it look like *this?'),
+    (10.95, 16.02, 1.00, "That's the *back of the disk, | bent over the top by gravity, | and under the bottom."),
+    (16.02, 18.70, 1.00, "Now let's fly in. | Way *closer."),
+    (18.72, 22.25, 1.00, 'Hover here, | and the black hole fills | exactly *half your sky.'),
+    (22.22, 24.45, 1.00, 'Here, light goes | in *circles.'),
+    (24.42, 26.66, 1.00, 'That line? | The back of your own *head.'),
+    (26.70, 32.10, 1.00, 'Now hover just above the horizon, | and the whole universe | shrinks to one *dot overhead.'),
+    # to a hovering observer at 1.001x, everything outside runs 1/sqrt(1 - 1/1.001) = 31.6x fast (shown as 32x)
+    (32.10, 34.40, 1.00, "Out there, | time is on *fast-forward."),
+    (34.40, 37.20, 1.00, "All that *darkness around it? | That's the black hole."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order
 
