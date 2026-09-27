@@ -347,3 +347,35 @@ The ending and the cold open share one steady camera clock, so the loop point st
 **The picture follows automatically now.** The time map from video time to the animation's clock was hand-set in round 11. It is now computed from the placed words by rules (`tools/vo_flow.py` `AFTER` and `warp_knots`) and written to `bh/warp.json`, which `bh/shots.py` reads. If the voice moves, the picture moves with it. The music re-arrangement follows the dot's new landing time. All 2,060 frames are re-rendered.
 
 **A caption fix on the way.** After the "top..." pause was shortened, a lone 5 ms noise blip inside it made the onset finder start "and under the bottom" 0.44 s early. A voice onset now has to last 15 ms, and every caption is within 0.14 s of its word.
+
+## Round 13: version 2, more content (the user: "it feels like there's not too much content… check Cleo Abram and Veritasium… finish the current video, send it, then work on a new version, reuse materials but add something")
+
+Version 1 (68.7 s) was finished and delivered first; its documents are in `outputs/v1`.
+
+**Research.** Two passes pulled captions and storyboards from 18 Cleo Abram Shorts and 13 Veritasium Shorts, and counted facts and references per second (research.md, "Version 2 research"). The gap was not facts: we had 1.7 per 10 s against Cleo's 2.3. It was references (0 against about 1.8 per 10 s), real imagery (none, against 17% of her runtime) and visual variety. Veritasium's black-hole Short showed the other lever, an expectation and its reversal.
+
+**Version 2.** The same narration style and simulation, plus:
+- the real M87* photo between the dot and the simulation, with the solar system drawn to scale inside it;
+- "It's as heavy as six and a half billion Suns";
+- "you'd expect it to hide behind the black hole. But gravity bends its light…";
+- Luminet, 1979, over our frame redrawn in dots;
+- Interstellar and Kip Thorne;
+- GPS clocks and a 10 km-a-day map drift over Apollo 17's Earth.
+
+The voice is a new continuous read (seed 163). The picture was re-timed around it from the words.
+
+**A low-res draft first.** A fresh-eyes critic was given only one frame per second and the transcript. It liked "the back of your own head" ("broke my brain"), the solar-system scale, the loop ("the first shot IS the view from the edge"), and said the GPS line was "a good real-world anchor". What it flagged, and what changed:
+- **About 12 s, "the eighth second on a static, blurry photo… 'It's huge'":** "It took telescopes all over the Earth" (nothing on screen showed it) and "It's huge" are out. "It's as heavy as six and a half billion Suns" is in. The solar-system circle now pops bold on "tiny" and holds 1.4 s.
+- **"GPS clocks up in orbit run fast", right after "time runs slower", sounds like a contradiction:** it is now "Up in orbit, clocks run fast", with FASTER / WHERE GRAVITY IS WEAKER on screen. The meaningless "+38 µs" is gone, and the satellite label no longer clips at the edge.
+- **24–31 s "feels like a classroom":** "Now watch the back half." is cut. Its suggestion to replace "This is the back half. And this is the front half." with "Paint the back half blue" was not taken: that is the user's own phrasing.
+- **The Luminet title was garbled by an overlapping note, and "the dots look like TV static":** the note ("* OUR SIMULATION, REDRAWN IN DOTS HIS WAY") is now inside the title block, and the dark sky stays clean paper, so the dots only draw the disk.
+- **The Interstellar card over the blue-painted disk could suggest the film's black hole was blue:** the disk returns to gold during the Luminet dots, and the distance counter waits until the card has gone.
+- **"THE PHOTON SPHERE" is jargon:** it now reads 1.5× / LIGHT CAN ORBIT HERE.
+- **The LIGHT pointer was too small to find:** it is bigger.
+- **Blank beats:** shorter after the self-view. The GPS card gets 0.45–0.5 s to come in and go out, where the joins had run at 0.15 s.
+
+**Not taken:**
+- Cutting "To see why, look at this" (it's the promise the photo answers), "See?" and "Much closer" (they're the user's approved natural speech).
+- Making the dot smaller.
+
+**Length.** It is 94.0 s against version 1's 68.7 s. That's long for a Short: the reference Shorts run a median 55–60 s, and the longest are 93–147 s. The critic listed further cuts that would reach about 76 s, mostly the lines above that were not taken.

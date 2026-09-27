@@ -1,5 +1,35 @@
 # Storyboard: "This dot is the whole universe"
 
+## Version 2 (round 13): the real thing, then the simulation
+
+Version 1's storyboard is in `outputs/v1/storyboard.md`. Version 2 keeps every simulated shot below (O, A–G). Between the dot and the black hole, and at three more places, it adds **inserts**: real imagery and reference cards composited over the render, each timed from the words that introduce it (`bh/inserts.py`):
+
+| insert | video time | what's seen | why |
+|---|---|---|---|
+| M87*, the first photo of a black hole | 3.8–16.7 | The glowing dot dissolves into the Event Horizon Telescope's photo, its ring laid over the dot at the same size and place. A slow push-in. On "tiny circle", Pluto's orbit pops in gold inside the dark centre, to scale (11% of the ring). The photo then dissolves into our side-on simulation of a black hole like it. | Show the real artefact, with its date, next to the CGI (Cleo Abram's most-used technique), and anchor the size. The dot, the photo's ring and the simulated shadow share one circle, so the motif carries through. |
+| Luminet, 1979 | 38.6–43.6 | Our arch frame turns into white ink dots on black, denser where brighter, the way Jean-Pierre Luminet drew the first picture of this. Labelled "* OUR SIMULATION, REDRAWN IN DOTS HIS WAY". | A named, dated first, shown in its own style without using his drawing. |
+| Interstellar | 43.6–47.0 | Title card over the gold arch (no film images). | A pop-culture link most viewers have seen. |
+| GPS on Earth | 80.0–88.7 | Apollo 17's Earth (1972) with a GPS orbit and a satellite; FASTER / WHERE GRAVITY IS WEAKER, then 10 KM / MAP DRIFT A DAY, IF NOT FIXED. | An everyday stake for time dilation, in the same place as the dot, so the ending returns to it. |
+
+**The time map for version 2** (story clock → video, from `bh/warp.json`):
+
+| story | video |
+|---|---|
+| O, the dot | 0.0–3.8, then under the photo |
+| A | 16.1–22.0 (after the photo) |
+| the rise | 22.0–23.5 |
+| the flat ring, ice on "back half" | 23.5–29.9 |
+| the swing down | 29.9–33.3 |
+| the arch and the Luminet dots, then gold again | 33.3–47.75 |
+| the dive | 47.75–50.2 |
+| D | 50.2–56.6 |
+| E, the diagram | 56.6–61.25 |
+| E2, the back of your head | 61.25–65.2 |
+| F, down to the dot | 65.2–73.2 |
+| G, the time lines, the GPS card, "That's the black hole" and 1.8 s of quiet | 73.2–94.0 |
+
+The shot sections below keep their story-clock times; script.md's beat sheet gives every beat in video time.
+
 *Version 8 (round 12): shorter pauses (0.25–0.55 s between lines, the "..." beats cut to 0.45 s), 68.67 s. The time map is computed from the placed words (`bh/warp.json`). Version 7 (round 11): a plainer, slower narration ("This is a black hole. And this bright ring is hot gas, spinning around it.", "Let's look at it from above." → "See? The disk is actually flat.", "This is the back half. And this is the front half.") read as one take at its own pace. The picture is re-timed around it by a time map (below), so the video runs 74.67 s. **The shot sections below keep their original story-clock times; the table maps them to video time, and script.md's beat sheet gives every beat in video time.** Version 6 (round 9): the time-dilation beat is two unhurried sentences with an example ("And down here, time runs slower. Stay for one minute... and half an hour goes by out there.", with 1 MIN counting up to 32 MIN), and the video runs 43.33 s so the last line has 1.35 s of quiet before the loop. Version 5 (rounds 7–8): the narration is conversational and points at what is on screen ("See this dot?", "That disk is actually flat. Back half, front half.", "That line? The back of your own head.", "All that darkness around it? That's the black hole."), and it is one continuous voice take. The cuts at 2.67, 22.2 and 24.55 are short dissolves, captions and labels ease in and out, and every label pops on the word that names it. The ghost frame after the self-view is gone. Version 4 (round 6): after "That's the back of your own head" the video now shows it. A first-person shot (E2) opens the photon-sphere line into a magnified image of the back of your helmet. The narration carries three more facts: the disk's inner edge at half the speed of light, the far side imaged under the bottom as well as over the top, and the universe in 31.6× fast-forward just above the horizon. Version 3 (round 3): the live distance counter, the dive line, the BLACK HOLE tag in D, and the turning, pushing end dot. Version 2: the cold open on the dot, whole-phrase captions and the G callouts.*
 
 **Logline.** The viewer thinks a black hole is a black ball that hides what's behind it, but its gravity bends light so hard that on the way down you'd see the back of its disk over the top, then the back of your own head, so if you hovered just above its edge, the whole universe would be one glowing dot over your head and everything else would be black hole.
