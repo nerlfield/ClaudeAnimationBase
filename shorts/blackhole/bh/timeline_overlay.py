@@ -85,9 +85,22 @@ def _split_long(out, words):
     return res
 
 
+def chunk_time(first_words, after=30.0, default=None):
+    """When the voice starts the caption chunk beginning with these words (labels pop with the words)."""
+    for a, b, words, hot in chunks():
+        if a > after and [w.strip('.,?!') for w in words[:len(first_words)]] == first_words:
+            return a
+    return default
+
+
+def black_hole_time():
+    """When the voice says "That's the black hole." (the callout pops with it)."""
+    return chunk_time(["That's", 'the', 'black'], default=35.65)
+
+
 def caption_layer(t):
     for a, b, words, hot in chunks():
-        if a > 30 and words == ['Black', 'hole.']:     # shown as a callout into the black, not as a caption under the dot
+        if a > 30 and words[:3] == ["That's", 'the', 'black']:   # shown as the callout into the black, not under the dot
             continue
         if a <= t < b:
             age = t - a if a > 0 else 1.0          # the opening caption is already up on frame 0 (no pop)
@@ -120,11 +133,12 @@ def layers(t, you_px=None, st=None):
     if 28.3 <= t < 31.9:
         f = seg(t, 28.3, 28.6)
         L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
-    if 31.9 <= t < 33.25:
-        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, 32.95, 33.25), fade_in=False))
-    if 33.3 <= t < 34.6:
-        # to a hovering observer here, the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast
-        L.append(ov.big_value('31.6\u00d7', 'the universe, in fast-forward', t - 33.3, fade=1.0 - seg(t, 34.3, 34.6)))
+    t30 = chunk_time(['thirty'], default=32.7)
+    if 31.9 <= t < t30:
+        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, t30 - 0.25, t30), fade_in=False))
+    if t30 <= t < 34.3:
+        # to a hovering observer here, the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast; pops on "thirty"
+        L.append(ov.big_value('31.6\u00d7', 'the universe, in fast-forward', t - t30, fade=1.0 - seg(t, 34.0, 34.3)))
     # D: the black half is the black hole
     if 19.55 <= t < 22.0:
         L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=64))
@@ -139,10 +153,11 @@ def layers(t, you_px=None, st=None):
     if 24.95 <= t < 26.45:
         L.append(ov.corner_tag('* magnified illustration', min(seg(t, 24.95, 25.2), 1.0 - seg(t, 26.2, 26.45))))
     # the dot's label
-    if 34.55 <= t < 37.1:
-        L.append(ov.point_label('the universe', DOT_TOP, t - 34.55, fade=1.0 - seg(t, 36.8, 37.1),
+    if 34.4 <= t < 37.15:
+        L.append(ov.point_label('the universe', DOT_TOP, t - 34.4, fade=1.0 - seg(t, 36.9, 37.15),
                                 dx=-150, dy=-120, size=56))
-    if 35.65 <= t < 37.15:
-        L.append(ov.callout_black(t - 35.65, fade=1.0 - seg(t, 36.85, 37.15)))
+    t_bh = black_hole_time()
+    if t_bh <= t < 37.2:
+        L.append(ov.callout_black(t - t_bh, fade=1.0 - seg(t, 36.95, 37.2)))
     L.append(caption_layer(t))
     return L

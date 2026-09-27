@@ -22,6 +22,9 @@ def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
     for o in offs:
         ts = t + o * (0.5 / shots.FPS)
         s2 = shots.state(ts)
+        if s2['shot'] != st['shot']:
+            # never let a blur sample fall across a cut (frame 800 once caught a ghost of the previous shot)
+            ts, s2 = t, st
         if s2['diagram'] is not None:
             hdr, _ = diagram.render_e(ts, w, h, spp, shade.BB)
             exp = 0.8

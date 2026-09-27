@@ -95,9 +95,9 @@ CUES = [
     (32.00, 'el/boom_big_1', -14, dict(noduck=True, align='peak', trim_pre=0.35)),
     (32.00, 'sfx2/syn_boom_big', -12, dict(noduck=True, align='peak')),
     (32.00, 'sfx2/syn_shimmer_long', -19, dict(fade_out=(36.4, 37.0))),
-    (33.30, 'el/pop_1', -20, {}),
-    (35.65, 'el/boom_2', -17, dict(align='peak', trim_pre=0.1)),
-    (35.65, 'sfx2/syn_pop_low2', -21, {}),
+    ('THIRTY', 'el/pop_1', -20, {}),
+    ('BLACK_HOLE', 'el/boom_2', -17, dict(align='peak', trim_pre=0.1)),
+    ('BLACK_HOLE', 'sfx2/syn_pop_low2', -21, {}),
     (37.33, 'sfx2/syn_reverse_long', -21, dict(align='end')),
 ]
 
@@ -286,7 +286,14 @@ def main():
     # ---- sfx
     sfx = np.zeros((N, 2), np.float32)
     cache = {}
+    import sys as _sys
+    _sys.path.insert(0, os.path.join(HERE, '..'))
+    from bh.timeline_overlay import black_hole_time, chunk_time
     for t0, name, g, opts in CUES:
+        if t0 == 'BLACK_HOLE':
+            t0 = black_hole_time()                             # the hit lands with "That's the black hole."
+        elif t0 == 'THIRTY':
+            t0 = chunk_time(['thirty'], default=32.7)          # the 31.6x pop lands on "thirty"
         if name not in cache:
             cache[name] = load(os.path.join(A, name + '.wav'))
             if cache[name].shape[1] == 1:

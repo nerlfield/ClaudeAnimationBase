@@ -58,7 +58,7 @@ def main():
     clap = Clap()
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import mix
-    cues = [(t, n) for t, n, g, o in mix.CUES]
+    cues = [(t, n) for t, n, g, o in mix.CUES if not isinstance(t, str)]
     for path in sys.argv[1:]:
         y, sr = sf.read(path, always_2d=True)
         x = y.mean(axis=1)

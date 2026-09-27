@@ -42,7 +42,8 @@ def script():
 # lines that also get short context reads.  "Black hole." is the script's last sentence, and every full read ended
 # it with a creaky final drop (f0 at or below 60 Hz); the video loops, so it is read the way a viewer hears it,
 # followed by the opening line, and cut out of the middle.
-CONTEXT = {11: "Everything else? Black hole. This dot? It's the whole universe."}   # (index 11 = "Black hole.")
+CONTEXT = {"All that darkness around it? That's the black hole.":
+           "All that darkness around it? That's the black hole. See this dot? That's the whole universe."}
 
 
 def fetch(seed, stability, text=None):
@@ -209,7 +210,8 @@ def main():
         d = fetch(seed, stab)
         reads.append((f's{seed}/st{stab}', cut(d, decode(d['audio']))))
         print('read', seed, stab, flush=True)
-    for i, text in CONTEXT.items():
+    for i in [j for j in range(len(vo.LINES)) if vo.plain(vo.LINES[j][3]) in CONTEXT]:
+        text = CONTEXT[vo.plain(vo.LINES[i][3])]
         for seed, stab in TAKES:
             d = fetch(seed, stab, text)
             reads.append((f'ctx s{seed}/st{stab}', cut(d, decode(d['audio']), only=i)))
@@ -224,9 +226,9 @@ def main():
             cands[i].append((name, c, m))
     center = float(np.median([m['f0'] for i in idx for _, _, m in cands[i] if m['voiced'] >= 0.4 and m['f0'] > 0]))
     print('narrator pitch centre (median of well-voiced lines): %.0f Hz' % center)
+    all_rows = {}
     for n, i in enumerate(idx):
         t0, t1, speed, text = vo.LINES[i]
-        spoken = vo.plain(text)
         prev_t1 = vo.LINES[idx[n - 1]][1] if n else 0.0
         max_lead = max(0.05, t0 - prev_t1)
         rows = []
@@ -245,9 +247,26 @@ def main():
                      - 3.0 * (1 - ratio)) if ok else -np.inf
             rows.append((score, name, ratio, lead, pcm, al, m))
         rows.sort(key=lambda r: -r[0])
-        best = rows[0]
+        all_rows[i] = rows
+    picks = {i: all_rows[i][0] for i in idx}
+    # a sentence split across two lines ("…the edge, | and the whole universe…") comes from one read, so the
+    # intonation carries across the join
+    for n in range(len(idx) - 1):
+        i, j = idx[n], idx[n + 1]
+        if vo.plain(vo.LINES[i][3]).endswith(','):
+            by_i = {r[1]: r for r in all_rows[i] if np.isfinite(r[0])}
+            by_j = {r[1]: r for r in all_rows[j] if np.isfinite(r[0])}
+            common = [(by_i[k][0] + by_j[k][0], k) for k in by_i if k in by_j]
+            if common:
+                _, k = max(common)
+                picks[i], picks[j] = by_i[k], by_j[k]
+                print(f'lines {i} and {j} share read {k} (one sentence)')
+    for i in idx:
+        t0, t1, speed, text = vo.LINES[i]
+        spoken = vo.plain(text)
+        best = picks[i]
         print(f'line {i:2d} "{spoken}" slot {t0:.2f}-{t1:.2f}')
-        for score, name, ratio, lead, pcm, al, m in rows:
+        for score, name, ratio, lead, pcm, al, m in all_rows[i]:
             print('   %-10s %6s  speech %.2fs voiced %.2f f0 %3.0f spread %.1f  fit x%.3f  %s%s' % (
                 name, '%.2f' % score if np.isfinite(score) else 'fail', m['dur'], m['voiced'], m['f0'], m['spread'], ratio,
                 'exact' if m['exact'] else 'heard "%s"' % m['heard'], '  <- picked' if name == best[1] else ''))
