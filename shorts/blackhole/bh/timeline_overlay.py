@@ -5,7 +5,7 @@ import math
 import os
 
 from . import overlay as ov
-from .shots import T_A, T_B, T_C, T_D, T_E, T_F, T_G, BAR, DUR, state, seg
+from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, state, seg
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
@@ -87,7 +87,7 @@ def _split_long(out, words):
 
 def caption_layer(t):
     for a, b, words, hot in chunks():
-        if a >= 34.5:          # "Black hole." is shown as a callout into the black, not as a caption under the dot
+        if a > 30 and words == ['Black', 'hole.']:     # shown as a callout into the black, not as a caption under the dot
             continue
         if a <= t < b:
             age = t - a if a > 0 else 1.0          # the opening caption is already up on frame 0 (no pop)
@@ -122,22 +122,27 @@ def layers(t, you_px=None, st=None):
         L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
     if 31.9 <= t < 33.25:
         L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, 32.95, 33.25), fade_in=False))
+    if 33.3 <= t < 34.6:
+        # to a hovering observer here, the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast
+        L.append(ov.big_value('31.6\u00d7', 'the universe, in fast-forward', t - 33.3, fade=1.0 - seg(t, 34.3, 34.6)))
     # D: the black half is the black hole
     if 19.55 <= t < 22.0:
         L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=64))
     if 26.95 <= t < 28.25:
         L.append(ov.top_label('Looking up \u2191', t - 26.95, fade=1.0 - seg(t, 27.95, 28.25), plate=True, size=64))
     # diagram tags
-    if T_E <= t < T_F:
-        f = min(seg(t, T_E, T_E + 0.3), 1.0 - seg(t, T_F - 0.3, T_F))
+    if T_E <= t < T_E2:
+        f = min(seg(t, T_E, T_E + 0.3), 1.0 - seg(t, T_E2 - 0.3, T_E2))
         L.append(ov.corner_tag('* diagram, not to scale', f))
-        if you_px is not None and 22.5 <= t < 26.3:
-            L.append(ov.point_label('you', you_px, t - 22.5, fade=1.0 - seg(t, 26.0, 26.3), dx=80, dy=-90))
+        if you_px is not None and 22.5 <= t < T_E2:
+            L.append(ov.point_label('you', you_px, t - 22.5, fade=1.0 - seg(t, T_E2 - 0.35, T_E2 - 0.05), dx=80, dy=-90))
+    if 24.95 <= t < 26.45:
+        L.append(ov.corner_tag('* magnified illustration', min(seg(t, 24.95, 25.2), 1.0 - seg(t, 26.2, 26.45))))
     # the dot's label
-    if 33.3 <= t < 36.8:
-        L.append(ov.point_label('the universe', DOT_TOP, t - 33.3, fade=1.0 - seg(t, 36.4, 36.8),
+    if 34.55 <= t < 37.1:
+        L.append(ov.point_label('the universe', DOT_TOP, t - 34.55, fade=1.0 - seg(t, 36.8, 37.1),
                                 dx=-150, dy=-120, size=56))
-    if 34.9 <= t < 36.8:
-        L.append(ov.callout_black(t - 34.9, fade=1.0 - seg(t, 36.4, 36.8)))
+    if 35.65 <= t < 37.15:
+        L.append(ov.callout_black(t - 35.65, fade=1.0 - seg(t, 36.85, 37.15)))
     L.append(caption_layer(t))
     return L

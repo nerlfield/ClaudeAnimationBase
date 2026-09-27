@@ -18,8 +18,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 from bh import timeline_overlay as tov  # noqa: E402
 
 
+NUMS = {'30': 'thirty'}
+
+
 def norm(w):
-    return re.sub(r"[^a-z']", '', w.lower())
+    w = w.lower().strip('.,?!')
+    return re.sub(r"[^a-z']", '', NUMS.get(w, w))
 
 
 def onset_finder():

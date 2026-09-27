@@ -1,7 +1,7 @@
 """One finished video frame at time t: physics or diagram render -> post -> overlays."""
 import numpy as np
 
-from . import shots, diagram, shade, post
+from . import shots, diagram, shade, post, selfview
 from .frame import render_hdr, SPP4, W_FULL, H_FULL
 from . import timeline_overlay as tov
 from . import overlay as ov
@@ -30,6 +30,8 @@ def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
             exp = s2['exposure']
         samples.append(hdr * exp)
     hdr = np.mean(samples, axis=0)
+    if st.get('selfview'):
+        hdr = selfview.composite(hdr, st['cam'], st['selfview']['open'], st['selfview']['turn'])
     if st.get('sweep', 0) > 0 and st['cam'] is not None:
         hdr = line_sweep(hdr, st['cam'], st['sweep'])
     img = post.finish(hdr, exposure=1.0, bloom_amt=st['bloom'], seed=int(round(t * shots.FPS)) + 17)

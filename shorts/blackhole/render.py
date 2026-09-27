@@ -27,7 +27,7 @@ def mb_for(t):
     """Motion-blur sub-samples by shot: more where the camera moves fast."""
     if shots.T_C <= t < shots.T_D:
         return 3
-    if 8.6 <= t < 10.8 or shots.T_B <= t < 7.2 or shots.T_F <= t < 29.6:
+    if 8.6 <= t < 10.8 or shots.T_B <= t < 7.2 or shots.T_F <= t < 29.6 or 26.2 <= t < shots.T_F:
         return 2
     if shots.T_A - 0.12 <= t < shots.T_A + 0.12:
         return 1

@@ -54,7 +54,9 @@ def measure(pcm, text, whisper):
     spread = float(np.std(12 * np.log2(f0v / med))) if v.sum() > 3 else 0.0
     segs, _ = whisper.transcribe(y.astype(np.float32), language='en', beam_size=5)
     heard = ' '.join(s.text for s in segs)
-    norm = lambda s: re.sub(r"[^a-z' ]", '', s.lower().replace('disc', 'disk')).split()
+    nums = {'30': 'thirty', '31': 'thirty one', '32': 'thirty two', '10': 'ten', '2': 'two', '1': 'one'}
+    norm = lambda s: re.sub(r"[^a-z' ]", '', re.sub(r'\d+', lambda m_: ' ' + nums.get(m_.group(), m_.group()) + ' ',
+                                                     s.lower().replace('disc', 'disk'))).split()
     return dict(dur=len(pcm) / vo.SR, voiced=float(v.mean()), f0=med, spread=spread, heard=heard.strip(),
                 exact=norm(heard) == norm(text), lufs=pyln.Meter(vo.SR, block_size=0.2).integrated_loudness(pcm.astype(np.float64)))
 

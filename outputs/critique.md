@@ -180,3 +180,33 @@ Whisper hears all 13 lines exactly, and captions land between 0.20 s early and 0
   - Every line starts on its beat, and captions land between 0.15 s early and 0.05 s late.
   - The voice sits at least 13.5 dB above the music while speaking, and 16.6 dB above music plus effects over the dive line.
   - Master: −14.1 LUFS, −1.4 dBTP.
+
+## Round 6: show the head, and more facts per second (the user: "would be great to see own head in black hole when you say that light here is looped"; "it wants more facts… Vsauce and Cleo Abram give much more interesting information per unit of time")
+
+**The back of your own head, shown.** A new first-person shot, E2 (24.55–26.67), replaces the diagram's double take:
+- **Framing:** it uses the same camera F opens on, so it flows straight into F.
+- **Push-in:** it pushes in on the photon-sphere line and tilts 3° down, so the line sits at 40% of the height. The first try put the opened line on top of the caption.
+- **The self-view:** the line opens like an eye into a lens of its own cold light. Inside it is the back of the astronaut's helmet (the same signed-distance astronaut as the diagram, raymarched from behind), lit from above by the bright sky with nothing from the black hole below. The head turns once.
+- **Hand-off:** the lens closes and the view whips back out to exactly F's first frame.
+- **Label and honesty note:** "* MAGNIFIED ILLUSTRATION". sources.md says the real image is a hair-thin sliver stretched around the whole line.
+- **Two looks were rejected on the way:** a pink rectangle (the band had sampled the disk's warm light, and read as an interface box) and a helmet standing on the horizon (the band behind it was dark).
+
+**Density.** The visuals are fixed, so the narration does the work:
+- **Words:** 87 → 104 in the same 37.3 s (2.3 → 2.8 words/s overall). The silent holds are cut back to the two payoffs (the arch reveal, now 0.9 s, and the dot landing).
+- **Three new facts, checked in sources.md:**
+  - "its inner edge racing at half the speed of light" (a circular orbit at the ISCO moves at c/2 for a local observer);
+  - "bent over the top by gravity, and under the bottom" (the far side's second image, which also answers both critics' question about the lower arc);
+  - "And it's playing thirty times fast", with a 31.6× number on screen (time dilation for a hovering observer at 1.001×).
+- **Ending:** "Everything else? Black hole." now lands at 34.5–36.3, one second before the loop, so it snaps straight back into "This dot?".
+
+**Voice.** New continuous Liam reads of the new script, cut and picked as before. Two fixes to caption timing:
+- Captions that start mid-line now take their start from Whisper's word timings on the chosen take. The stretched v3 timestamps were up to 0.5 s off where the read had no pause at a comma, as in "Hover here and…".
+- Those Whisper starts are then refined to the voice's own onset, because Whisper stretches a word that follows a pause back into the silence.
+
+Only "So why does it look like this?" is tightened, by 5%.
+
+**Checks:**
+- Whisper hears all 14 lines exactly, and captions land between 0.15 s early and 0.11 s late.
+- Nothing is in the bottom 20% or the button column.
+- The voice sits at least 13.6 dB above the music.
+- Master: −14.1 LUFS, −1.4 dBTP.

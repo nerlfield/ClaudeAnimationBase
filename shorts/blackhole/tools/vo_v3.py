@@ -42,7 +42,7 @@ def script():
 # lines that also get short context reads.  "Black hole." is the script's last sentence, and every full read ended
 # it with a creaky final drop (f0 at or below 60 Hz); the video loops, so it is read the way a viewer hears it,
 # followed by the opening line, and cut out of the middle.
-CONTEXT = {11: "Everything else? Black hole. This dot? It's the whole universe."}
+CONTEXT = {11: "Everything else? Black hole. This dot? It's the whole universe."}   # (index 11 = "Black hole.")
 
 
 def fetch(seed, stability, text=None):
@@ -160,6 +160,47 @@ def cut(read, pcm, only=None):
     return out
 
 
+def chunk_starts_from_whisper(pcm, al, marked, whisper):
+    """Caption chunks that start mid-line get their start from Whisper's word timing on the chosen take (the
+    stretched v3 timestamps can be 0.2-0.5 s off inside a line, and a comma is not always a pause)."""
+    import librosa
+    words = vo.plain(marked).split()
+    y = librosa.resample(pcm.astype(np.float64), orig_sr=SR, target_sr=16000).astype(np.float32)
+    segs, _ = whisper.transcribe(y, language='en', word_timestamps=True, beam_size=5)
+    heard = [w for sg in segs for w in sg.words]
+    if len(heard) != len(words):
+        return al
+    text = vo.plain(marked)
+    starts = [j for j in range(len(text)) if text[j] != ' ' and (j == 0 or text[j - 1] == ' ')]
+    cs = list(al['character_start_times_seconds'])
+    # Whisper stretches a word that follows a pause back into the silence: start at the voice's own onset instead
+    # (first 5 ms frame within 32 dB of the take's peak, after any 60 ms of quiet inside Whisper's span)
+    hop = int(0.005 * SR)
+    x = pcm[: len(pcm) // hop * hop].reshape(-1, hop)
+    rms = np.sqrt((x.astype(np.float64) ** 2).mean(axis=1))
+    thr = rms.max() * 10 ** (-32 / 20)
+
+    def onset(a, b):
+        i0, i1 = int(a / 0.005), min(len(rms), int((b + 0.3) / 0.005))
+        on = rms[i0:i1] > thr
+        quiet = np.convolve(~on, np.ones(12), 'valid') == 12
+        q = np.nonzero(quiet)[0]
+        if len(q):
+            on[:q[0] + 12] = False
+        k = np.nonzero(on)[0]
+        return (i0 + k[0]) * 0.005 if len(k) else a
+    wi = 0
+    for chunk in vo.marked_chunks(marked)[:-1]:
+        wi += len(chunk)
+        j0 = starts[wi]; j1 = starts[wi + 1] if wi + 1 < len(starts) else len(text)
+        t_on = onset(heard[wi].start, heard[wi].end)
+        for j in range(j0, j1):
+            cs[j] = max(cs[j], t_on)
+        cs[j0] = t_on
+    al = dict(al); al['character_start_times_seconds'] = cs
+    return al
+
+
 def main():
     from faster_whisper import WhisperModel
     whisper = WhisperModel('small.en', device='cpu', compute_type='int8', cpu_threads=2)
@@ -217,6 +258,7 @@ def main():
             pcm = squeeze(pcm, ratio); lead *= ratio
             for k in ('character_start_times_seconds', 'character_end_times_seconds'):
                 al[k] = [t * ratio for t in al[k]]
+        al = chunk_starts_from_whisper(pcm, al, text, whisper)
         json.dump(dict(text=spoken, speed=speed, voice=vo.VOICE, model='eleven_v3', read=name, squeeze=ratio, lead=lead,
                        pcm=base64.b64encode(pcm.astype(np.float32).tobytes()).decode(), al=al),
                   open(os.path.join(vo.BUILD, f'vo_{i:02d}.json'), 'w'))

@@ -83,8 +83,9 @@ CUES = [
     (22.70, 'sfx2/syn_gliss', -16, dict(duck=3)),
     (24.00, 'el/chime_1_key', -13, dict(align='peak', fade_out=(24.9, 25.4))),
     (24.00, 'sfx2/syn_chime', -17, dict(align='peak', fade_out=(24.9, 25.4))),
-    (25.15, 'sfx2/syn_swish2', -19, dict(align='peak')),
-    (25.90, 'sfx2/syn_swish2', -23, dict(align='peak')),
+    # E2: back to first person; the line opens into the back of your own head, then snaps shut
+    (24.55, 'el/whoosh_1', -21, dict(align='peak', fade_in=0.03)),
+    (24.95, 'sfx2/syn_shimmer', -21, dict(fade_out=(26.1, 26.45), duck=2)),
     (26.45, 'el/whoosh_0', -18, dict(align='peak', fade_in=0.03)),
     (26.67, 'el/boom_1', -19, dict(align='peak', trim_pre=0.1)),
     # F: the squeeze
@@ -94,8 +95,9 @@ CUES = [
     (32.00, 'el/boom_big_1', -14, dict(noduck=True, align='peak', trim_pre=0.35)),
     (32.00, 'sfx2/syn_boom_big', -12, dict(noduck=True, align='peak')),
     (32.00, 'sfx2/syn_shimmer_long', -19, dict(fade_out=(36.4, 37.0))),
-    (34.90, 'el/boom_2', -17, dict(align='peak', trim_pre=0.1)),
-    (34.90, 'sfx2/syn_pop_low2', -21, {}),
+    (33.30, 'el/pop_1', -20, {}),
+    (35.65, 'el/boom_2', -17, dict(align='peak', trim_pre=0.1)),
+    (35.65, 'sfx2/syn_pop_low2', -21, {}),
     (37.33, 'sfx2/syn_reverse_long', -21, dict(align='end')),
 ]
 

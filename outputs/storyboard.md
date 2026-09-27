@@ -1,6 +1,6 @@
 # Storyboard: "This dot is the whole universe"
 
-*Version 3, after the final-cut critique (round 3 in critique.md): the tiny depth gauge became a big live distance counter, the silent dive got a line ("Let's fly in. Way closer."), the black half in D is tagged BLACK HOLE, the sky inside the end dot turns while the camera pushes in (so the loop never sits still), and A's opening is re-matched to the bigger dot. Version 2 came from two rounds of frames-sheet critique: a cold open on the video's most surprising image that ends on exactly that frame, the G callouts, the arrowed light path in E, whole-phrase captions and B tilted to 58°.*
+*Version 4 (round 6): after "That's the back of your own head" the video now shows it. A first-person shot (E2) opens the photon-sphere line into a magnified image of the back of your helmet. The narration carries three more facts: the disk's inner edge at half the speed of light, the far side imaged under the bottom as well as over the top, and the universe in 31.6× fast-forward just above the horizon. Version 3 (round 3): the live distance counter, the dive line, the BLACK HOLE tag in D, and the turning, pushing end dot. Version 2: the cold open on the dot, whole-phrase captions and the G callouts.*
 
 **Logline.** The viewer thinks a black hole is a black ball that hides what's behind it, but its gravity bends light so hard that on the way down you'd see the back of its disk over the top, then the back of your own head, so if you hovered just above its edge, the whole universe would be one glowing dot over your head and everything else would be black hole.
 
@@ -53,11 +53,11 @@
 - **Camera.** Rise 5.33 → 7.10 (θ 82° → 32° from the pole, pulling back to r 34 and widening the field of view from 38° to 60° so the ring fits), hold with a 3° yaw drift until 8.6, swing down 8.6 → 10.67 with a 2° overshoot and settle on the 10.67 bar, then a slow push to 16.0.
 - **Reads.**
   - 5.33–7.10: the view tilts and the disk opens into an ellipse. The eye rides the disk.
-  - 6.00–7.80: VO "The disk around it? Flat." The eye is on the tilted ring.
+  - 5.45–8.85: VO "The disk is flat, its inner edge racing at half the speed of light." The eye is on the tilted ring.
   - 7.10–8.60: BACK (ice) and FRONT (gold) pop on the two halves, 0.2 s apart. The eye goes to BACK, the brighter, colder half.
   - 8.60–10.67: the swing down. The labels fade at 9.0 and the eye tracks the ice half. VO "So why does it look like this?" (9.0–10.6).
   - 10.67–12.00: **the ice arch stands over the hole.** No voice. A small "BACK" re-pops on the arch at 10.9.
-  - 12.00–15.00: VO "That's the back of the disk, bent over the top by gravity." The ice slowly returns to gold from 13.5.
+  - 11.55–16.00: VO "That's the back of the disk, bent over the top by gravity, and under the bottom." The eye goes from the arch to the lower ice arc; the ice slowly returns to gold from 13.5.
   - 15.30–16.00: the distance counter fades in at the top (20×). A riser starts.
 - **Out.** Camera move into C.
 
@@ -80,16 +80,25 @@
   - 21.30–22.20: the sweep along the line. The eye is on the line.
 - **Out.** Match cut on the line: E opens exactly edge-on, so the bright line continues across the cut before it opens into a circle.
 
-### E: The back of your head · 22.20–26.67 · [in: match cut, line → circle]
-- **Seen.** Diagram, labelled "* DIAGRAM, NOT TO SCALE"; the hole sits at 40% height once the ring opens so the lap stays clear of the captions. From below the ring plane: the black horizon sphere, the photon sphere drawn as a thin circle of light, and on it an astronaut (≈18% of frame width, in the upper half) labelled "YOU" with a leader line to the helmet. A pulse of light leaves the back of the helmet, runs the whole lap and hits the visor with a flash; its path stays drawn as a faint trail with arrowheads showing the direction.
-- **Event.** The line opens into a circle (22.2–23.0); the pulse's lap (22.7 → 24.0); the flash; the double take (the helmet whips round to look behind, and back).
-- **Camera.** Elevation −2° → −31° (ease-out), slow 5° orbit, back to −2° at 26.3–26.67.
+### E: Light goes round · 22.20–24.55 · [in: match cut, line → circle]
+- **Seen.** Diagram, labelled "* DIAGRAM, NOT TO SCALE"; the hole sits at 40% height once the ring opens so the lap stays clear of the captions. From below the ring plane: the black horizon sphere, the photon sphere drawn as a thin circle of light, and on it an astronaut labelled "YOU". A pulse of light leaves the back of the helmet, runs the whole lap with arrowheads, and flashes in the visor.
+- **Event.** The line opens into a circle (22.2–23.0); the pulse's lap (22.7 → 24.0); the flash (24.0).
+- **Camera.** Elevation −2° → −31° (ease-out), slow orbit.
 - **Reads.**
   - 22.20–23.00: the line becomes a ring around a black sphere, with the astronaut on it. "YOU" pops at 22.5.
-  - 22.30–24.00: VO "And light goes around it in circles." The eye follows the pulse, the only moving bright thing, for 1.3 s.
-  - 24.00–24.80: **the flash in the visor.** VO "That's the back of your own head." (24.8–26.4, a breath after the flash)
-  - 25.00–26.30: the double take (anticipation 0.15 s, whip 0.35 s, hold 0.4 s, back) as the laugh beat.
-- **Out.** The camera drops back to edge-on and the circle collapses to a line, then a match cut to first person on the same line.
+  - 22.30–24.00: VO "And light goes around it in circles." The eye follows the pulse, the only moving bright thing.
+  - 24.00–24.55: **the flash in the visor.**
+- **Out.** Cut to first person (E2).
+
+### E2: The back of your own head · 24.55–26.67 · [in: cut, diagram → first person]
+- **Seen.** First person at the photon sphere again, with the camera F opens on: the bright sky above, the black hole below, the line where they meet. The view pushes in on the line and tilts 3° down, so the line sits at 40% of the height, clear of the captions. The line then opens like an eye into a lens of cold light, and inside it is **the back of your own helmet**. The helmet is lit from above by the bright sky, nothing comes from the black hole below, and there is a warm rim from the disk. At 25.6–26.1 the head turns, the way yours just did. Labelled "* MAGNIFIED ILLUSTRATION". For real, the image of your head is a hair-thin sliver stretched around the whole line (APOD 2013-07-02; sources.md).
+- **Event.** The line → the lens with your head (24.95–25.5) → back to the line (26.1–26.4) → a whip pull-out into F.
+- **Camera.** F's opening camera; field of view 44° → 30° (push-in), then 29° → 60° in the last 0.45 s so the frame at 26.67 is exactly F's first.
+- **Reads.**
+  - 24.55–24.95: we're looking along the line. VO "That's the back of your own head." (24.8–26.3)
+  - 24.95–26.10: the line opens; the eye goes to the helmet, the only object in the frame.
+  - 26.10–26.67: the lens snaps shut and the view pulls out.
+- **Out.** Continuous into F (same camera).
 
 ### F: Just above the edge · 26.67–32.00 · [in: match cut, circle → line]
 - **Seen.** First person at 1.5× again. The camera sinks and tilts up to look straight away from the hole. The bright half of the sky rolls up and closes into a circle overhead, then shrinks (a hemisphere at 1.5×, 91° across at 1.1×, 30° at 1.01×, 9.4° at 1.001×: Synge's escape cone), turning ice-blue and brighter as it's blueshifted, until it's the dot from the first frame.
@@ -104,15 +113,15 @@
 - **Out.** Continuous into G.
 
 ### G: Everything else · 32.00–37.33 · [out: the loop, this frame continues into O]
-- **Seen.** The dot, the same framing as frame 0, the camera pushing in slowly while the sky inside it turns. The counter lands on "1.001×" with "0.1% ABOVE THE EDGE" (31.9–33.2); then "THE UNIVERSE" labels the dot (33.3) and "BLACK HOLE" appears with four arrows pointing out into the black (34.9), word-synced to the VO.
-- **Event.** The push-in and the turning sky carry straight on into O; the labels fade by 36.8, so the final frames are identical to O's.
+- **Seen.** The dot, the same framing as frame 0, the camera pushing in slowly while the sky inside it turns. The counter lands on "1.001×" / "0.1% ABOVE THE EDGE" (31.9–33.25). Then "31.6×" / "THE UNIVERSE, IN FAST-FORWARD" pops (33.3–34.6), then "THE UNIVERSE" labels the dot (34.55), and "BLACK HOLE" appears with four arrows pointing out into the black (35.65), word-synced to the VO.
+- **Event.** The push-in and the turning sky carry straight on into O; the labels fade by 37.15, so the final frames are identical to O's.
 - **Camera.** The same continuous function as O (G at time t equals O at time t − 37.33), so the loop has no seam.
 - **Reads.**
-  - 32.00–33.30: **the dot, the whole universe, held 1.3 s**, with its 1.001× label.
-  - 33.40–34.20: VO "Everything else?"
-  - 34.20–35.00: a beat.
-  - 35.00–35.70: VO "Black hole." The gold callout's arrows push the eye out into the black around the dot (no caption under the dot, so it can't read as the dot's name).
-  - 35.70–37.33: hold. The last read gets 1.6 s to land, then the loop into "This dot? It's the whole universe."
+  - 32.00–32.30: **the dot lands** on the hit.
+  - 32.30–34.35: VO "And it's playing thirty times fast." To a hovering observer here, everything outside runs 31.6× fast (1/√(1 − 1/1.001)), and the number pops as the VO says it.
+  - 34.50–35.45: VO "Everything else?"
+  - 35.65–36.30: VO "Black hole." The gold callout's arrows push the eye out into the black around the dot.
+  - 36.30–37.33: a one-second hold, then the loop snaps into "This dot? It's the whole universe."
 
 ---
 
@@ -121,7 +130,7 @@
 - **Every shot has an event.** O the turning sky and push-in; A the push and disk stream; B tilted ring → arch; C 22× → 1.5×; D stars zipping along the line and the sweep; E the line opens, the lap, the flash, the double take; F half the sky → the dot; G the creep and the fade to the loop frame.
 - **Reads have time and don't overlap.** Text pops (REAL PHYSICS SIMULATION, BACK/FRONT, 1.5×, BLACK HOLE, YOU, 1.001×) each land on a settled frame and are ≤4 words. The VO names what's already on screen ("flat" after the tilt, "like this" as the arch rises, "circles" while the pulse runs, "back of your own head" after the flash).
 - **No new idea lands on a payoff.** The arch (10.67–12.0), the flash (24.0, then the VO names it) and the dot (32.0–33.3) hold with no new information.
-- **Every seam has a transition, and they vary.** Seamless loop (G→O), inverted match cut (O→A), camera move (A→B→C), braked arrival (C→D), match cut line → circle (D→E), circle → line (E→F), continuous (F→G).
+- **Every seam has a transition, and they vary.** Seamless loop (G→O), inverted match cut (O→A), camera move (A→B→C), braked arrival (C→D), match cut line → circle (D→E), cut on the flash to first person (E→E2), continuous with a whip pull-out (E2→F), continuous (F→G).
 - **The ending rhymes with the opening.** It *is* the opening frame: the dot, now understood.
 - **Every setup pays off on screen.** The dot claim (O) pays off in F–G; the BACK tag in B pays off as the arch; the line in D is explained in E; the counter's "HORIZON = 1×" is approached to 1.001× in F; "hover" (said in D and F) is the condition the dot needs.
 - **On-screen text never restates the image.** REAL PHYSICS SIMULATION, BACK/FRONT, the distance counter, 1.5× PHOTON SPHERE, the BLACK HOLE tag in D, YOU, * DIAGRAM, NOT TO SCALE, LOOKING UP ↑, 1.001× 0.1% ABOVE THE EDGE, THE UNIVERSE and the BLACK HOLE arrows each add something the picture and VO don't say.
