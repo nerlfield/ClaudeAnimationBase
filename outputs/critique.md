@@ -266,3 +266,63 @@ Only "So why does it look like this?" is tightened, by 5%.
 - **Master:** still −14.2 LUFS integrated and −1.3 dBTP after encoding, with the voice at least 12.9 dB above the music.
 
 **THE UNIVERSE label** (the user: "at the end, this arrow is incorrectly placed"). The label sat up and to the left of the dot, and its leader ran to the label's left end at mid-height, straight through the "T". Labels now centre over their point when asked, and every leader runs to the nearest edge of the lettering and stops 12 px short. THE UNIVERSE sits centred above the dot, with a short vertical leader that starts on the rim itself. The rim's position is measured on the rendered frames and followed as the push-in carries it up 7 px. The diagram's YOU label uses the same rule.
+
+## Round 11: plain words, and the picture re-timed around the voice (the user: "The video still sounds weird and unnatural… 'back half, front half': it's more natural to say 'this is the back half and this is the front half'… 'that disk is actually flat' feels like you start saying it too early, first make a transition and then say it… 'here is how' is also weird… Imagine you're explaining it to a 3-year-old… smooth, clear, direct, clean… you're using too little of phrases like 'this is', 'there is'… improve both video and audio")
+
+Before starting, I re-read the original brief and every note since. The direction they share: speech that sounds like a person explaining, pictures that move when the words say so, and no rushed or abrupt joins.
+
+**Script.** Rewritten from scratch in plain, pointing language, one idea per sentence (script.md has the full text):
+- "See this glowing dot? That's the whole universe. Let me show you why." ("Here's how" is gone.)
+- "This is a black hole. And this bright ring is hot gas, spinning around it."
+- "Let's look at it from above." The camera rises, and only then: "See? The disk is actually flat."
+- "This is the back half. And this is the front half."
+- "Now watch the back half, as we go back down." Silence on the arch, then "The black hole bends its light, up over the top... and under the bottom."
+- "And see this thin line? That's light, going around the black hole in a circle. Light can go all the way around... and come back to you. So in this line, you see the back of your own head."
+
+The narration went from 115 to 186 words.
+
+**Voice.** Six full reads of the new script were auditioned (`tools/vo_flow.py --audition`). Seed 19 at stability 0.5 was the only one with every line heard exactly and none whispered or in fry. It also had the most pitch movement, 5.5 semitones, and a calm 3.1 words/s. It is placed at its own pace: every line starts no earlier than its picture allows, keeps its natural pause before it (at least 0.14 s), and is never squeezed.
+
+**The picture follows the voice.** Every shot had been keyed to a fixed 43.3 s clock, and the voice was squeezed to fit it. A smooth, always-forward time map from video time to that clock (`bh/shots.py` `WARP`, 25 knots read off the placed words) now re-times everything:
+- A holds for the whole "This is a black hole…" line.
+- The rise starts as "Let's look at it from above." ends and is finished before "See?".
+- The back half turns ice on "back half".
+- The swing down runs on "as we go back down".
+- The dive starts on "fly in".
+- The light's lap in the diagram takes the whole of "…going around the black hole in a circle. Light can go all the way around…" and flashes in the visor on "you".
+- The self-view lens is open for "you see the back of your own head".
+- The dot lands after "…one small dot above you."
+
+The ending and the cold open share one steady camera clock, so the loop point still joins two moments moving at the same speed. The disk's own motion runs in video time. The video is now 74.67 s (112 beats), with 1.3 s of quiet before the loop.
+
+**Sound follows too.**
+- Effect cues are placed in video time.
+- The light's lap got a new 5.6 s harp run to match its slower pace.
+- The music is re-arranged bar by bar from the approved track: the quiet opening bars, then the steady arpeggio groove looped under the explanations, then the rising build from the lap to the dot. Its drop lands on the dot, and its decay is stretched to the end. The reveal, the arch and the flash fall on the music's beats.
+
+**Bugs found in verification.**
+- **Dissolve half black:** for the second half of the dot-to-black-hole dissolve, the cold open's side rendered black. The dot's camera clock switched to the ending's formula once the cut time passed. The frame-change scan flagged it at 5.37 s, and it's fixed.
+- **Overlap at 58 s:** "LOOKING UP ↑" overlapped the returning distance counter. The label was then removed (see below).
+- **File size:** the 75 s video at CRF 18 was 123 MB, over GitHub's 100 MB limit. It is encoded at CRF 21 now (58 MB).
+
+**Fresh-eyes critic.** It was given only one frame per second and the transcript, no script or storyboard. It understood most of it: "Lensing finally made sense to me here" (18–30 s), with a "strong ending". Where it got lost, and what changed:
+- **8–10 s, "which ring?", and "disk" came out of nowhere:** a gold DISK OF HOT GAS tag now appears on the ring's near side on "And this bright ring is hot gas".
+- **31 s, a BACK tag lingered after the ring had turned gold:** the lower BACK tag now fades with the ice.
+- **33–36 s, "where am I?":** the BLACK HOLE tag now appears in the black half on arrival (35.0 s), not 2 s later.
+- **40 s, "the thin line is a hairline I had to hunt for":** a LIGHT pointer marks it on "And see this thin line?".
+- **53–57 s, "we go lower, but the picture barely changes":** the distance counter now returns on "Now let's go lower" and counts down from 1.5×. The LOOKING UP label, which only repeated "Then look up", is gone.
+- **63–70 s, "the same ball sits there":** on "and half an hour goes by out there" (67.25–69.4), the whole sky inside the dot now sweeps one full turn while the counter climbs from 1 to 32 MIN, like a clock hand racing. The first try, the disk's gas speeding up about 8×, didn't show at that distance (frame-to-frame change inside the dot stayed at 2.7). The turn raises it to 9.6. A whole turn ends where it started, so the frames after it and the loop are unchanged. It is camera motion, not a physics claim; the physics is the number.
+
+**Not changed:**
+- **"Make the dot actually small":** it is framed at half the width so it reads on a phone, and so the dot and the black hole's shadow match at the cut. The darkness around it is still most of the frame.
+- **Moving the time lines into the descent:** they follow "one small dot" because the dot is where you see the fast-forward.
+- **Re-recording "its light" and "the edge":** each patch would have spliced a different read into the one continuous take, and the user's last notes were about seams in the voice. In context, "its" follows "watch the back half", and "the edge" follows the black hole filling half your sky.
+- **Dim captions at 21, 31, 35 and 63 s:** the one-per-second samples caught a caption fading in, as a moving viewer never sees it.
+- **The diagram's cartoon style:** a design choice from round 3, labelled "* DIAGRAM, NOT TO SCALE".
+
+**Checks** (on the final cut, after the critic fixes):
+- Whisper on the final mix hears every word exactly, and captions land between 0.13 s early and 0.05 s late.
+- No isolated frames, and the loop seam is a normal frame step.
+- Nothing is in the bottom 20% or the button column.
+- Every effect sits at least 5.4 LU under the voice, and the music at least 12.8 dB under it.
+- Master: −14.1 LUFS, −1.4 dBTP.

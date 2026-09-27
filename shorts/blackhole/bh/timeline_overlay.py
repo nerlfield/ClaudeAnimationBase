@@ -8,7 +8,7 @@ import numpy as np
 
 from . import overlay as ov
 from .overlay import _ease_out
-from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, T_A_REAL, dot_tau, state, seg, unwarp
+from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, T_A_REAL, dot_tau, ff_u, state, seg, unwarp
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
@@ -155,6 +155,11 @@ def layers(t, you_px=None, st=None):
     u = st['t']
     if 0.5 <= t < T_A_REAL - 0.3:
         L.append(ov.top_label('Real physics simulation', t - 0.6, fade=1.0 - seg(t, T_A_REAL - 0.8, T_A_REAL - 0.3)))
+    # A: name the ring as it is named ("And this bright ring is hot gas, spinning around it."), in the words the
+    # next shot uses ("the disk"), on its near side just under the shadow; gone before the rise
+    t_gas = chunk_time(['And', 'this', 'bright'], after=5.0, default=7.7)
+    if t_gas <= t and u < 5.05:
+        L.append(ov.disk_tag('DISK OF HOT GAS', (540, 915), ov.GOLD, t - t_gas, 1.0 - seg(u, 4.7, 5.05), size=52))
     # disk tags: BACK / FRONT pop on "This is the back half." / "And this is the front half.", go as the swing starts
     lab = st.get('labels') or {}
     t_back, t_front = back_front_times()
@@ -167,8 +172,8 @@ def layers(t, you_px=None, st=None):
         L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - unwarp(10.9), 1.0 - seg(u, 12.5, 12.9)))
     # "...and under the bottom": the lower image of the disk's far side gets its own tag
     t_under = chunk_time(['and', 'under'], after=10.0, default=28.9)
-    if t_under <= t and u < 16.0:
-        L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(u, 15.65, 16.0), size=48))
+    if t_under <= t and u < 14.5:                                  # gone as the ice fades back to gold
+        L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(u, 13.9, 14.5), size=48))
     # distance counter: counts down live through the dive and the last descent, lands on each ladder value
     cam = st['cam']
     if 15.3 <= u < T_D:
@@ -176,9 +181,8 @@ def layers(t, you_px=None, st=None):
     if T_D <= u < T_D + 1.35:
         L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - unwarp(T_D), fade=1.0 - seg(u, T_D + 1.05, T_D + 1.35),
                               fade_in=False))
-    # the counter comes back for the last descent once LOOKING UP (same place, top centre) has gone
-    t_up = chunk_time(['Then', 'look'], after=40.0, default=56.6)
-    t_c0 = max(unwarp(28.3), t_up + 1.3)
+    # the counter comes back as the last descent starts ("Now let's go lower"), so going lower shows
+    t_c0 = chunk_time(['Now', "let's", 'go'], after=40.0, default=53.0) + 0.3
     if t >= t_c0 and u < 31.9:
         L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, seg(t, t_c0, t_c0 + 0.3)))
     # "And down here, time runs slower. Stay for one minute... and half an hour goes by out there."
@@ -191,15 +195,17 @@ def layers(t, you_px=None, st=None):
     if t_min <= t < t_hour:
         L.append(ov.big_value('1', 'down here', t - t_min, unit='MIN'))
     if t_hour <= t < t_end:
-        n = 1 + round(31 * _ease_out(seg(t, t_hour, t_hour + 0.9)))
+        n = 1 + round(31 * ff_u(t))                                   # counts with the dot's extra turn
         L.append(ov.big_value('%d' % n, 'out there', t - t_hour, fade=1.0 - seg(t, t_end - 0.3, t_end), fade_in=False,
                               unit='MIN'))
     # D: the black half is the black hole
-    if 19.55 <= u < 22.0:
-        L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - unwarp(19.55), 1.0 - seg(u, 21.7, 22.0), size=64))
-    # F: LOOKING UP on "Then look up."
-    if t_up <= t < t_up + 1.3:
-        L.append(ov.top_label('Looking up \u2191', t - t_up, fade=1.0 - seg(t, t_up + 1.0, t_up + 1.3), plate=True, size=64))
+    if 18.95 <= u < 22.0:                                          # from the arrival: this black is the black hole
+        L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - unwarp(18.95), 1.0 - seg(u, 21.7, 22.0), size=64))
+    # "And see this thin line?": a pointer to the hairline where the halves meet (it tilts: y 921 at x 300, 896 at x 780)
+    t_line = chunk_time(['And', 'see', 'this'], after=30.0, default=39.9)
+    if t_line <= t and u < 22.1:
+        L.append(ov.point_label('light', (700, 903), t - t_line, fade=1.0 - seg(u, 21.8, 22.1), dx=0, dy=-150, size=52,
+                                center=True, inset=6))
     # diagram tags
     if T_E <= u < T_E2:
         f = min(seg(u, T_E, T_E + 0.3), 1.0 - seg(u, T_E2 - 0.3, T_E2))

@@ -97,6 +97,21 @@ def unwarp(s):
     return 0.5 * (lo + hi)
 
 
+# "...and half an hour goes by out there": the sky inside the dot sweeps one extra full turn while the counter runs
+# 1 -> 32 MIN, like a clock hand racing.  (A first try sped up the disk's own clock instead; at that distance its
+# gas is too blurred to show it: frame-to-frame change inside the dot didn't move.)  A whole turn ends where it
+# started, so everything after it, and the loop, is unchanged.  Video times: "and half an hour goes by out there."
+# runs 67.23-69.36 (build/words.json).
+FF_WINDOW = (67.25, 69.40)
+
+
+def ff_u(t):
+    """0 -> 1 across FF_WINDOW (smootherstep): the extra turn's progress, and the counter's."""
+    a, b = FF_WINDOW
+    u = clamp((t - a) / (b - a))
+    return u * u * u * (u * (6 * u - 15) + 10)
+
+
 def dot_tau(t):
     """The end camera's clock for video time t in the cold open (first half of the video: it runs on past the
     cut while the dissolve into A still shows it) or in the ending (second half)."""
@@ -226,7 +241,7 @@ def r_for_cone(half_deg):
 
 # ---------------------------------------------------------------- the timeline
 
-def end_view(tau):
+def end_view(tau, extra_spin=0.0):
     """F-G-O: sinking toward the horizon and looking up while the sky closes into a dot.
     tau runs from T_F through STORY_DUR and on past it: O at time t uses tau = t + STORY_DUR, so the loop has no seam."""
     cone = kf(tau, [(T_F, 89.9), (T_G, 4.706), (END_TAU, 4.0)], lambda x: ease(x) if tau < T_G else x)
@@ -246,7 +261,7 @@ def end_view(tau):
     U = rotate(U, F, math.radians(0.35 * (tau - T_F)))
     # once the dot has formed, the sky inside it turns slowly about the radial axis: the dot stays put, its
     # stars and Milky Way keep moving through the ending and the cold open
-    spin = math.radians(6.0 * max(0.0, tau - T_G))
+    spin = math.radians(6.0 * max(0.0, tau - T_G) + extra_spin)
     Pn = P / np.linalg.norm(P)
     F, U = rotate(F, Pn, spin), rotate(U, Pn, spin)
     gs = 1 / math.sqrt(1 - 1 / r0)
@@ -355,6 +370,6 @@ def state(t, force=None):
                              turn=0.45 * math.sin(math.pi * seg(t, 25.5, 25.95)))
     else:
         p['shot'] = 'F' if t < T_G else 'G'
-        p['cam'], p['exposure'] = end_view(t if t_real < T_G_REAL else dot_tau(t_real))
+        p['cam'], p['exposure'] = (end_view(t) if t_real < T_G_REAL else end_view(dot_tau(t_real), 360.0 * ff_u(t_real)))
         p['bloom'] = 0.09 + 0.07 * seg(t, T_F + 2.0, 31.0)
     return p
