@@ -379,3 +379,18 @@ The voice is a new continuous read (seed 163). The picture was re-timed around i
 - Making the dot smaller.
 
 **Length.** It is 94.0 s against version 1's 68.7 s. That's long for a Short: the reference Shorts run a median 55–60 s, and the longest are 93–147 s. The critic listed further cuts that would reach about 76 s, mostly the lines above that were not taken.
+
+## Round 14: the last checks before delivery
+
+**The check.** Whisper on the final mix, with every caption chunk checked against the voice (`tools/captionsync.py`). The GPS line's captions ran 0.7–1.25 s late ("and without a fix" +1.25 s, "ten kilometers" +1.20 s). There was also a 1.5 s dead pause between "a day." and "And all this darkness", where there should be none.
+
+**The cause.** A re-read line's end had been taken as the last moment within 38 dB of its peak. The GPS re-read is quieter than the main read (spliced in at +4 dB), so its room tone sits at that level and the line "ended" 1.25 s after "day". The letter timings were stretched over that span, which made the captions late, and the next line waited for the phantom end. The photo lines' re-read had the same fault, by 0.64 s and 0.32 s.
+
+**The fix.** A re-read line now ends at its last frame within 26 dB of its peak, plus the voice's own decay (at most 0.25 s). The cut tails were checked: Whisper hears every word inside the trimmed lines, and on the cut tails alone it gives only its silence hallucination ("Thanks for watching!"). The photo lines keep their natural pause, because the gaps are re-measured after the trim.
+
+**Result.**
+- Everything after 0:09 comes 0.29 s earlier. The last line comes 1.25 s earlier.
+- The Earth card now fades out right after "a day" and is gone 0.3 s before "And all this darkness", so the picture moves before the voice does.
+- The video is 92.7 s (was 94.0). The picture was re-rendered from the new time map.
+- The captions are within 0.3 s of the voice everywhere.
+- The mix measures −14.07 LUFS and −1.6 dBTP, with the music at least 12.8 dB under the voice.

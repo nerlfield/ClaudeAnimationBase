@@ -129,6 +129,24 @@ def segment(read, pcm, whisper, idx=None):
     return out, rms
 
 
+def trim_tail(g, pcm):
+    """A re-read line's true end: its last frame within 26 dB of its peak plus the voice's own decay after it (while
+    within 38 dB, at most 0.25 s).  segment()'s end is the last frame within 38 dB anywhere in the line's slot, which a
+    noisier re-read's room tone can reach: the GPS line's re-read ran 0.8 s past its "day", putting its captions late
+    and a dead pause after it.  The letter times are rescaled onto the corrected span."""
+    hop = int(0.01 * SR)
+    x = pcm[int(g['s0'] * SR):int(g['s1'] * SR)].astype(np.float64)
+    r = np.sqrt(np.convolve(x ** 2, np.ones(hop) / hop, 'same'))[::hop]
+    kl = int(np.nonzero(r > r.max() * 10 ** (-26 / 20))[0][-1])
+    k = kl
+    while k + 1 < len(r) and k - kl < 25 and r[k + 1] > r.max() * 10 ** (-38 / 20):
+        k += 1
+    s1 = min(g['s1'], g['s0'] + (k + 1) / 100.0)
+    f = (s1 - g['s0']) / (g['s1'] - g['s0'])
+    m = lambda t: g['s0'] + (t - g['s0']) * f
+    return dict(g, s1=s1, cs=[m(t) for t in g['cs']], ce=[m(t) for t in g['ce']])
+
+
 _last_fit = [None]
 
 
@@ -334,6 +352,13 @@ def patch(segs, pcm, whisper):
             sp, _ = segment(d, pp, whisper, idx=ctx)
             if sp is None:
                 print('  patch %s s%-3d  lines not found' % (group, seed)); continue
+            for i in group:
+                t1 = sp[i]['s1']
+                sp[i] = trim_tail(sp[i], pp)
+                if t1 - sp[i]['s1'] > 0.02:
+                    print('  patch %s s%-3d  line %d ends %.2f s earlier (room tone, not voice)' % (group, seed, i, t1 - sp[i]['s1']))
+            for a, b in zip(ctx, ctx[1:]):
+                sp[b]['gap'] = sp[b]['s0'] - sp[a]['s1']
             cost, ok, rows = 0.0, True, []
             for i in group:
                 g = sp[i]

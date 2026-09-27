@@ -53,7 +53,7 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 | Licence | Standard YouTube Licence | |
 | Remixing | Allow | Remixes and Shorts that sample it are free reach. |
 | Comments | On, sorted by Top | |
-| Cover frame (chosen in the app) | The real M87* photo with OUR SOLAR SYSTEM circled inside it (on "is this tiny circle", about 0:15), or the ice-blue arch over the black hole just after "But gravity bends its light" | The first is a real photo plus a surprising scale. The second is the video's strongest simulated image. |
+| Cover frame (chosen in the app) | The real M87* photo with OUR SOLAR SYSTEM circled inside it (on "is this tiny circle", about 0:14), or the ice-blue arch over the black hole just after "But gravity bends its light" | The first is a real photo plus a surprising scale. The second is the video's strongest simulated image. |
 
 ## Pinned comment
 
