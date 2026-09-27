@@ -255,3 +255,12 @@ Only "So why does it look like this?" is tightened, by 5%.
   - Whisper on the final mix hears all 13 lines exactly.
   - Captions land within 0.12 s of the voice, except the checker's known false alarm on "and the whole universe" (see round 8).
   - The music decays smoothly to silence by 41 s, and the final pause sits at −35 dB (shimmer and swell).
+
+## Round 10: softer effects (the user: "some of them are too loud, make them a bit softer")
+
+`tools/sfxlevels.py` measures every effects moment against the voice: the effects stem's loudest 400 ms around each cue (K-weighted, like LUFS momentary loudness), minus the voice's median while speaking. Measured this way, the four impact hits were the problem. Each is two layered booms, and together they came in level with the voice or above it: 2.67 s −0.6 LU, 10.67 s +1.6 LU, 18.67 s −4.3 LU, 32.0 s +0.7 LU. Everything else already sat 8 LU or more under the voice.
+
+- **Hits:** each lowered 3–7 dB. They now land 5.4–7.0 LU under the voice (2.67 s −5.5, 10.67 s −5.4, 18.67 s −7.0, 32.0 s −6.1). Their peaks are now 12.5 dB or more below the voice's peak.
+- **Trimmed 2–3 dB:** the visor chime at 24.0 s (now −8.7 LU), the dive rush at 16.0 s, the dot's shimmer chain, and the soft hit on "That's the black hole".
+- **Unchanged:** the pops, whooshes and risers, already 10–20 LU under the voice.
+- **Master:** still −14.2 LUFS integrated and −1.3 dBTP after encoding, with the voice at least 12.9 dB above the music.

@@ -60,29 +60,30 @@ CUES = [
     (2.67, 'sfx2/syn_reverse', -18, dict(align='end')),
     (2.67, 'el/whoosh_0', -21, dict(align='peak', fade_in=0.03)),
     # O -> A cut
-    (2.67, 'el/boom_0', -13, dict(noduck=True, align='peak')),
-    (2.67, 'sfx2/syn_boom', -12, dict(noduck=True, align='peak')),
+    # round 10 (the user: "some of them are too loud"): every hit sits about 6 LU under the voice, not level with it
+    (2.67, 'el/boom_0', -18, dict(noduck=True, align='peak')),
+    (2.67, 'sfx2/syn_boom', -17, dict(noduck=True, align='peak')),
     # B: rise, labels, swing down, the arch
     (6.20, 'sfx2/syn_whoosh_long', -21, dict(align='peak')),
     ('BACK', 'el/pop_1', -19, {}),
     ('FRONT', 'sfx2/syn_pop_low2', -20, {}),
     (9.60, 'el/whoosh_1', -17, dict(align='peak', fade_in=0.03)),
-    (10.67, 'el/boom_big_1', -13, dict(noduck=True, align='peak', trim_pre=0.35)),
-    (10.67, 'sfx2/syn_boom_big', -11, dict(noduck=True, align='peak')),
+    (10.67, 'el/boom_big_1', -20, dict(noduck=True, align='peak', trim_pre=0.35)),
+    (10.67, 'sfx2/syn_boom_big', -18, dict(noduck=True, align='peak')),
     (10.90, 'el/pop_1', -21, {}),
     (16.00, 'el/riser_2', -22, dict(align='end', duck=6)),
     # C: the dive (under "Let's get closer. Much closer.")
-    (16.00, 'sfx2/syn_dive', -14, dict(duck=8)),
+    (16.00, 'sfx2/syn_dive', -16, dict(duck=8)),
     (16.00, 'el/dive_1', -16, dict(duck=6, fade_out=(18.5, 18.9))),
     # D: arrival at the photon sphere, the sweep along the line
-    (18.67, 'sfx2/syn_land2', -16, dict(noduck=True, align='peak')),
-    (18.67, 'sfx2/syn_boom', -14, dict(noduck=True, align='peak')),
+    (18.67, 'sfx2/syn_land2', -18, dict(noduck=True, align='peak')),
+    (18.67, 'sfx2/syn_boom', -17, dict(noduck=True, align='peak')),
     (18.67, 'sfx2/syn_shimmer', -23, dict(fade_out=(21.8, 22.2), duck=3)),
     (22.20, 'el/whoosh_0', -19, dict(align='peak', fade_in=0.03, fade_out=(22.3, 22.55))),
     # E: the lap, the flash, the double take, the collapse
     (22.70, 'sfx2/syn_gliss', -16, dict(duck=3)),
-    (24.00, 'el/chime_1_key', -13, dict(align='peak', fade_out=(24.9, 25.4))),
-    (24.00, 'sfx2/syn_chime', -17, dict(align='peak', fade_out=(24.9, 25.4))),
+    (24.00, 'el/chime_1_key', -16, dict(align='peak', fade_out=(24.9, 25.4))),
+    (24.00, 'sfx2/syn_chime', -19, dict(align='peak', fade_out=(24.9, 25.4))),
     # E2: back to first person; the line opens into the back of your own head, then snaps shut
     (24.55, 'el/whoosh_1', -21, dict(align='peak', fade_in=0.03)),
     (24.95, 'sfx2/syn_shimmer', -21, dict(fade_out=(26.1, 26.45), duck=2)),
@@ -92,15 +93,15 @@ CUES = [
     (31.90, 'sfx2/syn_riser_long', -20, dict(align='end', duck=6)),
     (31.90, 'sfx2/syn_land2', -17, dict(align='peak')),
     # G: the dot lands; "Black hole."; the swell back into the loop
-    (32.00, 'el/boom_big_1', -14, dict(noduck=True, align='peak', trim_pre=0.35)),
-    (32.00, 'sfx2/syn_boom_big', -12, dict(noduck=True, align='peak')),
+    (32.00, 'el/boom_big_1', -21, dict(noduck=True, align='peak', trim_pre=0.35)),
+    (32.00, 'sfx2/syn_boom_big', -19, dict(noduck=True, align='peak')),
     # the dot's shimmer, chained (5.2 s each) to carry the longer ending; each takes over under the last one's fade
-    (32.00, 'sfx2/syn_shimmer_long', -19, dict(fade_out=(36.4, 37.0))),
-    (36.30, 'sfx2/syn_shimmer_long', -20, dict(fade_in=0.7, fade_out=(40.8, 41.4))),
-    (40.60, 'sfx2/syn_shimmer_long', -21, dict(fade_in=0.8, fade_out=(DUR - 0.9, DUR - 0.3))),
+    (32.00, 'sfx2/syn_shimmer_long', -21, dict(fade_out=(36.4, 37.0))),
+    (36.30, 'sfx2/syn_shimmer_long', -21, dict(fade_in=0.7, fade_out=(40.8, 41.4))),
+    (40.60, 'sfx2/syn_shimmer_long', -22, dict(fade_in=0.8, fade_out=(DUR - 0.9, DUR - 0.3))),
     ('MINUTE', 'sfx2/syn_pop_low2', -21, {}),
     ('HOUR', 'el/pop_1', -19, {}),
-    ('BLACK_HOLE', 'el/boom_2', -17, dict(align='peak', trim_pre=0.1)),
+    ('BLACK_HOLE', 'el/boom_2', -19, dict(align='peak', trim_pre=0.1)),
     ('BLACK_HOLE', 'sfx2/syn_pop_low2', -21, {}),
     (DUR, 'sfx2/syn_reverse_long', -21, dict(align='end')),
 ]
