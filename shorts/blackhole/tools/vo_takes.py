@@ -20,7 +20,9 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import vo  # noqa: E402
 
-TAKES = os.path.join(vo.BUILD, 'vo_takes')
+TAKES = os.path.join(vo.BUILD, 'vo_takes', vo.VOICE)          # takes are kept per voice
+# the narrator's usual pitch: takes must sit within -22%/+26% of it and are pulled toward it (Chris ~115 Hz)
+F0_CENTER = float(os.environ.get('VO_F0', 115))
 SETTINGS = [  # (seed, stability, style)
     (11, 0.50, 0.20), (23, 0.50, 0.20), (37, 0.60, 0.10), (41, 0.60, 0.10), (53, 0.45, 0.30), (67, 0.45, 0.30),
     (71, 0.50, 0.30), (83, 0.55, 0.20)]
@@ -59,12 +61,12 @@ def measure(pcm, text, whisper):
 
 def score(m, slot, deadpan):
     """Higher is better; -inf if a hard rule fails."""
-    if not m['exact'] or m['dur'] > slot + 0.05 or m['voiced'] < 0.4 or not (90 <= m['f0'] <= 145):
+    if not m['exact'] or m['dur'] > slot + 0.05 or m['voiced'] < 0.4 or not (0.78 * F0_CENTER <= m['f0'] <= 1.26 * F0_CENTER):
         return -np.inf
     if not deadpan and m['spread'] < 1.5:
         return -np.inf
     # ...and stays near the narrator's usual pitch (median of the accepted lines, ~115 Hz) so lines match
-    return m['voiced'] + 0.15 * min(m['spread'], 4.0) - 0.3 * abs(m['dur'] - 0.85 * slot) - 0.02 * abs(m['f0'] - 115)
+    return m['voiced'] + 0.15 * min(m['spread'], 4.0) - 0.3 * abs(m['dur'] - 0.85 * slot) - 0.02 * abs(m['f0'] - F0_CENTER)
 
 
 def main():
@@ -88,7 +90,7 @@ def main():
             if not os.path.exists(path) and not report_only:
                 raw, al = tts(spoken, prev_text, next_text, speed, seed, stab, style)
                 pcm, al, _ = vo.trim(raw, al)
-                json.dump(dict(text=spoken, speed=speed, pcm=base64.b64encode(pcm.astype(np.float32).tobytes()).decode(), al=al,
+                json.dump(dict(text=spoken, speed=speed, voice=vo.VOICE, pcm=base64.b64encode(pcm.astype(np.float32).tobytes()).decode(), al=al,
                                seed=seed, stability=stab, style=style), open(path, 'w'))
             if os.path.exists(path):
                 cands.append((f's{seed} stab {stab} style {style}', path))
@@ -111,7 +113,7 @@ def main():
             if not os.path.exists(bak):
                 shutil.copy(dst, bak)
             c = json.load(open(best[2]))
-            json.dump(dict(text=c['text'], speed=c['speed'], pcm=c['pcm'], al=c['al']), open(dst, 'w'))
+            json.dump(dict(text=c['text'], speed=c['speed'], voice=vo.VOICE, pcm=c['pcm'], al=c['al']), open(dst, 'w'))
             print('  installed', os.path.basename(best[2]))
 
 

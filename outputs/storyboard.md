@@ -34,7 +34,7 @@
 - **Camera.** Looking straight up from 1.001× the horizon radius; vertical field of view 28.4° → 26° (a slow push-in; the dot grows from 52% to 54% of the width), the sky turning 6°/s.
 - **Reads.**
   - 0.00–0.90: a glowing orb in darkness. The eye lands on the dot.
-  - 0.15–1.62: VO "This dot is the whole universe." Caption "THIS DOT IS" from frame 0, then "THE WHOLE UNIVERSE." held to the cut.
+  - 0.15–2.40: VO "This dot? It's the whole universe." Caption "THIS DOT?" from frame 0, then "IT'S THE WHOLE UNIVERSE." held to the cut.
   - 0.60–2.50: top label "REAL PHYSICS SIMULATION" (50 px, bright). It tells you this isn't art.
 - **Out.** On the 2.67 bar, a match cut with inversion: the bright dot becomes the black hole's dark shadow, same size and position, under a whoosh and a rim flash.
 
@@ -53,7 +53,7 @@
 - **Camera.** Rise 5.33 → 7.10 (θ 82° → 32° from the pole, pulling back to r 34 and widening the field of view from 38° to 60° so the ring fits), hold with a 3° yaw drift until 8.6, swing down 8.6 → 10.67 with a 2° overshoot and settle on the 10.67 bar, then a slow push to 16.0.
 - **Reads.**
   - 5.33–7.10: the view tilts and the disk opens into an ellipse. The eye rides the disk.
-  - 6.00–7.60: VO "The disk around it is flat." The eye is on the tilted ring.
+  - 6.00–7.80: VO "The disk around it? Flat." The eye is on the tilted ring.
   - 7.10–8.60: BACK (ice) and FRONT (gold) pop on the two halves, 0.2 s apart. The eye goes to BACK, the brighter, colder half.
   - 8.60–10.67: the swing down. The labels fade at 9.0 and the eye tracks the ice half. VO "So why does it look like this?" (9.0–10.6).
   - 10.67–12.00: **the ice arch stands over the hole.** No voice. A small "BACK" re-pops on the arch at 10.9.
@@ -87,7 +87,7 @@
 - **Reads.**
   - 22.20–23.00: the line becomes a ring around a black sphere, with the astronaut on it. "YOU" pops at 22.5.
   - 22.30–24.00: VO "And light goes around it in circles." The eye follows the pulse, the only moving bright thing, for 1.3 s.
-  - 24.00–24.80: **the flash in the visor.** VO "That's the back of your own head." (24.2–25.9)
+  - 24.00–24.80: **the flash in the visor.** VO "That's the back of your own head." (24.8–26.4, a breath after the flash)
   - 25.00–26.30: the double take (anticipation 0.15 s, whip 0.35 s, hold 0.4 s, back) as the laugh beat.
 - **Out.** The camera drops back to edge-on and the circle collapses to a line, then a match cut to first person on the same line.
 
@@ -99,7 +99,7 @@
   - 26.67–27.20: the match cut; we're back at the line.
   - 26.90–28.80: VO "Now hover just above the edge." The eye follows the bright sky as it rolls up.
   - 27.00–27.90: "LOOKING UP ↑" kicker at the top (on a soft dark backing, over the disk streak) as the camera tilts.
-  - 29.00–31.85: VO "The whole universe gets squeezed into one dot above your head." Captions "THE WHOLE UNIVERSE / GETS SQUEEZED / INTO ONE DOT ABOVE YOUR HEAD." The eye is on the shrinking circle.
+  - 29.05–32.00: VO "The whole universe shrinks to one dot overhead." Captions "THE WHOLE UNIVERSE / SHRINKS TO ONE DOT OVERHEAD." The eye is on the shrinking circle.
   - 32.00: the dot lands.
 - **Out.** Continuous into G.
 
@@ -112,7 +112,7 @@
   - 33.40–34.20: VO "Everything else?"
   - 34.20–35.00: a beat.
   - 35.00–35.70: VO "Black hole." The gold callout's arrows push the eye out into the black around the dot (no caption under the dot, so it can't read as the dot's name).
-  - 35.70–37.33: hold. The last read gets 1.6 s to land, then the loop into "This dot is the whole universe."
+  - 35.70–37.33: hold. The last read gets 1.6 s to land, then the loop into "This dot? It's the whole universe."
 
 ---
 

@@ -158,3 +158,25 @@ Whisper hears all 13 lines exactly, and captions land between 0.20 s early and 0
   - the 19–22 s stretch, now tagged and voiced;
   - the unlabelled lower image of the disk's far side;
   - the diagram's art style.
+
+## Round 5: a new, more natural voice (the user: "I don't like the voice… I liked Liam", then "too scripted, feels like a robot")
+
+- **Voice:** ElevenLabs "Liam – Energetic, Social Media Creator" (`TX3LPaxmHKxFdv7VOQHJ`), found in the account's voice list.
+- **Why it sounded scripted:** every line was generated on its own with `eleven_multilingual_v2` and trimmed tight. That flattens the intonation between sentences and throws away the breaths.
+- **What changed:**
+  - **Model:** `eleven_v3`, the expressive model. Its lines move 4–11 semitones in pitch, against 2–4 for the old takes.
+  - **One continuous read:** Liam reads the whole script in one go; eight seeds at "natural" and "creative" stability (`tools/vo_v3.py`).
+  - **Cut by the audio, not the timestamps:** v3's timestamps give each pause to the next sentence and drifted up to 0.7 s within a read. Cuts made from them started captions early and clipped word endings (Whisper heard "gravid" and "over half"). Each read is now split at the quietest point in each pause. Each line starts and ends where its sound does, and its letters' times are stretched onto that span. Caption changes that follow a comma or question mark snap to the voice's onset after the pause.
+  - **Breaths kept:** each line keeps the breath before it (up to 0.35 s, placed so the first word still lands on its beat) and a natural 0.28 s tail.
+  - **Picking the best version of each line:** across the reads, a line must transcribe exactly and not be whispered (at least 20% voiced) or in fry (median pitch at least 72% of the narrator's 108 Hz). The pitch-consistency limit was dropped: v3's questions rise well above the centre, and that is the naturalness asked for. The pick then favours more voicing and more pitch movement, stays near the narrator's usual pitch, and prefers lines that need no squeeze.
+- **"Black hole.":** as the last sentence of every full read it came out creaky (60 Hz or below, flat). It is now cut from a short read of "Everything else? Black hole. This dot? It's the whole universe.", which is how the loop plays (132 Hz, a level deadpan, as scripted).
+- **Wording, loosened for speech:**
+  - "This dot? It's the whole universe."
+  - "The disk around it? Flat."
+  - "The whole universe shrinks to one dot overhead." Every read of "…gets squeezed into one dot above your head" took 3.6–4.4 s for a 3.0 s slot. Squeezing it 15–30% would have sounded processed.
+- **Timing:** v3 reads slower and ignores the speed setting, so slots now use the real gaps between beats. "That's the back of your own head." moved to 24.78 s, a breath after the visor flash. WSOLA tightens only one line, "So why does it look like this?", by 2.4%; the cap was 8%.
+- **Checks:**
+  - Whisper hears all 13 lines exactly.
+  - Every line starts on its beat, and captions land between 0.15 s early and 0.05 s late.
+  - The voice sits at least 13.5 dB above the music while speaking, and 16.6 dB above music plus effects over the dive line.
+  - Master: −14.1 LUFS, −1.4 dBTP.

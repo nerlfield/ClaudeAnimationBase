@@ -68,8 +68,8 @@ def chunks():
 
 
 # a chunk that would need a smaller font is split at a phrase boundary, timed from the TTS word starts
-SPLITS = {('The', 'whole', 'universe', 'gets', 'squeezed'): 3}
-EXTRA_HOT = {'squeezed'}
+SPLITS = {('The', 'whole', 'universe', 'gets', 'squeezed'): 3}     # (earlier wording; kept for the Chris cut)
+EXTRA_HOT = {'squeezed', 'shrinks'}
 
 
 def _split_long(out, words):

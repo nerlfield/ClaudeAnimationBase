@@ -15,27 +15,28 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.path.join(HERE, '..', 'build')
-VOICE = 'iP95p4xoKVk53GoZ742B'          # Chris - Charming, Down-to-Earth (premade)
-MODEL = 'eleven_multilingual_v2'
+VOICE = 'TX3LPaxmHKxFdv7VOQHJ'          # Liam - Energetic, Social Media Creator (premade; the user's pick)
+# earlier cut: 'iP95p4xoKVk53GoZ742B', Chris - Charming, Down-to-Earth (takes kept in build/vo_chris/)
+MODEL = 'eleven_v3'                   # read as one continuous performance by tools/vo_v3.py (v2 lines sounded read-out)
 SR = 44100
 LINE_LUFS = -22.5                   # each line is matched to this before placement
 
 # (start time in the video, latest end, text) -- '|' marks caption chunk breaks, '*' marks gold words
 LINES = [
-    (0.15, 2.40, 0.92, 'This dot is | the whole *universe.'),
-    (2.85, 5.25, 0.95, 'To see it, fly down to a *black *hole.'),
-    (6.00, 7.75, 0.95, 'The disk around it is *flat.'),
-    (8.95, 10.65, 0.86, 'So why does it look like *this?'),
-    (11.95, 15.30, 1.04, "That's the *back of the disk, | bent over the top by gravity."),
-    (18.85, 22.15, 1.04, 'Hover here, | and the black hole fills | exactly *half your sky.'),
-    (22.30, 24.05, 1.00, 'And light goes around it in *circles.'),
-    (24.15, 26.05, 0.88, "That's the back of your own *head."),
-    (26.90, 28.60, 0.95, 'Now hover just above the *edge.'),
-    (28.90, 32.15, 0.98, 'The whole universe gets squeezed | into one *dot above your head.'),
-    (33.30, 34.30, 0.90, 'Everything else?'),
-    (34.90, 35.90, 0.85, 'Black hole.'),
-    # added after the final-cut critique (the dive had no voice); appended so the cached takes keep their index
-    (16.10, 18.30, 1.00, "Let's fly in. | Way *closer."),
+    (0.15, 2.55, 1.00, "This dot? | It's the whole *universe."),
+    (2.85, 5.80, 1.00, 'To see it, fly down to a *black *hole.'),
+    (6.00, 8.60, 1.00, 'The disk around it? | *Flat.'),
+    (8.90, 10.62, 1.00, 'So why does it look like *this?'),
+    (11.95, 15.85, 1.00, "That's the *back of the disk, | bent over the top by gravity."),
+    (18.80, 22.15, 1.00, 'Hover here, | and the black hole fills | exactly *half your sky.'),
+    (22.28, 24.70, 1.00, 'And light goes around it in *circles.'),
+    (24.78, 26.55, 1.00, "That's the back of your own *head."),
+    (26.85, 29.00, 1.00, 'Now hover just above the *edge.'),
+    (29.05, 32.05, 1.00, 'The whole universe | shrinks to one *dot overhead.'),
+    (33.30, 34.75, 1.00, 'Everything else?'),
+    (34.90, 36.50, 1.00, 'Black hole.'),
+    # added after the final-cut critique (the dive had no voice); appended so each line keeps its cache index
+    (16.05, 18.62, 1.00, "Let's fly in. | Way *closer."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order
 
@@ -129,19 +130,22 @@ def main():
         for attempt in range(4):
             if os.path.exists(cache):
                 c = json.load(open(cache))
-                if c['text'] == spoken and c['speed'] == speed:
+                if c['text'] == spoken and c['speed'] == speed and c.get('voice') == VOICE and c.get('model', 'eleven_multilingual_v2') == MODEL:
                     pcm = np.frombuffer(base64.b64decode(c['pcm']), np.float32); al = c['al']
                 else:
                     pcm = None
             else:
                 pcm = None
             if pcm is None:
+                if MODEL == 'eleven_v3':
+                    raise SystemExit(f'line {i}: no v3 take cached for "{spoken}"; run tools/vo_v3.py first')
                 raw, al = tts(spoken, prev_text, next_text, speed)
                 pcm, al, _ = trim(raw, al)
-                json.dump(dict(text=spoken, speed=speed, pcm=base64.b64encode(pcm.astype(np.float32).tobytes()).decode(), al=al),
+                json.dump(dict(text=spoken, speed=speed, voice=VOICE, pcm=base64.b64encode(pcm.astype(np.float32).tobytes()).decode(), al=al),
                           open(cache, 'w'))
             dur = len(pcm) / SR
-            if t0 + dur <= t1 + 0.05 or speed >= 1.12:
+            lead = c.get('lead', 0.0) if pcm is not None and os.path.exists(cache) else 0.0
+            if MODEL == 'eleven_v3' or t0 + dur - lead <= t1 + 0.05 or speed >= 1.12:
                 break
             speed = round(min(1.12, speed * (dur / (t1 - t0)) * 1.02), 3)
         # every line at the same loudness (the takes came out between -21 and -25 LUFS), with 8 ms edges
@@ -149,14 +153,15 @@ def main():
         lv = pyln.Meter(SR, block_size=min(0.4, 0.9 * len(pcm) / SR)).integrated_loudness(pcm.astype(np.float64))
         pcm = (pcm * 10 ** ((LINE_LUFS - lv) / 20)).astype(np.float32)
         e = int(0.008 * SR); pcm = pcm.copy(); pcm[:e] *= np.linspace(0, 1, e); pcm[-e:] *= np.linspace(1, 0, e)
-        a = int(t0 * SR)
+        # a v3 line carries the breath before it: the words still start at t0, the breath just before
+        a = int(round((t0 - lead) * SR))
         mix[a:a + len(pcm)] += pcm
         # clamp the alignment to the trimmed audio: the last word's end otherwise includes trailing silence
         spoken_end = (np.where(np.abs(pcm) > 0.01)[0][-1] + 1) / SR
         al = dict(al)
         al['character_end_times_seconds'] = [min(e, spoken_end) for e in al['character_end_times_seconds']]
         al['character_start_times_seconds'] = [min(s0, spoken_end) for s0 in al['character_start_times_seconds']]
-        ws = words_from_alignment(al, t0)
+        ws = words_from_alignment(al, t0 - lead)
         all_words += [dict(w=w, s=round(s, 3), e=round(e, 3)) for w, s, e in ws]
         k = 0
         for mc in marked_chunks(text):
@@ -164,7 +169,7 @@ def main():
             chunks.append(dict(start=round(c[0][1], 3), end=round(c[-1][2], 3), words=[w for w, _, _ in c],
                                hot=[w for (w, _, _), (_, h) in zip(c, mc) if h]))
         assert k == len(ws), (text, len(ws), k)
-        report.append(f'{t0:6.2f}-{t0 + dur:6.2f} (slot to {t1:5.2f}) speed {speed:.3f}  {len(spoken.split()) / dur:.2f} w/s  {spoken}')
+        report.append(f'{t0:6.2f}-{t0 + dur - lead:6.2f} (slot to {t1:5.2f}) speed {speed:.3f}  {len(spoken.split()) / dur:.2f} w/s  {spoken}')
     chunks.sort(key=lambda c: c['start']); all_words.sort(key=lambda w: w['s'])
     # chunks stay up until the next one starts (or 0.35 s after their last word)
     for j, c in enumerate(chunks):
