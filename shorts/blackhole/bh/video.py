@@ -25,9 +25,10 @@ def _render_group(t, g, w, h, spp, motion_blur):
         ts = t + o * (0.5 / shots.FPS)
         s2 = shots.state(ts, force=g)
         if s2['diagram'] is not None:
-            hdr, _ = diagram.render_e(ts, w, h, spp, shade.BB)
+            hdr, _ = diagram.render_e(s2['t'], w, h, spp, shade.BB)        # the diagram runs on story time
             exp = 0.8
         else:
+            # (the disk turns in video time)
             hdr = render_hdr(s2['cam'], ts, w, h, spp, tint=s2['tint'], disk_gain=s2['disk_gain'], sky_gain=s2['sky_gain'])
             exp = s2['exposure']
         samples.append(hdr * exp)
@@ -40,7 +41,9 @@ def _render_group(t, g, w, h, spp, motion_blur):
 
 
 def dissolve_at(t):
-    """(group before, group after, weight of the after-shot) if t is inside a dissolve, else None."""
+    """(group before, group after, weight of the after-shot) if video time t is inside a dissolve, else None
+    (dissolves are placed and timed on the story clock)."""
+    t = shots.warp(t)
     for T, a, b, d in shots.DISSOLVES:
         if T - d / 2 <= t < T + d / 2:
             u = (t - (T - d / 2)) / d
@@ -60,7 +63,7 @@ def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
         hdr = ha * (1 - k) + hb * k
         bloom = sa['bloom'] * (1 - k) + sb['bloom'] * k
     else:
-        hdr, st = _render_group(t, shots.group_at(t), w, h, spp, motion_blur)
+        hdr, st = _render_group(t, shots.group_at(shots.warp(t)), w, h, spp, motion_blur)
         bloom = st['bloom']
     img = post.finish(hdr, exposure=1.0, bloom_amt=bloom, seed=int(round(t * shots.FPS)) + 17)
     return np.clip(img, 0, 1)
@@ -69,7 +72,7 @@ def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
 def overlay_frame(img, t):
     """Caption scrim plus every caption and label for time t, on a base frame of any size."""
     st = shots.state(t)
-    you = diagram.you_px(t) if st['diagram'] is not None else None
+    you = diagram.you_px(st['t']) if st['diagram'] is not None else None
     if tov.caption_layer(t) is not None:
         img = scrim(img)
     img = ov.composite(img, tov.layers(t, you, st))

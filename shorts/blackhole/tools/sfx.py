@@ -346,6 +346,7 @@ SYNTH = {
     'chime': lambda: syn_chime(),
     'glide': lambda: syn_glide(),
     'gliss': lambda: syn_gliss(),
+    'gliss_slow': lambda: syn_gliss(dur=5.6),     # round 11: the lap now takes ~6 s
     'land2': lambda: land_sound(),
     'pop_low2': lambda: finish(repitch(from_take('pop_1'), 0.84)),
     'swish2': lambda: swish_sound(),

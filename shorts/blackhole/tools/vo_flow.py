@@ -30,11 +30,14 @@ MAX_KEEP_GAP = 1.1        # longest natural pause kept before the picture's wind
 MAX_SQUEEZE = 0.92
 LEAD, TAIL = 0.38, 0.45   # at most this much breath before / decay after each line comes from the read
 # the chosen performance (from `python tools/vo_flow.py --search`), kept under the script it was read from
-PIN = (179, 0.0)
+PIN = (19, 0.5)          # round 11: the new script's audition winner (s179 read rounds 8-10)
 # lines reworded after the read was chosen: re-read together, in their neighbours' company, with the pinned read's
 # settings (seeds tried in turn) and spliced in.  The pinned read said "Out there, time's in fast-forward." here:
 # heard as "times and fast forward" and, even reworded, too quick to land (round 9).
-PATCH = {(10, 11): [179, 7, 19, 31, 43, 59, 71, 83]}
+PATCH = {}
+# round 11: a new script, so a new read.  Reads auditioned (python tools/vo_flow.py --audition); the picture is then
+# re-timed around the chosen one (bh/shots.py WARP), so the voice keeps its own pace.
+AUDITION = [(179, 0.0), (163, 0.0), (71, 0.0), (59, 0.0), (97, 0.0), (19, 0.5)]
 
 
 def tokens(text):
@@ -240,9 +243,40 @@ def patch(segs, pcm, whisper):
         print('  patch %s: using s%d (gain %+.1f dB)' % (group, seed, 20 * np.log10(gain)))
 
 
+def audition(whisper):
+    """Every AUDITION read of the current script, line by line: heard exactly, voiced, pitch and movement, and its
+    natural duration and pause before it.  Writes build/vo_audition.json; picks nothing."""
+    idx = vo_v3.order()
+    out = {}
+    for seed, stab in AUDITION:
+        d = vo_v3.fetch(seed, stab)
+        pcm = vo_v3.decode(d['audio'])
+        segs, rms = segment(d, pcm, whisper)
+        if segs is None:
+            print('read s%-3d st%.1f  lines not found in the transcript' % (seed, stab)); continue
+        rows = []
+        for i in idx:
+            g = segs[i]
+            m = vo_takes.measure(pcm[int(g['s0'] * SR):int(g['s1'] * SR)], g['text'], whisper)
+            rows.append(dict(line=i, dur=g['s1'] - g['s0'], gap=g['gap'], exact=bool(g['exact']), voiced=m['voiced'],
+                             f0=m['f0'], spread=m['spread']))
+        f0s = [r['f0'] for r in rows if r['voiced'] >= 0.3]
+        centre = float(np.median(f0s))
+        bad = [r['line'] for r in rows if not r['exact'] or r['voiced'] < 0.25 or r['f0'] < 0.72 * centre]
+        speech = sum(r['dur'] for r in rows); pauses = sum(r['gap'] for r in rows[1:])
+        wps = len(' '.join(g['text'] for g in segs.values()).split()) / speech
+        print('read s%-3d st%.1f  bad %-12s  speech %.1f s + pauses %.1f s  %.2f words/s in lines  f0 %3.0f  movement %.2f st' % (
+            seed, stab, bad or '-', speech, pauses, wps, centre, np.mean([min(r['spread'], 6) for r in rows])))
+        print('      durations ' + ' '.join('%d:%.1f/%.1f' % (r['line'], r['gap'], r['dur']) for r in rows))
+        out['s%d_st%.1f' % (seed, stab)] = dict(bad=bad, rows=rows, f0=centre)
+    json.dump(out, open(os.path.join(vo.BUILD, 'vo_audition.json'), 'w'), indent=1)
+
+
 def main():
     from faster_whisper import WhisperModel
     whisper = WhisperModel('small.en', device='cpu', compute_type='int8', cpu_threads=4)
+    if '--audition' in sys.argv:
+        return audition(whisper)
     idx = vo_v3.order()
     if '--search' not in sys.argv:
         d = json.load(open(os.path.join(vo_v3.READS, 'read_s%d_st%.1f.json' % PIN)))

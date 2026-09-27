@@ -1,6 +1,9 @@
 """The video's timeline: camera and render parameters as pure functions of video time t (seconds).
 
-Bars at 90 BPM: one bar = 2.6667 s.  Shot boundaries and payoffs sit on bars (see outputs/storyboard.md).
+Two clocks.  The animation was built on a 43.33 s "story" clock (bars at 90 BPM; the T_* times and every keyframe
+below are story times).  Since round 11 the video runs 74.67 s around a slower, plainer narration, so state(t)
+takes VIDEO time and maps it to story time through WARP: holds stretch to fit the lines about them, a camera move
+finishes before the line about its result starts, and cuts land where the words need them.
 """
 import math
 import numpy as np
@@ -10,14 +13,93 @@ from .geodesic import B_CRIT
 
 BPM = 90.0
 BAR = 4 * 60.0 / BPM
-DUR = 65 * BAR / 4                 # 43.333 s = 65 beats (14 bars until round 9; 2.25 more let the ending breathe)
+STORY_DUR = 65 * BAR / 4           # the animation's own clock: 43.333 s (the whole video until round 10)
+DUR = 112 * BAR / 4                 # 74.667 s = 112 beats: the video since round 11, re-timed around the narration
 FPS = 30
-N_FRAMES = int(round(DUR * FPS))   # 1300
+N_FRAMES = int(round(DUR * FPS))   # 2240
 
 # shot boundaries (v2 storyboard)
 T_A, T_B, T_C, T_D, T_E, T_F, T_G = BAR, 2 * BAR, 6 * BAR, 7 * BAR, 22.2, 10 * BAR, 12 * BAR
 T_E2 = 24.55                      # E2: first person again, the line opens into the back of your own head
 HOLE_Y = 0.42                      # the black hole (and the final dot) sit at 42% of frame height
+
+# video time -> story time, knot by knot, read off the placed narration (build/words.json, round 11):
+WARP = [
+    (0.00, 0.000),
+    (5.35, T_A),      # the black hole appears just after "Let me show you why."
+    (11.55, 5.05),    # A holds through "This is a black hole. And this bright ring is hot gas, spinning around it."
+    (12.05, T_B),     # "Let's look at it from above." ... the rise starts as the sentence ends
+    (14.00, 7.10),    # the rise is over before "See? The disk is actually flat." (14.3)
+    (17.80, 7.50),    # the back half turns ice on "This is the *back half" (tint 7.50 -> 7.80)
+    (18.20, 7.80),
+    (22.10, 8.60),    # the swing down starts on "as we go back down"
+    (24.00, 10.67),   # the arch lands; 0.66 s of silence before "The black hole bends its light"
+    (30.10, 13.50),   # the arch (ice) holds through "...and under the bottom", then fades to gold
+    (31.80, T_C),     # the dive starts on "fly in"
+    (34.50, T_D),     # arrival at the photon sphere, 0.5 s before "If you hover right here"
+    (40.00, 21.30),   # the glow sweeps along the line on "And see this thin line?"
+    (41.40, T_E),     # the line opens into the diagram's circle on "That's light, going around..."
+    (42.40, 23.00),
+    (48.00, 24.00),   # the light's lap ends in the visor flash on "...and come back to you."
+    (48.75, T_E2),    # first person again for "So in this line,"
+    (49.30, 24.90),   # the line opens...
+    (50.30, 25.50),   # ...onto the back of your head for "you see the back of your own head"
+    (51.60, 25.95),
+    (52.20, 26.30),
+    (52.80, T_F),     # pull-out done as "Now let's go lower" starts
+    (56.50, 27.80),   # sinking (the bright sky shrinks) through "...hover just above the edge."
+    (58.90, 29.50),   # "Then look up." ... straight up by "The whole universe shrinks"
+    (62.00, T_G),     # the dot lands after "...into one small dot above you."
+]
+T_G_REAL = WARP[-1][0]
+T_A_REAL = WARP[1][0]
+# after the dot lands (and in the cold open, which continues it) the ending runs on its own steady clock, so the
+# loop point joins two moments moving at the same speed
+DOT_RATE = (STORY_DUR - T_G) / (DUR - T_G_REAL)
+END_TAU = STORY_DUR + DOT_RATE * T_A_REAL          # the end camera's clock when the cold open cuts to A
+
+
+def _slopes():
+    """Monotone cubic (Fritsch-Carlson) slopes at the WARP knots; the last one matches the dot's clock."""
+    x = np.array([k[0] for k in WARP]); y = np.array([k[1] for k in WARP])
+    d = np.diff(y) / np.diff(x)
+    m = np.empty(len(x))
+    m[0] = d[0]; m[-1] = DOT_RATE
+    for i in range(1, len(x) - 1):
+        m[i] = 0.0 if d[i - 1] * d[i] <= 0 else 2.0 / (1.0 / d[i - 1] + 1.0 / d[i])   # harmonic mean
+    return x, y, m
+
+
+_WX, _WY, _WM = _slopes()
+
+
+def warp(t):
+    """Video time -> story time (smooth and increasing)."""
+    if t >= _WX[-1]:
+        return T_G + DOT_RATE * (t - _WX[-1])
+    if t <= 0.0:
+        return t * _WM[0]
+    i = int(np.searchsorted(_WX, t)) - 1
+    h = _WX[i + 1] - _WX[i]; u = (t - _WX[i]) / h
+    h00 = 2 * u ** 3 - 3 * u ** 2 + 1; h10 = u ** 3 - 2 * u ** 2 + u; h01 = -2 * u ** 3 + 3 * u ** 2; h11 = u ** 3 - u ** 2
+    return float(h00 * _WY[i] + h10 * h * _WM[i] + h01 * _WY[i + 1] + h11 * h * _WM[i + 1])
+
+
+def unwarp(s):
+    """Story time -> video time (bisection on warp)."""
+    lo, hi = -1.0, DUR + 1.0
+    for _ in range(60):
+        mid = 0.5 * (lo + hi)
+        if warp(mid) < s:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+def dot_tau(t):
+    """The end camera's clock for video time t in the ending (t >= T_G_REAL) or the cold open (t < T_A_REAL)."""
+    return STORY_DUR + DOT_RATE * t if t < T_A_REAL else T_G + DOT_RATE * (t - T_G_REAL)
 
 
 # ---------------------------------------------------------------- easing
@@ -145,13 +227,13 @@ def r_for_cone(half_deg):
 
 def end_view(tau):
     """F-G-O: sinking toward the horizon and looking up while the sky closes into a dot.
-    tau runs from T_F through DUR and on past it: O at time t uses tau = t + DUR, so the loop has no seam."""
-    cone = kf(tau, [(T_F, 89.9), (T_G, 4.706), (DUR + BAR, 4.0)], lambda x: ease(x) if tau < T_G else x)
+    tau runs from T_F through STORY_DUR and on past it: O at time t uses tau = t + STORY_DUR, so the loop has no seam."""
+    cone = kf(tau, [(T_F, 89.9), (T_G, 4.706), (END_TAU, 4.0)], lambda x: ease(x) if tau < T_G else x)
     r0 = r_for_cone(cone) if cone < 89.9 else 1.5
     az = 10.0
     P = pos(60.0, az)
     Fa, Ua = tangent_view(P, az, 6.0)
-    vfov = kf(tau, [(T_F + 0.3, 60.0), (31.0, 34.0), (DUR + BAR, 26.0)], lambda x: ease(x) if tau < 31.0 else x)
+    vfov = kf(tau, [(T_F + 0.3, 60.0), (31.0, 34.0), (END_TAU, 26.0)], lambda x: ease(x) if tau < 31.0 else x)
     Fb = P.copy(); Ub = -rotate(np.array([1.0, 0.0, 0.0]), [0, 0, 1], math.radians(az))
     Rb = np.cross(Fb, Ub)
     off = math.atan((1 - 2 * HOLE_Y) * math.tan(math.radians(vfov) / 2))
@@ -193,16 +275,18 @@ def group_at(t):
 
 
 def state(t, force=None):
-    """Everything the renderer needs at time t: a camera (or None for the diagram shot) and parameters.
+    """Everything the renderer needs at VIDEO time t: a camera (or None for the diagram shot) and parameters.
+    p['t'] is the story time the shot branches run on; p['t_real'] the video time.
     force: evaluate a given shot's branch ('O', 'AB', 'C', 'D', 'E', 'E2', 'FG') even outside its time range
     (used to render both sides of a dissolve)."""
-    p = dict(t=t, tint=0.0, exposure=0.55, disk_gain=1.0, sky_gain=1.0, shot='A', bloom=0.09, cam=None,
+    t_real, t = t, warp(t)
+    p = dict(t=t, t_real=t_real, tint=0.0, exposure=0.55, disk_gain=1.0, sky_gain=1.0, shot='A', bloom=0.09, cam=None,
              diagram=None, labels={}, selfview=None)
     g = force or group_at(t)
     if g == 'O':
         # O: the cold open is the end of the journey, continued past the loop point
         p['shot'] = 'O'
-        p['cam'], p['exposure'] = end_view(t + DUR)
+        p['cam'], p['exposure'] = end_view(dot_tau(t_real))
         p['bloom'] = 0.16
         k = seg(t, T_A - 0.1, T_A)
         p['exposure'] *= 1.0 + 2.5 * k * k; p['bloom'] += 0.12 * k
@@ -219,7 +303,7 @@ def state(t, force=None):
         p['cam'] = Cam(r0, P, F, U, vfov)
         fl = 1.0 - seg(t, T_A, T_A + 0.16)
         p['exposure'] = 0.55 * (1.0 + 1.6 * fl * fl); p['bloom'] = 0.09 + 0.1 * fl
-        p['tint'] = kf(t, [(7.05, 0.0), (7.45, 1.0), (13.5, 1.0), (15.2, 0.0)])
+        p['tint'] = kf(t, [(7.50, 0.0), (7.80, 1.0), (13.5, 1.0), (15.2, 0.0)])     # ice on "the back half"
         # label anchors on the disk (unlensed projection is close enough at this distance)
         cam = p['cam']
         far = np.array([0.0, 7.5, 0.0]); near = np.array([0.0, -5.0, 0.0])
@@ -270,6 +354,6 @@ def state(t, force=None):
                              turn=0.45 * math.sin(math.pi * seg(t, 25.5, 25.95)))
     else:
         p['shot'] = 'F' if t < T_G else 'G'
-        p['cam'], p['exposure'] = end_view(t)
+        p['cam'], p['exposure'] = end_view(t if t_real < T_G_REAL else dot_tau(t_real))
         p['bloom'] = 0.09 + 0.07 * seg(t, T_F + 2.0, 31.0)
     return p

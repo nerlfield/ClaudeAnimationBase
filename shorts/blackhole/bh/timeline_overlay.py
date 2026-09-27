@@ -8,12 +8,13 @@ import numpy as np
 
 from . import overlay as ov
 from .overlay import _ease_out
-from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, state, seg
+from .shots import T_A, T_B, T_C, T_D, T_E, T_E2, T_F, T_G, BAR, DUR, T_A_REAL, dot_tau, state, seg, unwarp
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
 MID_LEAD = 0.12
-# top of the finished dot's rim, measured on the rendered frames: the push-in carries it up and left a little
+# top of the finished dot's rim against the end camera's clock (tau), measured on the rendered frames: the push-in
+# carries it up and left a little
 DOT_RIM = [(33.0, 533, 538), (36.0, 529, 533), (39.3, 526, 528), (40.5, 525, 526), (41.5, 524, 524), (42.5, 522, 522),
            (43.3, 522, 521)]
 
@@ -104,16 +105,17 @@ def chunk_time(first_words, after=30.0, default=None):
 
 
 def back_front_times():
-    """When BACK and FRONT pop on the flat disk: as the voice says "Back half, front half." (the pops' sounds too)."""
-    return (min(8.4, chunk_time(['Back', 'half'], after=5.0, default=7.10)),
-            min(8.5, chunk_time(['front', 'half'], after=5.0, default=7.30)))
+    """When BACK and FRONT pop on the flat disk: on "This is the back half." and "And this is the front half."
+    (the pops' sounds too)."""
+    return (chunk_time(['This', 'is', 'the', 'back'], after=5.0, default=17.3),
+            chunk_time(['And', 'this', 'is', 'the', 'front'], after=5.0, default=18.9))
 
 
 def minute_times():
     """When 1 MIN pops ("Stay for one minute"), when it counts up to 32 ("and half an hour"), and when it goes."""
-    t_min = chunk_time(['Stay', 'for'], default=35.4)
-    t_hour = chunk_time(['and', 'half'], default=36.5)
-    return t_min, t_hour, chunk_time(['All', 'that'], default=39.2) - 0.1
+    t_min = chunk_time(['Stay', 'for'], default=65.4)
+    t_hour = chunk_time(['and', 'half'], default=67.3)
+    return t_min, t_hour, chunk_time(['And', 'all', 'this'], default=70.0) - 0.1
 
 
 def black_hole_time():
@@ -145,42 +147,43 @@ def caption_layer(t):
 
 
 def layers(t, you_px=None, st=None):
-    """All overlay layers for time t (full-res RGBA PIL images)."""
+    """All overlay layers for VIDEO time t (full-res RGBA PIL images).  Labels on a picture event follow the story
+    clock (u = st['t']); labels on a word follow the voice (t)."""
     L = []
     st = st or state(t)
-    if 0.5 <= t < 2.55:
-        L.append(ov.top_label('Real physics simulation', t - 0.6, fade=1.0 - seg(t, 2.25, 2.55)))
-    # disk tags
+    u = st['t']
+    if 0.5 <= t < T_A_REAL - 0.3:
+        L.append(ov.top_label('Real physics simulation', t - 0.6, fade=1.0 - seg(t, T_A_REAL - 0.8, T_A_REAL - 0.3)))
+    # disk tags: BACK / FRONT pop on "This is the back half." / "And this is the front half.", go as the swing starts
     lab = st.get('labels') or {}
-    # BACK / FRONT pop as the voice says "Back half, front half."
     t_back, t_front = back_front_times()
-    if t_back <= t < 9.10 and lab:
-        f = 1.0 - seg(t, 8.8, 9.1)
+    if t_back <= t and u < 9.10 and lab:
+        f = 1.0 - seg(u, 8.8, 9.1)
         L.append(ov.disk_tag('BACK', lab.get('back'), ov.ICE, t - t_back, f))
         if t >= t_front:
             L.append(ov.disk_tag('FRONT', lab.get('front'), ov.GOLD, t - t_front, f))
-    if 10.9 <= t < 12.9:
-        L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - 10.9, 1.0 - seg(t, 12.5, 12.9)))
-    # "…and under the bottom": the lower image of the disk's far side gets its own tag
-    t_under = chunk_time(['and', 'under'], after=10.0, default=14.5)
-    if t_under <= t < 16.0:
-        L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(t, 15.65, 16.0), size=48))
+    if 10.9 <= u < 12.9:
+        L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - unwarp(10.9), 1.0 - seg(u, 12.5, 12.9)))
+    # "...and under the bottom": the lower image of the disk's far side gets its own tag
+    t_under = chunk_time(['and', 'under'], after=10.0, default=28.9)
+    if t_under <= t and u < 16.0:
+        L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(u, 15.65, 16.0), size=48))
     # distance counter: counts down live through the dive and the last descent, lands on each ladder value
     cam = st['cam']
-    if 15.3 <= t < T_D:
-        f = seg(t, 15.3, 15.6)
-        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
-    if T_D <= t < T_D + 1.35:
-        L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - T_D, fade=1.0 - seg(t, T_D + 1.05, T_D + 1.35), fade_in=False))
-    if 28.3 <= t < 31.9:
-        f = seg(t, 28.3, 28.6)
-        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, f))
+    if 15.3 <= u < T_D:
+        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, seg(u, 15.3, 15.6)))
+    if T_D <= u < T_D + 1.35:
+        L.append(ov.big_value('1.5\u00d7', 'the photon sphere', t - unwarp(T_D), fade=1.0 - seg(u, T_D + 1.05, T_D + 1.35),
+                              fade_in=False))
+    if 28.3 <= u < 31.9:
+        L.append(ov.big_value(ov.distance_text(cam.r0), 'your distance \u00b7 horizon = 1\u00d7', 1.0, seg(u, 28.3, 28.6)))
     # "And down here, time runs slower. Stay for one minute... and half an hour goes by out there."
     # To a hovering observer at 1.001x the rest of the universe runs 1/sqrt(1 - 1/1.001) = 31.6x fast: one minute
     # here is 31.6 minutes out there.  1 MIN pops on "Stay for one minute", then counts up to 32 on "half an hour".
     t_min, t_hour, t_end = minute_times()
-    if 31.9 <= t < t_min:
-        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - 31.9, fade=1.0 - seg(t, t_min - 0.25, t_min), fade_in=False))
+    if u >= 31.9 and t < t_min:
+        L.append(ov.big_value('1.001\u00d7', '0.1% above the edge', t - unwarp(31.9), fade=1.0 - seg(t, t_min - 0.25, t_min),
+                              fade_in=False))
     if t_min <= t < t_hour:
         L.append(ov.big_value('1', 'down here', t - t_min, unit='MIN'))
     if t_hour <= t < t_end:
@@ -188,24 +191,25 @@ def layers(t, you_px=None, st=None):
         L.append(ov.big_value('%d' % n, 'out there', t - t_hour, fade=1.0 - seg(t, t_end - 0.3, t_end), fade_in=False,
                               unit='MIN'))
     # D: the black half is the black hole
-    if 19.55 <= t < 22.0:
-        L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - 19.55, 1.0 - seg(t, 21.7, 22.0), size=64))
-    if 26.95 <= t < 28.25:
-        L.append(ov.top_label('Looking up \u2191', t - 26.95, fade=1.0 - seg(t, 27.95, 28.25), plate=True, size=64))
+    if 19.55 <= u < 22.0:
+        L.append(ov.disk_tag('BLACK HOLE', (540, 1030), ov.GOLD, t - unwarp(19.55), 1.0 - seg(u, 21.7, 22.0), size=64))
+    # F: LOOKING UP on "Then look up."
+    t_up = chunk_time(['Then', 'look'], after=40.0, default=56.6)
+    if t_up <= t < t_up + 1.6:
+        L.append(ov.top_label('Looking up \u2191', t - t_up, fade=1.0 - seg(t, t_up + 1.3, t_up + 1.6), plate=True, size=64))
     # diagram tags
-    if T_E <= t < T_E2:
-        f = min(seg(t, T_E, T_E + 0.3), 1.0 - seg(t, T_E2 - 0.3, T_E2))
+    if T_E <= u < T_E2:
+        f = min(seg(u, T_E, T_E + 0.3), 1.0 - seg(u, T_E2 - 0.3, T_E2))
         L.append(ov.corner_tag('* diagram, not to scale', f))
-        if you_px is not None and 22.5 <= t < T_E2:
-            L.append(ov.point_label('you', you_px, t - 22.5, fade=1.0 - seg(t, T_E2 - 0.35, T_E2 - 0.05), dx=80, dy=-90))
-    if 24.95 <= t < 26.45:
-        L.append(ov.corner_tag('* magnified illustration', min(seg(t, 24.95, 25.2), 1.0 - seg(t, 26.2, 26.45))))
-    # the dot's label
+        if you_px is not None and 22.5 <= u < T_E2:
+            L.append(ov.point_label('you', you_px, t - unwarp(22.5), fade=1.0 - seg(u, T_E2 - 0.35, T_E2 - 0.05), dx=80, dy=-90))
+    if 24.95 <= u < 26.45:
+        L.append(ov.corner_tag('* magnified illustration', min(seg(u, 24.95, 25.2), 1.0 - seg(u, 26.2, 26.45))))
     # the dot's label and the black-hole callout: they stay through the pause after the last word, then fade so
     # the last frames are the clean dot of frame 0
-    t_uni = chunk_time(['All', 'that'], default=DUR - 4.9)
+    t_uni = chunk_time(['And', 'all', 'this'], after=40.0, default=DUR - 5.0)
     if t_uni <= t < DUR - 0.3:
-        L.append(ov.point_label('the universe', dot_top(t), t - t_uni, fade=1.0 - seg(t, DUR - 0.75, DUR - 0.3),
+        L.append(ov.point_label('the universe', dot_top(dot_tau(t)), t - t_uni, fade=1.0 - seg(t, DUR - 0.75, DUR - 0.3),
                                 dx=0, dy=-130, size=56, center=True, inset=2))       # the leader touches the rim
     t_bh = black_hole_time()
     if t_bh <= t < DUR - 0.3:

@@ -24,7 +24,8 @@ BASE = os.path.join(HERE, 'build', 'base')
 
 
 def mb_for(t):
-    """Motion-blur sub-samples by shot: more where the camera moves fast."""
+    """Motion-blur sub-samples by shot: more where the camera moves fast (video time t, judged on the story clock)."""
+    t = shots.warp(t)
     if shots.T_C <= t < shots.T_D:
         return 3
     if 8.6 <= t < 10.8 or shots.T_B <= t < 7.2 or shots.T_F <= t < 29.6 or 26.0 <= t < shots.T_F:

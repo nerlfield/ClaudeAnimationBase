@@ -18,7 +18,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 B = os.path.join(HERE, '..', 'build')
 A = os.path.join(B, 'audio')
 SR = 44100
-DUR = 65 * 60 / 90.0              # 43.333 s (65 beats)
+import sys as _sys0
+_sys0.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+from bh import shots  # noqa: E402
+DUR = shots.DUR                   # 74.667 s (112 beats) since round 11
 N = int(round(DUR * SR))
 MUSIC_SHIFT = 0.06                 # the music's bar lines sit 60 ms late; pull it earlier
 
@@ -54,51 +57,54 @@ def highpass(y, hz):
 # effects synthesised in-house (sfx2/syn_*); no other sources.  align: 'start' (default), 'peak' (the loudest moment
 # lands on the time, so hits and whoosh apexes sit on the cut) or 'end' (risers and reverse swells finish on it).
 # duck: extra sidechain dB under the voice for cues that play under speech.
+# every cue in VIDEO time (round 11 re-timed the picture around the narration: bh/shots.py WARP).  Picture events
+# are given by their story time through V(); word cues by name, resolved from the captions.
+V = shots.unwarp
+TG = shots.T_G_REAL                 # the dot lands
 CUES = [
-    # O: the dot
-    (0.00, 'sfx2/syn_shimmer', -21, dict(fade_out=(2.3, 2.67))),
-    (2.67, 'sfx2/syn_reverse', -18, dict(align='end')),
-    (2.67, 'el/whoosh_0', -21, dict(align='peak', fade_in=0.03)),
-    # O -> A cut
+    # O: the dot, then the cut to the black hole just after "Let me show you why."
+    (0.00, 'sfx2/syn_shimmer', -21, dict(fade_out=(V(2.3), V(2.67)))),
+    (V(2.67), 'sfx2/syn_reverse', -18, dict(align='end')),
+    (V(2.67), 'el/whoosh_0', -21, dict(align='peak', fade_in=0.03)),
     # round 10 (the user: "some of them are too loud"): every hit sits about 6 LU under the voice, not level with it
-    (2.67, 'el/boom_0', -18, dict(noduck=True, align='peak')),
-    (2.67, 'sfx2/syn_boom', -17, dict(noduck=True, align='peak')),
+    (V(2.67), 'el/boom_0', -18, dict(noduck=True, align='peak')),
+    (V(2.67), 'sfx2/syn_boom', -17, dict(noduck=True, align='peak')),
     # B: rise, labels, swing down, the arch
-    (6.20, 'sfx2/syn_whoosh_long', -21, dict(align='peak')),
+    (V(6.20), 'sfx2/syn_whoosh_long', -21, dict(align='peak')),
     ('BACK', 'el/pop_1', -19, {}),
     ('FRONT', 'sfx2/syn_pop_low2', -20, {}),
-    (9.60, 'el/whoosh_1', -17, dict(align='peak', fade_in=0.03)),
-    (10.67, 'el/boom_big_1', -20, dict(noduck=True, align='peak', trim_pre=0.35)),
-    (10.67, 'sfx2/syn_boom_big', -18, dict(noduck=True, align='peak')),
-    (10.90, 'el/pop_1', -21, {}),
-    (16.00, 'el/riser_2', -22, dict(align='end', duck=6)),
-    # C: the dive (under "Let's get closer. Much closer.")
-    (16.00, 'sfx2/syn_dive', -16, dict(duck=8)),
-    (16.00, 'el/dive_1', -16, dict(duck=6, fade_out=(18.5, 18.9))),
+    (V(9.60), 'el/whoosh_1', -17, dict(align='peak', fade_in=0.03)),
+    (V(10.67), 'el/boom_big_1', -20, dict(noduck=True, align='peak', trim_pre=0.35)),
+    (V(10.67), 'sfx2/syn_boom_big', -18, dict(noduck=True, align='peak')),
+    (V(10.90), 'el/pop_1', -21, {}),
+    (V(16.00), 'el/riser_2', -22, dict(align='end', duck=6)),
+    # C: the dive (under "Now let's fly in closer. Much closer.")
+    (V(16.00), 'sfx2/syn_dive', -16, dict(duck=8)),
+    (V(16.00), 'el/dive_1', -16, dict(duck=6, fade_out=(V(18.5), V(18.9)))),
     # D: arrival at the photon sphere, the sweep along the line
-    (18.67, 'sfx2/syn_land2', -18, dict(noduck=True, align='peak')),
-    (18.67, 'sfx2/syn_boom', -17, dict(noduck=True, align='peak')),
-    (18.67, 'sfx2/syn_shimmer', -23, dict(fade_out=(21.8, 22.2), duck=3)),
-    (22.20, 'el/whoosh_0', -19, dict(align='peak', fade_in=0.03, fade_out=(22.3, 22.55))),
-    # E: the lap, the flash, the double take, the collapse
-    (22.70, 'sfx2/syn_gliss', -16, dict(duck=3)),
-    (24.00, 'el/chime_1_key', -16, dict(align='peak', fade_out=(24.9, 25.4))),
-    (24.00, 'sfx2/syn_chime', -19, dict(align='peak', fade_out=(24.9, 25.4))),
-    # E2: back to first person; the line opens into the back of your own head, then snaps shut
-    (24.55, 'el/whoosh_1', -21, dict(align='peak', fade_in=0.03)),
-    (24.95, 'sfx2/syn_shimmer', -21, dict(fade_out=(26.1, 26.45), duck=2)),
-    (26.45, 'el/whoosh_0', -18, dict(align='peak', fade_in=0.03)),
-    (26.67, 'el/boom_1', -19, dict(align='peak', trim_pre=0.1)),
+    (V(18.67), 'sfx2/syn_land2', -18, dict(noduck=True, align='peak')),
+    (V(18.67), 'sfx2/syn_boom', -17, dict(noduck=True, align='peak')),
+    (V(18.67), 'sfx2/syn_shimmer', -23, dict(fade_out=(V(21.8), V(22.2)), duck=3)),
+    (V(22.20), 'el/whoosh_0', -19, dict(align='peak', fade_in=0.03, fade_out=(V(22.3), V(22.55)))),
+    # E: the light's lap (now ~6 s, under "going around... all the way around... and come back to you"), the flash
+    (V(22.70), 'sfx2/syn_gliss_slow', -17, dict(duck=3)),
+    (V(24.00), 'el/chime_1_key', -16, dict(align='peak', fade_out=(V(24.9), V(25.4)))),
+    (V(24.00), 'sfx2/syn_chime', -19, dict(align='peak', fade_out=(V(24.9), V(25.4)))),
+    # E2: back to first person; the line opens into the back of your own head, then closes
+    (V(24.55), 'el/whoosh_1', -21, dict(align='peak', fade_in=0.03)),
+    (V(24.95), 'sfx2/syn_shimmer', -21, dict(fade_out=(V(26.1), V(26.45)), duck=2)),
+    (V(26.45), 'el/whoosh_0', -18, dict(align='peak', fade_in=0.03)),
+    (V(26.67), 'el/boom_1', -19, dict(align='peak', trim_pre=0.1)),
     # F: the squeeze
-    (31.90, 'sfx2/syn_riser_long', -20, dict(align='end', duck=6)),
-    (31.90, 'sfx2/syn_land2', -17, dict(align='peak')),
-    # G: the dot lands; "Black hole."; the swell back into the loop
-    (32.00, 'el/boom_big_1', -21, dict(noduck=True, align='peak', trim_pre=0.35)),
-    (32.00, 'sfx2/syn_boom_big', -19, dict(noduck=True, align='peak')),
-    # the dot's shimmer, chained (5.2 s each) to carry the longer ending; each takes over under the last one's fade
-    (32.00, 'sfx2/syn_shimmer_long', -21, dict(fade_out=(36.4, 37.0))),
-    (36.30, 'sfx2/syn_shimmer_long', -21, dict(fade_in=0.7, fade_out=(40.8, 41.4))),
-    (40.60, 'sfx2/syn_shimmer_long', -22, dict(fade_in=0.8, fade_out=(DUR - 0.9, DUR - 0.3))),
+    (V(31.90), 'sfx2/syn_riser_long', -20, dict(align='end', duck=6)),
+    (V(31.90), 'sfx2/syn_land2', -17, dict(align='peak')),
+    # G: the dot lands; the time lines; "That's the black hole."; the swell back into the loop
+    (TG, 'el/boom_big_1', -21, dict(noduck=True, align='peak', trim_pre=0.35)),
+    (TG, 'sfx2/syn_boom_big', -19, dict(noduck=True, align='peak')),
+    # the dot's shimmer, chained (5.2 s each) to carry the ending; each takes over under the last one's fade
+    (TG, 'sfx2/syn_shimmer_long', -21, dict(fade_out=(TG + 4.4, TG + 5.0))),
+    (TG + 4.3, 'sfx2/syn_shimmer_long', -21, dict(fade_in=0.7, fade_out=(TG + 8.7, TG + 9.3))),
+    (TG + 8.6, 'sfx2/syn_shimmer_long', -22, dict(fade_in=0.8, fade_out=(DUR - 0.9, DUR - 0.3))),
     ('MINUTE', 'sfx2/syn_pop_low2', -21, {}),
     ('HOUR', 'el/pop_1', -19, {}),
     ('BLACK_HOLE', 'el/boom_2', -19, dict(align='peak', trim_pre=0.1)),
@@ -111,6 +117,39 @@ def peak_time(y):
     x = np.abs(y).max(axis=1)
     k = max(1, int(0.01 * SR))
     return float(np.argmax(np.convolve(x, np.ones(k) / k, 'same'))) / SR
+
+
+# the music (composed for the 43.3 s cut: 6 bars of intro and orbit, 6 of build, a drop at bar 12 that decays to
+# silence) re-arranged bar by bar for the 74.7 s cut.  Bars are placed on the video's beat grid so the drop's
+# downbeat is the dot landing (62.0 s); the reveal, the arch and the visor flash fall on beats of the same grid.
+# Bar 4-5, the steady arpeggio groove, loops under the explanations; the build (bars 6-11) runs from the light's lap
+# to the dot.  After the drop's first second, its decay is stretched to fill the ending (a tone and its room tail).
+MUSIC_BARS = [0, 1, 2, 3] + [4, 5] * 6 + [4] + [6, 7, 8, 9, 10, 11]
+
+
+def arrange_music(mu):
+    bar = int(round(4 * 60 / 90.0 * SR)); xf = int(0.04 * SR)
+    ramp = np.linspace(0, 1, xf)[:, None].astype(np.float32)
+    start = int(round((shots.T_G_REAL - len(MUSIC_BARS) * 4 * 60 / 90.0) * SR))     # 0.667 s: one beat in
+    out = np.zeros((N + 2 * bar, mu.shape[1]), np.float32)
+    pos = start
+    for k, b in enumerate(MUSIC_BARS):
+        seg = mu[b * bar:(b + 1) * bar + xf].copy()     # one bar plus a 40 ms overlap into the next
+        seg[-xf:] *= 1 - ramp
+        if k:
+            seg[:xf] *= ramp                            # consecutive bars sum back to the original exactly
+        out[pos:pos + len(seg)] += seg
+        pos += bar
+    # the drop: its first second as composed, the rest of its decay stretched to the end of the video
+    import librosa
+    a0, a1, b1 = 12 * bar, 12 * bar + SR, 14 * bar
+    tail = np.stack([librosa.effects.time_stretch(np.ascontiguousarray(mu[a1:b1, c]), rate=(b1 - a1) / max(1, N - pos - SR))
+                     for c in range(mu.shape[1])], axis=1).astype(np.float32)
+    drop = np.concatenate([mu[a0:a1], tail])
+    drop[:xf] *= ramp
+    m = min(len(drop), len(out) - pos)
+    out[pos:pos + m] += drop[:m]
+    return out[:N]
 
 
 def place(bus, t0, y, gain, opts):
@@ -261,19 +300,7 @@ def main():
     # ---- music: pull onto the bar grid, set 9 dB under the voice, duck under speech
     mu = decode(os.path.join(A, 'music_v2.mp3'))
     mu = mu[int(MUSIC_SHIFT * SR):]
-    # the music was composed for 14 bars (37.33 s) and ends on a hit at 32.0 that decays to silence.  Since round 9
-    # the video runs to 43.33 s, so the decay after the hit's first second is stretched to fill it (a tone and its
-    # room tail, which stretch cleanly; the hit itself is untouched)
-    T_HOLD, T_OLD = 33.0, 14 * 4 * 60 / 90.0
-    if N > int(T_OLD * SR):
-        import librosa
-        a, b = int(T_HOLD * SR), int(T_OLD * SR)
-        tail = np.stack([librosa.effects.time_stretch(np.ascontiguousarray(mu[a:b, c]), rate=(b - a) / (N - a))
-                         for c in range(mu.shape[1])], axis=1).astype(np.float32)
-        xf = int(0.05 * SR)
-        w = np.linspace(0, 1, xf)[:, None]
-        tail[:xf] = mu[a:a + xf] * (1 - w) + tail[:xf] * w
-        mu = np.concatenate([mu[:a], tail])
+    mu = arrange_music(mu)
     mu = np.pad(mu, ((0, max(0, N - len(mu))), (0, 0)))[:N]
     mu_l = meter.integrated_loudness(mu)
     mu *= db(-16.0 - 9.0 - mu_l)

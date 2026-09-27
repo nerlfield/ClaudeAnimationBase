@@ -19,7 +19,7 @@ RIGHT_X, RIGHT_Y = 0.87 * W, 0.40 * H
 
 def alpha_at(t):
     st = shots.state(t)
-    you = diagram.you_px(t) if st['diagram'] is not None else None
+    you = diagram.you_px(st['t']) if st['diagram'] is not None else None
     base = ov._layer()
     for l in tov.layers(t, you, st):
         if l is not None:
