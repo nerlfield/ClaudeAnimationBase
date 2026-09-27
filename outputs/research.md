@@ -231,3 +231,41 @@ Each rule is tied to what I measured above.
 11. **Keep it short: 30–45 s.** The four biggest Shorts here are 34, 48, 66 and 67 s, but the two that run long spend that time on predictions or a second trick. The rules video says the shorter version always wins on the same subject. We don't pad.
 12. **The music bed sits well under the voice, with transients on cuts and wow beats.** The measured bed is ≤4–5 dB under the voice at every reference; the brief's rule (≥6 dB under, ducked) is stricter and we'll follow it. Whooshes and impacts go on cuts, as the onset measurements show the references do.
 13. **A slightly dry, human voice.** Scripts across the set use short declaratives and understatement at the payoff ("The weight somehow went up." / "And it moves." / "And it doesn't hurt.") and a joke or aside early ("Um, hi.", "Physics Salad?", "Just an opinion."). No hype adjectives anywhere in the transcripts.
+
+## Version 2 research: facts and references per second (Cleo Abram, Veritasium), 2026-09-27
+
+The user's note after version 1: "not too much of content… Cleo Abram usually gives you lots of interesting facts, references… review the Cleo Abram and Veritasium channels". Two research passes pulled word-timed captions (yt-dlp `web_embedded` client) and 1 fps storyboard sprites for 18 Cleo Abram Shorts and 13 Veritasium Shorts, all looked at. In each, every fact (a checkable claim) and every reference (a named person, place, date, organisation, object, pop-culture item or number with units) was marked. Visual changes were counted from the storyboards, so they are lower bounds.
+
+| | Cleo Abram (median of 17) | Veritasium (median of 13) | our version 1 |
+|---|---|---|---|
+| words/s | 3.4 | 2.7 | 2.7 |
+| facts per 10 s | 2.3 | 1.1 | 1.7 |
+| references per 10 s, spoken + on screen | 1.8 (space Shorts 1.2 spoken) | 0.17 (space/history Shorts up to 2.7) | 0 |
+| real imagery | in 12 of 17, a median 17% of runtime | paired with every reference in the space Shorts | none |
+| distinct visual types | 5 | 1–4 | 3 |
+| visual changes per 10 s | 4.8 | 2.9 | 2.6 |
+
+What this says:
+- **Our fact rate was already close to Cleo Abram's.** What was missing were references, real imagery and visual variety.
+- **Her closest match to our Short is all CGI.** "What If You Got Sucked Into A Black Hole?" even has the back-of-your-head beat, with no references and no real image. It was her weakest recent upload (211K views after 4 days, against 961K–3.1M for her neighbouring uploads). That's one data point, and the videos' ages differ, but it points the same way.
+- **Veritasium's top Shorts carry few references.** Their draw is one counterintuitive thing proved on camera. References cluster where nothing can be demonstrated (space, history), and each is paired with a real artefact: a NASA image, a headline, a paper.
+- **Veritasium's black-hole Short (33.0M views, 57 s) has zero references.** It runs on story mechanics:
+  - a flat claim ("You can never see anything enter a black hole");
+  - a character with a clock (your nemesis in a rocket, shaking his fist);
+  - an expectation and its reversal ("you would expect him to speed up, but that is not what you see");
+  - a second surprise ("Not only that…");
+  - long pauses on the key words.
+
+Techniques taken into version 2, each with the source's own words:
+1. **Show the real artefact, with its date, next to the CGI** (Cleo: "We captured this image of it in 2022."). Version 2 turns the dot into the Event Horizon Telescope's photo of M87*, "released in 2019", and the photo into the simulation.
+2. **Give every number a familiar anchor** (Cleo: "about as long as Manhattan", "the rate that your fingernails grow"). Version 2: "Our whole solar system is this tiny circle" (Pluto's orbit drawn to scale inside the photo), and GPS maps drifting ten kilometres a day.
+3. **Named, dated specifics** (Cleo: "during Apollo 11, astronaut Neil Armstrong said…"; Veritasium: "in 1985 cosmonaut Vladimir Dzhanibekov…"). Version 2: "In 1979, Jean-Pierre Luminet drew this by hand, dot by dot," over our frame redrawn in dots, then Interstellar (2014) and Kip Thorne.
+4. **State the expectation, then reverse it** (Veritasium). Version 2: "you'd expect it to hide behind the black hole. But gravity bends its light…"
+5. **Put "you" in the scene with an everyday stake** (Cleo: "inside everything that you use"). Version 2: "It even happens on Earth. GPS clocks up in orbit run fast. Without a fix, your map would drift ten kilometers a day," over Apollo 17's photo of Earth.
+
+Not taken:
+- **A host on camera** (Cleo is on screen 10% of the time). We have no presenter.
+- **The subscribe tease at the end.** The loop is the ending.
+- **Veritasium's character with a clock.** It would need a new animation; the time-dilation beat already has its 1 MIN → 32 MIN clock.
+
+Raw data (not committed): the session scratchpad's `research_v2/cleo` and `research_v2/veritasium` folders hold the transcripts, beat tables with every fact and reference marked, metrics and storyboard sheets.

@@ -1,6 +1,7 @@
 """One finished video frame at time t: physics or diagram render -> post -> overlays."""
 import numpy as np
 
+from . import inserts
 from . import shots, diagram, shade, post, selfview
 from .frame import render_hdr, SPP4, W_FULL, H_FULL
 from . import timeline_overlay as tov
@@ -73,6 +74,7 @@ def overlay_frame(img, t):
     """Caption scrim plus every caption and label for time t, on a base frame of any size."""
     st = shots.state(t)
     you = diagram.you_px(st['t']) if st['diagram'] is not None else None
+    img = inserts.apply(img, t)                 # v2: real imagery and reference cards, under the captions
     if tov.caption_layer(t) is not None:
         img = scrim(img)
     img = ov.composite(img, tov.layers(t, you, st))

@@ -14,11 +14,11 @@ import soundfile as sf
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.path.join(HERE, '..', 'build')
-NUMS = {'30': 'thirty', '32': 'thirtytwo', '1': 'one'}
+NUMS = {'30': 'thirty', '32': 'thirtytwo', '1': 'one', '10': 'ten'}
 
 
 def norm(w):
-    w = w.lower().strip('.,?!')
+    w = w.lower().strip('.,?!').split('-')[0] or w.lower().strip('.,?!-')   # "Jean-Pierre" ~ Whisper's "Jean" "-Pierre"
     return re.sub(r"[^a-z']", '', NUMS.get(w, w)).replace('disc', 'disk')
 
 
@@ -26,11 +26,14 @@ def onset_at(rms, thr, a, b):
     """The voice's own onset for a word Whisper puts at [a, b] (rms: 5 ms frames, thr: 'voice on' level)."""
     i0, i1 = int(a / 0.005), min(len(rms), int((b + 0.3) / 0.005))
     on = rms[i0:i1] > thr
-    if b - a > 0.45:                         # a span this long swallowed a pause: start after it
-        quiet = np.convolve(~on, np.ones(12), 'valid') == 12
-        q = np.nonzero(quiet)[0]
-        if len(q):
-            on[:q[0] + 12] = False
+    # Whisper often starts a word in the pause before it (or in the last word's tail): if there is a pause of at
+    # least 40 ms in the first 60% of its span, the word starts after it.  (A gap later in the span is inside the
+    # word: the stop in "exact-ly".)
+    head = int(0.6 * (b - a) / 0.005)
+    quiet = np.convolve(~on[:max(head, 8)], np.ones(8), 'valid') == 8
+    q = np.nonzero(quiet)[0]
+    if len(q):
+        on[:q[-1] + 8] = False
     k = np.nonzero(np.convolve(on, np.ones(3), 'valid') == 3)[0]    # on for 15 ms: a lone 5 ms blip isn't speech
     if not len(k):
         return a

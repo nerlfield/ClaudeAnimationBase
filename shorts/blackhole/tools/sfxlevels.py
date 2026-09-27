@@ -26,7 +26,8 @@ def cue_time(t0):
         return back_front_times()[t0 == 'FRONT']
     if t0 in ('MINUTE', 'HOUR'):
         return minute_times()[t0 == 'HOUR']
-    return t0
+    from bh.inserts import cue_times
+    return cue_times().get(t0, t0)
 
 
 def momentary(x, sr, meter):

@@ -20,11 +20,11 @@ from bh import timeline_overlay as tov  # noqa: E402
 import caption_align  # noqa: E402  (same onset rule: Whisper's word spans swallow pauses and squash words)
 
 
-NUMS = {'30': 'thirty', '32': 'thirtytwo', '1': 'one'}
+NUMS = {'30': 'thirty', '32': 'thirtytwo', '1': 'one', '10': 'ten'}
 
 
 def norm(w):
-    w = w.lower().strip('.,?!')
+    w = w.lower().strip('.,?!').split('-')[0] or w.lower().strip('.,?!-')   # "Jean-Pierre" ~ Whisper's "Jean" "-Pierre"
     return re.sub(r"[^a-z']", '', NUMS.get(w, w))
 
 

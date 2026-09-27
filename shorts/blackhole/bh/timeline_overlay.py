@@ -116,7 +116,7 @@ def minute_times():
     """When 1 MIN pops ("Stay for one minute"), when it counts up to 32 ("and half an hour"), and when it goes."""
     t_min = chunk_time(['Stay', 'for'], default=65.4)
     t_hour = chunk_time(['and', 'half'], default=67.3)
-    return t_min, t_hour, chunk_time(['And', 'all', 'this'], default=70.0) - 0.1
+    return t_min, t_hour, chunk_time(['It', 'even'], after=60.0, default=82.0) - 0.1     # v2: GPS comes next
 
 
 def black_hole_time():
@@ -153,11 +153,17 @@ def layers(t, you_px=None, st=None):
     L = []
     st = st or state(t)
     u = st['t']
-    if 0.5 <= t < T_A_REAL - 0.3:
-        L.append(ov.top_label('Real physics simulation', t - 0.6, fade=1.0 - seg(t, T_A_REAL - 0.8, T_A_REAL - 0.3)))
+    # REAL PHYSICS SIMULATION over the dot, and again when the real photo gives way to the simulation
+    from .inserts import times as insert_times
+    IT = insert_times()
+    if 0.5 <= t < IT['photo_in0']:
+        L.append(ov.top_label('Real physics simulation', t - 0.6, fade=1.0 - seg(t, IT['photo_in0'] - 0.3, IT['photo_in0'])))
+    if IT['photo_out0'] + 0.2 <= t < IT['photo_out1'] + 3.0:
+        L.append(ov.top_label('Real physics simulation', t - IT['photo_out0'] - 0.2,
+                              fade=1.0 - seg(t, IT['photo_out1'] + 2.6, IT['photo_out1'] + 3.0)))
     # A: name the ring as it is named ("And this bright ring is hot gas, spinning around it."), in the words the
     # next shot uses ("the disk"), on its near side just under the shadow; gone before the rise
-    t_gas = chunk_time(['And', 'this', 'bright'], after=5.0, default=7.7)
+    t_gas = chunk_time(['The', 'bright', 'ring'], after=5.0, default=18.5)
     if t_gas <= t and u < 5.05:
         L.append(ov.disk_tag('DISK OF HOT GAS', (540, 915), ov.GOLD, t - t_gas, 1.0 - seg(u, 4.7, 5.05), size=52))
     # disk tags: BACK / FRONT pop on "This is the back half." / "And this is the front half.", go as the swing starts
@@ -168,12 +174,14 @@ def layers(t, you_px=None, st=None):
         L.append(ov.disk_tag('BACK', lab.get('back'), ov.ICE, t - t_back, f))
         if t >= t_front:
             L.append(ov.disk_tag('FRONT', lab.get('front'), ov.GOLD, t - t_front, f))
-    if 10.9 <= u < 12.9:
-        L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - unwarp(10.9), 1.0 - seg(u, 12.5, 12.9)))
+    t_arch = unwarp(10.9)                                          # on the arch for 3 s (v2: the hold is long)
+    if t_arch <= t < t_arch + 3.0:
+        L.append(ov.disk_tag('BACK', (540, 470), ov.ICE, t - t_arch, 1.0 - seg(t, t_arch + 2.6, t_arch + 3.0)))
     # "...and under the bottom": the lower image of the disk's far side gets its own tag
     t_under = chunk_time(['and', 'under'], after=10.0, default=28.9)
-    if t_under <= t and u < 14.5:                                  # gone as the ice fades back to gold
-        L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(u, 13.9, 14.5), size=48))
+    t_under_end = min(t_under + 2.8, IT['stipple0'])              # gone before Luminet's dots (v2)
+    if t_under <= t < t_under_end:
+        L.append(ov.disk_tag('BACK', (540, 1080), ov.ICE, t - t_under, 1.0 - seg(t, t_under_end - 0.35, t_under_end), size=48))
     # distance counter: counts down live through the dive and the last descent, lands on each ladder value
     cam = st['cam']
     if 15.3 <= u < T_D:

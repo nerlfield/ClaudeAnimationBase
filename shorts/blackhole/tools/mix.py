@@ -62,13 +62,13 @@ def highpass(y, hz):
 V = shots.unwarp
 TG = shots.T_G_REAL                 # the dot lands
 CUES = [
-    # O: the dot, then the cut to the black hole just after "Let me show you why."
-    (0.00, 'sfx2/syn_shimmer', -21, dict(fade_out=(V(2.3), V(2.67)))),
-    (V(2.67), 'sfx2/syn_reverse', -18, dict(align='end')),
-    (V(2.67), 'el/whoosh_0', -21, dict(align='peak', fade_in=0.03)),
-    # round 10 (the user: "some of them are too loud"): every hit sits about 6 LU under the voice, not level with it
-    (V(2.67), 'el/boom_0', -18, dict(noduck=True, align='peak')),
-    (V(2.67), 'sfx2/syn_boom', -17, dict(noduck=True, align='peak')),
+    # O: the dot, then (v2) the real photo of M87* on "look at this."; the cut to the simulation is under the photo
+    (0.00, 'sfx2/syn_shimmer', -21, dict(fade_out=('PHOTO_IN', -0.5, 0.2))),
+    ('PHOTO_IN', 'sfx2/syn_reverse', -19, dict(align='end')),
+    ('PHOTO_IN', 'el/boom_0', -19, dict(noduck=True, align='peak')),
+    ('PHOTO_IN', 'sfx2/syn_boom', -18, dict(noduck=True, align='peak')),
+    ('CIRCLE', 'el/pop_1', -19, {}),
+    ('PHOTO_OUT', 'el/whoosh_1', -20, dict(align='peak', fade_in=0.03)),
     # B: rise, labels, swing down, the arch
     (V(6.20), 'sfx2/syn_whoosh_long', -21, dict(align='peak')),
     ('BACK', 'el/pop_1', -19, {}),
@@ -105,6 +105,12 @@ CUES = [
     (TG, 'sfx2/syn_shimmer_long', -21, dict(fade_out=(TG + 4.4, TG + 5.0))),
     (TG + 4.3, 'sfx2/syn_shimmer_long', -21, dict(fade_in=0.7, fade_out=(TG + 8.7, TG + 9.3))),
     (TG + 8.6, 'sfx2/syn_shimmer_long', -22, dict(fade_in=0.8, fade_out=(DUR - 0.9, DUR - 0.3))),
+    # v2 references: Luminet's dots, Interstellar, the Earth and GPS
+    ('STIPPLE', 'sfx2/syn_chime', -25, {}),
+    ('INTERSTELLAR', 'sfx2/syn_pop_low2', -20, {}),
+    ('EARTH_IN', 'el/whoosh_0', -21, dict(align='peak', fade_in=0.03)),
+    ('GPS_FAST', 'el/pop_1', -20, {}),
+    ('GPS_KM', 'sfx2/syn_pop_low2', -20, {}),
     ('MINUTE', 'sfx2/syn_pop_low2', -21, {}),
     ('HOUR', 'el/pop_1', -19, {}),
     ('BLACK_HOLE', 'el/boom_2', -19, dict(align='peak', trim_pre=0.1)),
@@ -338,13 +344,19 @@ def main():
     import sys as _sys
     _sys.path.insert(0, os.path.join(HERE, '..'))
     from bh.timeline_overlay import back_front_times, black_hole_time, minute_times
+    from bh.inserts import cue_times
+    IC = cue_times()
     for t0, name, g, opts in CUES:
         if t0 == 'BLACK_HOLE':
             t0 = black_hole_time()                             # the hit lands with "That's the black hole."
         elif t0 in ('BACK', 'FRONT'):
             t0 = back_front_times()[t0 == 'FRONT']              # the tag pops land with "Back half, front half."
+        elif t0 in IC:
+            t0 = IC[t0]
         elif t0 in ('MINUTE', 'HOUR'):
             t0 = minute_times()[t0 == 'HOUR']                   # 1 MIN pops, then counts up to 32 MIN
+        if 'fade_out' in opts and isinstance(opts['fade_out'][0], str):      # (cue, from, to) relative to a named cue
+            c, d0, d1 = opts['fade_out']; opts = dict(opts, fade_out=(IC[c] + d0, IC[c] + d1))
         if name not in cache:
             cache[name] = load(os.path.join(A, name + '.wav'))
             if cache[name].shape[1] == 1:

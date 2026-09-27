@@ -25,23 +25,27 @@ LINE_LUFS = -22.5                   # each line is matched to this before placem
 # Round 8: one person talking you through the picture, read as ONE continuous performance (tools/vo_flow.py).
 # (start, end) is each line's window on the beat sheet: the earliest it may start and the latest it must end.
 LINES = [
-    # Round 11 (the user: "imagine you explaining it to a 3 year old… smooth, clear, direct, clean"; "you're using too
-    # little of phrases like: this is, there is"): plain words, one idea per sentence, each line pointing at what is
-    # on screen, and every camera move finished before the line about its result starts.  Lines are placed one after
-    # another at their own pace; where the picture needs time first, tools/vo_flow.py AFTER says so, and the picture
-    # is then re-timed around the voice (bh/warp.json).  The first number is only a floor; none is squeezed.
+    # Version 2 (round 13, the user: "it feels like there's not too much content… Cleo Abram usually gives you lots
+    # of interesting facts, references… mb we can insert some mentions"): the plain, pointing narration of v1 plus
+    # the real photo (M87*, EHT, released 2019), a true-scale anchor, a named first (Luminet, 1979), a pop-culture
+    # link (Interstellar), an expectation-then-reversal (Veritasium), and an everyday stake (GPS).  Lines follow one
+    # another at the read's own pace; tools/vo_flow.py AFTER says where the picture needs time first.
     (0.00, 99, 1.00, "See this glowing *dot? | That's the whole *universe."),
-    (0.00, 99, 1.00, "Let me show you *why."),
-    (0.00, 99, 1.00, "This is a *black *hole. | And this bright ring is hot *gas, | spinning around it."),
+    (0.00, 99, 1.00, "To see why, | look at *this."),
+    (0.00, 99, 1.00, "This is the first real *photo of a black hole, | released in *2019. | It took telescopes | all over the *Earth."),
+    (0.00, 99, 1.00, "It's *huge. | Our whole solar system | is this tiny *circle."),
+    (0.00, 99, 1.00, "And up *close, | it would look like this. | The bright ring is hot *gas, | spinning around it."),
     (0.00, 99, 1.00, "Let's look at it from *above."),
     (0.00, 99, 1.00, "See? | The disk is actually *flat."),
     (0.00, 99, 1.00, "This is the *back half. | And this is the *front half."),
-    (0.00, 99, 1.00, "Now watch the *back half, | as we go back down."),
-    (0.00, 99, 1.00, "The black hole *bends its light, | up over the *top... | and under the *bottom."),
+    (0.00, 99, 1.00, "Now watch the *back half."),
+    (0.00, 99, 1.00, "As we go back down, | you'd expect it to *hide | behind the black hole."),
+    (0.00, 99, 1.00, "But gravity *bends its light, | up over the *top... | and under the *bottom."),
+    (0.00, 99, 1.00, "In *1979, | Jean-Pierre Luminet drew this by *hand, | dot by dot."),
+    (0.00, 99, 1.00, "And *Interstellar's black hole | used the same *physics."),
     (0.00, 99, 1.00, "Now let's fly in *closer. | Much *closer."),
     (0.00, 99, 1.00, "If you hover right here, | the black hole fills | exactly *half your sky."),
-    (0.00, 99, 1.00, "And see this thin *line? | That's light, | going around the black hole in a *circle."),
-    (0.00, 99, 1.00, "Light can go all the way *around... | and come back to *you."),
+    (0.00, 99, 1.00, "And see this thin *line? | It's light that goes | all the way *around the black hole... | and comes back to *you."),
     (0.00, 99, 1.00, "So in this line, | you see the back of your own *head."),
     (0.00, 99, 1.00, "Now let's go lower, | and hover just above the *edge. | Then look *up."),
     (0.00, 99, 1.00, "The whole universe *shrinks | into one small *dot above you."),
@@ -49,6 +53,9 @@ LINES = [
     # down here is 31.6 minutes out there (said "half an hour", shown as 1 min -> 32 min)
     (0.00, 99, 1.00, "And down here, | time runs *slower."),
     (0.00, 99, 1.00, "Stay for one *minute... | and half an *hour goes by out there."),
+    # GPS: +45 us/day from weaker gravity in orbit, -7 us/day from orbital speed, net +38 us/day; uncorrected, fixes
+    # drift about 10 km a day (Ashby 2003; sources.md)
+    (0.00, 99, 1.00, "It even happens on *Earth. | GPS clocks up in orbit | run *fast. | Without a fix, | your map would drift | *ten kilometers a day."),
     (0.00, 99, 1.00, "And all this *darkness around the dot? | That's the black hole."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order

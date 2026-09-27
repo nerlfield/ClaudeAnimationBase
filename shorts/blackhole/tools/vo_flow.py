@@ -34,14 +34,14 @@ WARP_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'bh',
 MAX_SQUEEZE = 0.92
 LEAD, TAIL = 0.38, 0.45   # at most this much breath before / decay after each line comes from the read
 # the chosen performance (from `python tools/vo_flow.py --search`), kept under the script it was read from
-PIN = (19, 0.5)          # round 11: the new script's audition winner (s179 read rounds 8-10)
+PIN = (163, 0.0)         # v2 (round 13): the audition winner (s19 read v1; s179 rounds 8-10)
 # lines reworded after the read was chosen: re-read together, in their neighbours' company, with the pinned read's
 # settings (seeds tried in turn) and spliced in.  The pinned read said "Out there, time's in fast-forward." here:
 # heard as "times and fast forward" and, even reworded, too quick to land (round 9).
 PATCH = {}
 # round 11: a new script, so a new read.  Reads auditioned (python tools/vo_flow.py --audition); the picture is then
 # re-timed around the chosen one (bh/shots.py WARP), so the voice keeps its own pace.
-AUDITION = [(179, 0.0), (163, 0.0), (71, 0.0), (59, 0.0), (97, 0.0), (19, 0.5)]
+AUDITION = [(19, 0.5), (179, 0.0), (163, 0.0)]     # v2 (round 13): the three best voices of round 11's audition
 
 
 def tokens(text):
@@ -50,8 +50,10 @@ def tokens(text):
     out = []
     for w in text.lower().replace('-', ' ').split():
         w = w.strip('.,?!')
-        w = {'32': 'thirty two', '30': 'thirty', '1': 'one'}.get(w, w).replace('disc', 'disk')
+        w = {'32': 'thirty two', '30': 'thirty', '1': 'one', '10': 'ten'}.get(w, w).replace('disc', 'disk')
         out += [re.sub(r"[^a-z]", '', x) for x in w.split()]
+    # Whisper's spellings of a name it doesn't know ("Lumenet", "Luminais") count as the name
+    out = ['luminet' if x.startswith(('lumin', 'lumen')) else x for x in out]
     return [x for x in out if x]
 
 
@@ -193,16 +195,19 @@ class Placed:
         raise KeyError('%r not in line %d' % (token, i))
 
 
-# where the picture needs time before a line may start (the voice waits for it; round 11's windows, as rules)
+# where the picture needs time before a line may start (the voice waits for it).  Version 2 line numbers.
 AFTER = {
-    2: lambda P: P.end(1) + 0.60,          # the black hole appears 0.25 s after "why.", then 0.35 s to see it
-    4: lambda P: P.word(3, 'at') + 1.75,    # the rise runs from "at it from above" (1.5 s) before "See?"
-    7: lambda P: P.word(6, 'as') + 1.95,    # the swing down from "as we go back down" (1.55 s) lands the arch, then 0.4 s
-    9: lambda P: P.word(8, 'fly') + 2.80,   # the dive from "fly in" (2.45 s) arrives before "If you hover"
-    12: lambda P: P.word(11, 'you') + 0.85,  # the visor flash on "you", then first person again
-    13: lambda P: P.end(12) + 0.60,        # the lens closes and the view pulls out
-    15: lambda P: P.end(14) + 0.60,        # the dot lands 0.15 s after "above you.", then a beat
+    6: lambda P: P.word(5, 'at') + 1.75,    # the rise runs from "at it from above" (1.5 s) before "See?"
+    10: lambda P: max(P.start[9] + 1.55, P.end(9) + 0.10) + 0.35,   # the swing down (from "As we go back down")
+                                                                     # lands the arch, then "But gravity bends"
+    14: lambda P: P.word(13, 'fly') + 2.80,  # the dive from "fly in" (2.45 s) arrives before "If you hover"
+    16: lambda P: P.word(15, 'you') + 0.85,  # the visor flash on "you", then first person again
+    17: lambda P: P.end(16) + 0.60,        # the lens closes and the view pulls out
+    19: lambda P: P.end(18) + 0.60,        # the dot lands 0.15 s after "above you.", then a beat
 }
+# the real photo (inserts in bh/inserts.py) covers the cut from the dot to the black hole: it is fully in from
+# PHOTO_IN after "look at this" until "And up close"
+PHOTO_IN = lambda P: P.word(1, 'this') + 0.35
 
 
 def plan(segs):
@@ -226,24 +231,26 @@ def plan(segs):
 
 
 def warp_knots(P):
-    """Video time -> story time knots for bh/shots.py, read off the placed words (round 11's hand-set knots, as
-    rules), plus the video's length and the dot's fast-forward window."""
-    reveal = P.end(1) + 0.25
-    R0 = P.word(3, 'at')
-    K = [(0.0, 0.0), (reveal, 8 / 3.0),                                   # T_A: the black hole appears
-         (R0 - 0.35, 5.05), (R0, 16 / 3.0), (R0 + 1.50, 7.10),           # dip, rise on "at it from above"
-         (P.word(5, 'back') - 0.10, 7.50), (P.word(5, 'back') + 0.30, 7.80),   # the back half turns ice
-         (P.word(6, 'as'), 8.60), (P.word(6, 'as') + 1.55, 10.67),        # swing down, the arch
-         (P.end(7) + 0.10, 13.50), (P.word(8, 'fly'), 16.0), (P.word(8, 'fly') + 2.45, 56 / 3.0),   # dive
-         (P.start[10] + 0.15, 21.30), (P.word(10, "That's") - 0.10, 22.20), (P.word(10, "That's") + 0.90, 23.00),
-         (P.word(11, 'you') + 0.10, 24.00),                               # the lap ends in the visor on "you"
-         (P.start[12] - 0.20, 24.55), (P.start[12] + 0.35, 24.90), (P.word(12, 'you') + 0.10, 25.50),
-         (P.end(12) - 0.45, 25.95), (P.end(12) + 0.15, 26.30), (P.end(12) + 0.70, 80 / 3.0),
-         (P.word(13, 'Then') - 0.10, 27.80), (P.word(14, 'universe') + 0.20, 29.50), (P.end(14) + 0.15, 32.0)]
+    """Video time -> story time knots for bh/shots.py, read off the placed words, plus the video's length and the
+    dot's fast-forward window (version 2 line numbers)."""
+    photo_mid = 0.5 * (PHOTO_IN(P) + P.start[4])     # the cut from the dot to the black hole, hidden under the photo
+    R0 = P.word(5, 'at')
+    arch = max(P.start[9] + 1.55, P.end(9) + 0.10)
+    K = [(0.0, 0.0), (photo_mid, 8 / 3.0),                              # T_A under the photo
+         (R0 - 0.35, 5.05), (R0, 16 / 3.0), (R0 + 1.50, 7.10),           # A holds; dip, rise on "at it from above"
+         (P.word(7, 'back') - 0.10, 7.50), (P.word(7, 'back') + 0.30, 7.80),   # the back half turns ice
+         (P.start[9], 8.60), (arch, 10.67),                              # swing down through "you'd expect it to hide"
+         (P.end(12) + 0.10, 13.50), (P.word(13, 'fly'), 16.0), (P.word(13, 'fly') + 2.45, 56 / 3.0),   # dive
+         (P.start[15] + 0.15, 21.30), (P.word(15, "It's") - 0.10, 22.20), (P.word(15, "It's") + 0.90, 23.00),
+         (P.word(15, 'you') + 0.10, 24.00),                               # the lap ends in the visor on "you"
+         (P.start[16] - 0.20, 24.55), (P.start[16] + 0.35, 24.90), (P.word(16, 'you') + 0.10, 25.50),
+         (P.end(16) - 0.45, 25.95), (P.end(16) + 0.15, 26.30), (P.end(16) + 0.70, 80 / 3.0),
+         (P.word(17, 'Then') - 0.10, 27.80), (P.word(18, 'universe') + 0.20, 29.50), (P.end(18) + 0.15, 32.0)]
     for (a0, b0), (a1, b1) in zip(K, K[1:]):
         assert a1 > a0 + 0.05 and b1 > b0, ('warp knots out of order', (a0, b0), (a1, b1))
-    dur = math.ceil((P.end(17) + END_QUIET) / BEAT - 1e-6) * BEAT
-    ff = (P.word(16, 'and') - 0.15, P.end(16) + 0.05)
+    last = max(P.start)
+    dur = math.ceil((P.end(last) + END_QUIET) / BEAT - 1e-6) * BEAT
+    ff = (P.word(20, 'and') - 0.15, P.end(20) + 0.05)
     return K, dur, ff
 
 
