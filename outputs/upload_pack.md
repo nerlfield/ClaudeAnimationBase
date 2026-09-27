@@ -1,4 +1,6 @@
-# Upload pack (round 12 cut, 68.7 s)
+# Upload pack (version 2)
+
+Version 1's pack is in `outputs/v1/upload_pack.md`.
 
 Everything to paste into YouTube Studio (or the mobile app) for this Short. The choices come from the reference
 channels' own Shorts: yt-dlp metadata for 90 Shorts, the top 10 by views of each channel's newest 80 plus every
@@ -14,15 +16,15 @@ Vsauce 23, lingualin 32, Veritasium 35, Cleo Abram 36, StarTalk 42). They are a 
 sometimes with one word in capitals ("What is the TRUE Midpoint of Life?", "Why So Many Tornadoes Happen HERE").
 None puts hashtags in the title.
 
-Backup, if you'd rather have the search term in the title: *What You'd See Hovering Over A Black Hole* (41).
+Backup, if you'd rather lead with the real photo: *We Photographed A Black Hole. Then We Flew In* (45).
 
 ## Description
 
 > What would you actually see if you hovered right above a black hole?
 >
-> Its gravity bends light so much that you can see the back of its disk over the top, and even the back of your own head. Go lower, and the whole universe shrinks into one glowing dot above you. One minute down there is half an hour out here.
+> Start with the real thing: the first photo of a black hole, M87*, released by the Event Horizon Telescope in 2019. Our whole solar system would be a tiny circle inside it. Then fly in: gravity bends light so much that you see the back of its disk over the top (Jean-Pierre Luminet drew it by hand in 1979, and Interstellar used the same physics), and even the back of your own head. Go lower, and the whole universe shrinks into one glowing dot above you, while one minute down there is half an hour out here. GPS satellites deal with the same effect every day.
 >
-> Every frame is simulated: each pixel follows a real ray of light through Einstein's curved spacetime.
+> Every simulated frame follows real rays of light through Einstein's curved spacetime.
 >
 > #blackhole #physics #space #astrophysics #generalrelativity
 
@@ -34,7 +36,7 @@ This follows the two science channels closest to this video:
 
 ## Tags
 
-> black hole, black hole simulation, what you would see near a black hole, photon sphere, event horizon, time dilation, gravitational lensing, accretion disk, general relativity, einstein, astrophysics, physics, space, science
+> black hole, first photo of a black hole, M87, event horizon telescope, black hole simulation, what you would see near a black hole, photon sphere, event horizon, time dilation, GPS relativity, gravitational lensing, accretion disk, interstellar black hole physics, general relativity, einstein, astrophysics, physics, space, science
 
 YouTube says tags play only a small role, and most of the top reference Shorts have none (Cleo, lingualin, Vsauce). Veritasium adds a few (the channel name, "science", "physics", then the topic), so these are topic words only. Leave out movie names such as Interstellar or Gargantua: the video doesn't use either.
 
@@ -51,11 +53,11 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 | Licence | Standard YouTube Licence | |
 | Remixing | Allow | Remixes and Shorts that sample it are free reach. |
 | Comments | On, sorted by Top | |
-| Cover frame (chosen in the app) | **0:22.2**: the ice-blue arch of the disk's back half over the black hole, with no caption on screen | It's the clearest "what is that?" image in the video. Second choice: 0:17.5 (the flat disk from above, back half ice, BACK and FRONT). |
+| Cover frame (chosen in the app) | The real M87* photo with OUR SOLAR SYSTEM circled inside it (on "is this tiny circle", about 0:15), or the ice-blue arch over the black hole just after "But gravity bends its light" | The first is a real photo plus a surprising scale. The second is the video's strongest simulated image. |
 
 ## Pinned comment
 
-> To answer the obvious questions: you only see this if your rockets hold you still just above the edge. Doing that near M87* would take about 7,500 g, so it's a thought experiment. If you just fell in, the sky would *not* shrink to a dot. The time part is real though: one minute there is 31.6 minutes far away.
+> The first photo is real (EHT, 2019); everything after "up close" is a physics simulation of a black hole like it, seen from the side. And to answer the obvious questions: you only see this if your rockets hold you still just above the edge. Doing that near M87* would take about 7,500 g, so it's a thought experiment. If you just fell in, the sky would *not* shrink to a dot. The time part is real though: one minute there is 31.6 minutes far away.
 >
 > Would you trade one minute down there for half an hour of everyone else's life?
 
