@@ -57,12 +57,17 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 
 ## Pinned comment
 
-> The first photo is real (EHT, 2019); everything after "up close" is a physics simulation of a black hole like it, seen from the side (the orbit diagram and the view of your own head are illustrations, magnified so you can see them). And to answer the obvious questions: you only see this if your rockets hold you still just above the edge. Doing that near M87* would take about 7,500 g, so it's a thought experiment. If you just fell in, the sky would *not* shrink to a dot. The time part is real though: one minute there is 31.6 minutes far away.
+> Before anyone asks: the first photo is real (EHT, 2019). Everything after it is a simulation of a black hole like that one, and the orbit + your-own-head shots are zoomed in so you can actually see them.
 >
-> Would you trade one minute down there for half an hour of everyone else's life?
+> You'd only get the tiny-dot view if you hovered right above the edge with rockets. Near M87* that's about 7,500 g, so... thought experiment 😅 If you just fell in, the sky wouldn't shrink like that.
+>
+> The time part is real though. 1 minute down there ≈ 31.6 minutes for everyone else.
+>
+> Would you go?
 
 It settles the "well, actually" comments up front, as Veritasium does, and ends on a question people will answer.
-Since round 16 it also carries the disclosure the removed on-screen notes used to make.
+It also carries the disclosure the removed on-screen notes used to make. Round 17 rewrote it in a creator's voice
+(the user: the first version "feels too much AI").
 The research's rule 9 is to end on a line people will argue with.
 
 ## Credits (optional, in the description or a comment)
