@@ -57,13 +57,7 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 
 ## Pinned comment
 
-> Before anyone asks: the first photo is real (EHT, 2019). Everything after it is a simulation of a black hole like that one, and the orbit + your-own-head shots are zoomed in so you can actually see them.
->
-> You'd only get the tiny-dot view if you hovered right above the edge with rockets. Near M87* that's about 7,500 g, so... thought experiment 😅 If you just fell in, the sky wouldn't shrink like that.
->
-> The time part is real though. 1 minute down there ≈ 31.6 minutes for everyone else.
->
-> Would you go?
+> First photo is real (EHT, 2019), the rest is a simulation. You'd only see the dot if you hovered right at the edge, which near M87* takes ~7,500 g 😅 The time part is real though: 1 min there ≈ 31.6 min here. Would you go?
 
 It settles the "well, actually" comments up front, as Veritasium does, and ends on a question people will answer.
 It also carries the disclosure the removed on-screen notes used to make. Round 17 rewrote it in a creator's voice
