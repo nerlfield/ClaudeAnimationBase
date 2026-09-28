@@ -392,5 +392,12 @@ The voice is a new continuous read (seed 163). The picture was re-timed around i
 - Everything after 0:09 comes 0.29 s earlier. The last line comes 1.25 s earlier.
 - The Earth card now fades out right after "a day" and is gone 0.3 s before "And all this darkness", so the picture moves before the voice does.
 - The video is 92.7 s (was 94.0). The picture was re-rendered from the new time map.
-- The captions are within 0.3 s of the voice everywhere.
+- The captions are within 0.3 s of the voice everywhere (but see below).
 - The mix measures −14.07 LUFS and −1.6 dBTP, with the music at least 12.8 dB under the voice.
+
+**Then a bug in the caption aligner itself.** The re-check still found "six and a half billion Suns" 0.4 s late and "and hover" 0.34 s late. Looking into it turned up three faults in `tools/caption_align.py`:
+- **Numbers never matched.** Whisper's words carry a leading space, and the number mapping ran before stripping it. So "6", "10", "1", "30" and "32" never matched, and any caption starting with a number kept the script's rough time.
+- **Its clock ran fast.** The 5 ms energy frames were `int(0.005 × 44100)` = 220 samples, which is 4.989 ms. The aligner read the audio 0.23% early: 0.19 s off by 85 s. The checker shared the code, so it had the same bias and could not see it. Every caption after about 0:30 had been 0.1–0.2 s late. The energy is now taken on a 48 kHz copy, where 5 ms is exactly 240 samples.
+- **Whisper can be a word off inside running speech.** It had "ten" on "drift" and "used" on "hole". When its start does not follow a real pause, the aligner now uses a real pause (60 ms or more) within 0.12 s of the script's own time, if there is one. A pause of 120 ms or more inside Whisper's span also counts ("lower, | and hover").
+
+Every moved caption was checked by hand against the voice's energy ("six" 9.67, "and hover" 65.80, "and without a fix" 83.52, "ten" 85.67, "used" 45.0). The checker still flags two captions ("used" +0.31 s, "clocks" −0.27 s). Both are Whisper placing the word on the previous word's tail, and the energy shows the caption on the voice's onset.

@@ -20,19 +20,18 @@ from bh import timeline_overlay as tov  # noqa: E402
 import caption_align  # noqa: E402  (same onset rule: Whisper's word spans swallow pauses and squash words)
 
 
-NUMS = {'30': 'thirty', '32': 'thirtytwo', '1': 'one', '10': 'ten'}
+NUMS = {'30': 'thirty', '32': 'thirtytwo', '1': 'one', '10': 'ten', '6': 'six'}
 
 
 def norm(w):
-    w = w.lower().strip('.,?!').split('-')[0] or w.lower().strip('.,?!-')   # "Jean-Pierre" ~ Whisper's "Jean" "-Pierre"
+    w = w.strip().lower()
+    w = w.strip('.,?!').split('-')[0] or w.strip('.,?!-')   # "Jean-Pierre" ~ Whisper's "Jean" "-Pierre"
     return re.sub(r"[^a-z']", '', NUMS.get(w, w))
 
 
 def onset_finder():
     y, sr = sf.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'build', 'stem_vo.wav'), always_2d=True)
-    hop = int(0.005 * sr)
-    x = y[:, 0][: len(y) // hop * hop].reshape(-1, hop)
-    rms = np.sqrt((x ** 2).mean(axis=1))
+    rms = caption_align.envelope(y[:, 0], sr)
     thr = rms.max() * 10 ** (-32 / 20)
 
     return lambda a, b: caption_align.onset_at(rms, thr, a, b)

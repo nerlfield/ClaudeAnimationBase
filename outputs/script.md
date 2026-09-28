@@ -88,10 +88,10 @@ Video time on the left. Picture events follow the words (`bh/warp.json`). Labels
 | 15.71–20.66 | "And up close, it would look like this. The bright ring is hot gas, spinning around it." | **the photo becomes our simulation** (15.8–16.4): the black hole side-on, the disk streaming | REAL PHYSICS SIMULATION; DISK OF HOT GAS on "The bright ring" | whoosh | 0.6 s dissolve, photo → simulation |
 | 21.21–22.31 | "Let's look at it from above." | the rise starts on "at it" (21.7) | — | airy whoosh | camera move |
 | 23.49–25.62 | "See? The disk is actually flat." | the flat ring from above | — | — | — |
-| 26.09–29.16 | "This is the back half. And this is the front half." | the far half turns ice on "back half" (26.7–27.1) | BACK (26.1), FRONT (27.8) | a tick each | — |
+| 26.09–29.16 | "This is the back half. And this is the front half." | the far half turns ice on "back half" (26.7–27.1) | BACK (26.1), FRONT (27.7) | a tick each | — |
 | 29.62–32.90 | "As we go back down, you'd expect it to hide behind the black hole." | the swing down (29.6–33.0) | tags fade | whoosh down | camera move |
 | 33.00 | — | **the ice arch over the hole** | BACK on the arch | deep hit | — |
-| 33.35–37.90 | "But gravity bends its light, up over the top... and under the bottom." | slow push, the lower ice arc | a small BACK on the lower arc on "and under" (36.6) | groove | — |
+| 33.35–37.90 | "But gravity bends its light, up over the top... and under the bottom." | slow push, the lower ice arc | a small BACK on the lower arc on "and under" (36.5) | groove | — |
 | 38.28–43.06 | "In 1979, Jean-Pierre Luminet drew this by hand, dot by dot." | our frame turns into white ink dots on black, denser where brighter; underneath, the ice fades back to gold | 1979 · JEAN-PIERRE LUMINET / THE FIRST PICTURE OF THIS, COMPUTED ON AN IBM 7040 AND DRAWN BY HAND / * OUR SIMULATION, REDRAWN IN DOTS HIS WAY | a soft chime | 0.4 s dissolve in and out of the dots |
 | 43.25–46.44 | "And Interstellar's black hole used the same physics." | the gold arch (as in the film), no film images | INTERSTELLAR (2014) / ITS BLACK HOLE WAS RENDERED FROM KIP THORNE'S EQUATIONS | low pop | — |
 | 46.72–49.58 | "Now let's fly in closer. Much closer." | the counter fades in (46.7); the dive starts on "fly" (47.5) | 20× counting down live | riser, dive rush | camera move, braked arrival (49.9) |
@@ -101,9 +101,9 @@ Video time on the left. Picture events follow the words (`bh/warp.json`). Labels
 | 64.67–68.70 | "Now let's go lower, and hover just above the edge. Then look up." | sinking; the tilt up runs on "Then look up" | the counter returns (65.1) and counts down from 1.5× | long riser | continuous |
 | 68.99–72.74 | "The whole universe shrinks into one small dot above you." | the bright circle shrinks into the dot | the counter (→ 1.001×) | riser peaks; the build ends | — |
 | 72.89 | — | **the dot lands**, as in frame 0 | 1.001× / 0.1% ABOVE THE EDGE | hit; the music drops to one high tone | — |
-| 73.34–79.17 | "And down here, time runs slower. Stay for one minute... and half an hour goes by out there." | the sky in the dot sweeps one full turn as the counter climbs (77.2–79.2) | 1 MIN / DOWN HERE (76.1) → 32 MIN / OUT THERE (77.4) | pops | — |
-| 79.62–87.02 | "Even GPS feels this. Up in orbit, clocks run fast, and without a fix, your map would drift ten kilometers a day." | **Apollo 17's Earth** (1972) with a GPS orbit and a satellite going round | FASTER / WHERE GRAVITY IS WEAKER (82.4), then 10 KM / MAP DRIFT A DAY, IF NOT FIXED (85.7); credit "Earth: NASA, Apollo 17, 1972" | whoosh in; pops | 0.45 s dissolve in and out of the Earth card; it is gone before the next line |
-| 87.57–90.91 | "And all this darkness around the dot? That's the black hole." | the dot again | THE UNIVERSE (87.8); BLACK HOLE with four arrows out into the black (89.9) | soft hit | — |
+| 73.34–79.17 | "And down here, time runs slower. Stay for one minute... and half an hour goes by out there." | the sky in the dot sweeps one full turn as the counter climbs (77.2–79.2) | 1 MIN / DOWN HERE (75.9) → 32 MIN / OUT THERE (77.2) | pops | — |
+| 79.62–87.02 | "Even GPS feels this. Up in orbit, clocks run fast, and without a fix, your map would drift ten kilometers a day." | **Apollo 17's Earth** (1972) with a GPS orbit and a satellite going round | FASTER / WHERE GRAVITY IS WEAKER (82.2), then 10 KM / MAP DRIFT A DAY, IF NOT FIXED (85.7); credit "Earth: NASA, Apollo 17, 1972" | whoosh in; pops | 0.45 s dissolve in and out of the Earth card; it is gone before the next line |
+| 87.57–90.91 | "And all this darkness around the dot? That's the black hole." | the dot again | THE UNIVERSE (87.6); BLACK HOLE with four arrows out into the black (89.7) | soft hit | — |
 | 90.91–92.67 | *(quiet)* | labels fade; the push-in and turning sky continue | — | shimmer; a reverse swell into the loop | **seamless loop** into frame 0 |
 
 ## Captions

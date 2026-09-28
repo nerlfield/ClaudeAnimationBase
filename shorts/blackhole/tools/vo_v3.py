@@ -185,14 +185,14 @@ def chunk_starts_from_whisper(pcm, al, marked, whisper):
     thr = rms.max() * 10 ** (-32 / 20)
 
     def onset(a, b):
-        i0, i1 = int(a / 0.005), min(len(rms), int((b + 0.3) / 0.005))
+        i0, i1 = int(a * SR / hop), min(len(rms), int((b + 0.3) * SR / hop))   # hop is 220 samples, not 5 ms
         on = rms[i0:i1] > thr
         quiet = np.convolve(~on, np.ones(12), 'valid') == 12
         q = np.nonzero(quiet)[0]
         if len(q):
             on[:q[0] + 12] = False
         k = np.nonzero(on)[0]
-        return (i0 + k[0]) * 0.005 if len(k) else a
+        return (i0 + k[0]) * hop / SR if len(k) else a
     wi = 0
     for chunk in vo.marked_chunks(marked)[:-1]:
         wi += len(chunk)
