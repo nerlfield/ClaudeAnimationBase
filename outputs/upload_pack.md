@@ -38,7 +38,7 @@ This follows the two science channels closest to this video:
 
 > black hole, first photo of a black hole, M87, event horizon telescope, black hole simulation, what you would see near a black hole, photon sphere, event horizon, time dilation, gravitational lensing, accretion disk, interstellar black hole physics, general relativity, einstein, astrophysics, physics, space, science
 
-YouTube says tags play only a small role, and most of the top reference Shorts have none (Cleo, lingualin, Vsauce). Veritasium adds a few (the channel name, "science", "physics", then the topic), so these are topic words only. Leave out movie names such as Interstellar or Gargantua: the video doesn't use either.
+YouTube says tags play only a small role, and most of the top reference Shorts have none (Cleo, lingualin, Vsauce). Veritasium adds a few (the channel name, "science", "physics", then the topic), so these are topic words only. Interstellar is in because the video names it. Gargantua is not: the video never says it.
 
 ## Settings
 
@@ -57,11 +57,12 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 
 ## Pinned comment
 
-> The first photo is real (EHT, 2019); everything after "up close" is a physics simulation of a black hole like it, seen from the side. And to answer the obvious questions: you only see this if your rockets hold you still just above the edge. Doing that near M87* would take about 7,500 g, so it's a thought experiment. If you just fell in, the sky would *not* shrink to a dot. The time part is real though: one minute there is 31.6 minutes far away.
+> The first photo is real (EHT, 2019); everything after "up close" is a physics simulation of a black hole like it, seen from the side (the orbit diagram and the view of your own head are illustrations, magnified so you can see them). And to answer the obvious questions: you only see this if your rockets hold you still just above the edge. Doing that near M87* would take about 7,500 g, so it's a thought experiment. If you just fell in, the sky would *not* shrink to a dot. The time part is real though: one minute there is 31.6 minutes far away.
 >
 > Would you trade one minute down there for half an hour of everyone else's life?
 
 It settles the "well, actually" comments up front, as Veritasium does, and ends on a question people will answer.
+Since round 16 it also carries the disclosure the removed on-screen notes used to make.
 The research's rule 9 is to end on a line people will argue with.
 
 ## Credits (optional, in the description or a comment)
