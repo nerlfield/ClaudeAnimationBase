@@ -4,7 +4,8 @@
 
 It says the title's claim in other words (YouTube shows the title under the cover), keeps every mark out of the bottom
 20% (where the Shorts shelf lays the title over the cover), and leaves the black around the dot empty: that black is
-the answer the video gives.
+the answer the video gives.  The design is centred on the image (y 400-1530) so a preview that crops the top and
+bottom, down to a 4:5 centre crop, still shows all of it.
 """
 import math
 import os
@@ -22,7 +23,9 @@ W, H = ov.W, ov.H
 FRAME = os.path.join(HERE, '..', 'build', 'base', '02539.png')     # the clean dot the video opens and loops on
 OUT = os.path.join(HERE, '..', '..', '..', 'outputs', 'thumbnail.jpg')
 DOT = (540, 806, 300)          # the dot in the frame: centre and a radius that takes in its glow
-CENTRE, SCALE = (540, 1085), 1.32
+DOT_R = 278                    # the dot's visible radius in the frame
+CENTRE, SCALE = (540, 1180), 1.18
+TEXT_Y = 400                   # top of THE ENTIRE
 
 
 def dot_layer():
@@ -44,9 +47,9 @@ def dot_layer():
 
 def text_layer():
     lay = ov._layer(); d = ImageDraw.Draw(lay)
-    f1 = ov.font('Montserrat-Black.ttf', 118)
-    f2 = ov.font('Montserrat-Black.ttf', 176)
-    for txt, f, col, y in (('THE ENTIRE', f1, ov.WHITE, 176), ('UNIVERSE', f2, ov.GOLD, 290)):
+    f1 = ov.font('Montserrat-Black.ttf', 108)
+    f2 = ov.font('Montserrat-Black.ttf', 162)
+    for txt, f, col, y in (('THE ENTIRE', f1, ov.WHITE, TEXT_Y), ('UNIVERSE', f2, ov.GOLD, TEXT_Y + 106)):
         d.text((W / 2 - f.getlength(txt) / 2, y), txt, font=f, fill=col + (255,))
     lay = ov._glow(lay, ov.GOLD, 26, 0.35)
     return ov._shadowed(lay, 14, (0, 8), 0.95)
@@ -55,7 +58,9 @@ def text_layer():
 def arrow_layer():
     """A hand-drawn-looking arrow from under UNIVERSE, curving down onto the dot's rim."""
     lay = ov._layer(); d = ImageDraw.Draw(lay)
-    p0, p1, p2 = (800, 520), (930, 640), (812, 780)              # quadratic Bezier; ends just outside the rim
+    r = DOT_R * SCALE + 45                                       # ends just outside the rim, up and to the right
+    p2 = (CENTRE[0] + r * math.cos(math.radians(50)), CENTRE[1] - r * math.sin(math.radians(50)))
+    p0, p1 = (p2[0], TEXT_Y + 296), (p2[0] + 125, TEXT_Y + 400)  # quadratic Bezier from under UNIVERSE
     pts = []
     for k in range(41):
         s = k / 40

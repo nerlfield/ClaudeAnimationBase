@@ -53,7 +53,7 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 | Licence | Standard YouTube Licence | |
 | Remixing | Allow | Remixes and Shorts that sample it are free reach. |
 | Comments | On, sorted by Top | |
-| Cover / thumbnail | **Upload `outputs/thumbnail.jpg`** (1080×1920; `tools/thumbnail.py`). If your app only lets you pick a frame: the real M87* photo with OUR SOLAR SYSTEM circled inside it (about 0:14) | The dot from the first frame, big, with THE ENTIRE UNIVERSE and an arrow to it. It says the title's claim in other words, since the shelf shows the title under the cover, and nothing sits in the bottom 20% where the shelf lays the title over the image. The black around the dot is left empty: it's the video's answer. Readable at 180 px wide. |
+| Cover / thumbnail | **Upload `outputs/thumbnail.jpg`** (1080×1920; `tools/thumbnail.py`). If your app only lets you pick a frame: the real M87* photo with OUR SOLAR SYSTEM circled inside it (about 0:14) | The dot from the first frame, big, with THE ENTIRE UNIVERSE and an arrow to it. It says the title's claim in other words, since the shelf shows the title under the cover, and nothing sits in the bottom 20% where the shelf lays the title over the image. The design is centred (y 429–1513), so even a 4:5 centre crop keeps all of it. The black around the dot is left empty: it's the video's answer. Readable at 180 px wide. |
 
 ## Pinned comment
 
