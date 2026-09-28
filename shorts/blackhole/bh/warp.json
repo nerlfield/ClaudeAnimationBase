@@ -103,8 +103,8 @@
  ],
  "dur": 84.6667,
  "ff_window": [
-  77.236,
-  79.219
+  76.852,
+  79.099
  ],
  "note": "written by tools/vo_flow.py from the placed narration; read by bh/shots.py"
 }

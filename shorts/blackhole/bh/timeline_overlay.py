@@ -215,14 +215,9 @@ def layers(t, you_px=None, st=None):
     if t_line <= t and u < 22.1:
         L.append(ov.point_label('light', (700, 903), t - t_line, fade=1.0 - seg(u, 21.8, 22.1), dx=0, dy=-170, size=66,
                                 center=True, inset=6))
-    # diagram tags
-    if T_E <= u < T_E2:
-        f = min(seg(u, T_E, T_E + 0.3), 1.0 - seg(u, T_E2 - 0.3, T_E2))
-        L.append(ov.corner_tag('* diagram, not to scale', f))
-        if you_px is not None and 22.5 <= u < T_E2:
-            L.append(ov.point_label('you', you_px, t - unwarp(22.5), fade=1.0 - seg(u, T_E2 - 0.35, T_E2 - 0.05), dx=80, dy=-90))
-    if 24.95 <= u < 26.45:
-        L.append(ov.corner_tag('* magnified illustration', min(seg(u, 24.95, 25.2), 1.0 - seg(u, 26.2, 26.45))))
+    # the diagram's YOU (round 15: the "* diagram, not to scale" and "* magnified illustration" notes are gone)
+    if T_E <= u < T_E2 and you_px is not None and 22.5 <= u:
+        L.append(ov.point_label('you', you_px, t - unwarp(22.5), fade=1.0 - seg(u, T_E2 - 0.35, T_E2 - 0.05), dx=80, dy=-90))
     # the dot's label and the black-hole callout: they stay through the pause after the last word, then fade so
     # the last frames are the clean dot of frame 0
     t_uni = chunk_time(['And', 'all', 'this'], after=40.0, default=DUR - 5.0)

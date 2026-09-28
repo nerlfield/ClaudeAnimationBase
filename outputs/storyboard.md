@@ -7,7 +7,7 @@ Version 1's storyboard is in `outputs/v1/storyboard.md`. Version 2 keeps every s
 | insert | video time | what's seen | why |
 |---|---|---|---|
 | M87*, the first photo of a black hole | 3.8–16.4 | The glowing dot dissolves into the Event Horizon Telescope's photo, its ring laid over the dot at the same size and place. A slow push-in. On "tiny circle", Pluto's orbit pops in gold inside the dark centre, to scale (11% of the ring). The photo then dissolves into our side-on simulation of a black hole like it. | Show the real artefact, with its date, next to the CGI (Cleo Abram's most-used technique), and anchor the size. The dot, the photo's ring and the simulated shadow share one circle, so the motif carries through. |
-| Luminet, 1979 | 38.3–43.3 | Our arch frame turns into white ink dots on black, denser where brighter, the way Jean-Pierre Luminet drew the first picture of this. Labelled "* OUR SIMULATION, REDRAWN IN DOTS HIS WAY". | A named, dated first, shown in its own style without using his drawing. |
+| Luminet, 1979 | 38.3–43.3 | Our arch frame turns into white ink dots on black, denser where brighter, the way Jean-Pierre Luminet drew the first picture of this. | A named, dated first, shown in its own style without using his drawing. |
 | Interstellar | 43.3–46.7 | Title card over the gold arch (no film images). | A pop-culture link most viewers have seen. |
 
 **The time map for version 2** (story clock → video, from `bh/warp.json`):
@@ -128,7 +128,7 @@ After the dot lands, and in the cold open (which continues it), the camera runs 
 - **Out.** Match cut on the line, as a 0.24 s dissolve: E opens exactly edge-on, so the bright line continues across the cut before it opens into a circle.
 
 ### E: Light goes round · 22.20–24.55 · [in: match cut, line → circle]
-- **Seen.** Diagram, labelled "* DIAGRAM, NOT TO SCALE"; the hole sits at 40% height once the ring opens so the lap stays clear of the captions. From below the ring plane: the black horizon sphere, the photon sphere drawn as a thin circle of light, and on it an astronaut labelled "YOU". A pulse of light leaves the back of the helmet, runs the whole lap with arrowheads, and flashes in the visor.
+- **Seen.** Diagram (its "* DIAGRAM, NOT TO SCALE" note was dropped in round 15); the hole sits at 40% height once the ring opens so the lap stays clear of the captions. From below the ring plane: the black horizon sphere, the photon sphere drawn as a thin circle of light, and on it an astronaut labelled "YOU". A pulse of light leaves the back of the helmet, runs the whole lap with arrowheads, and flashes in the visor.
 - **Event.** The line opens into a circle (22.2–23.0); the pulse's lap (22.7 → 24.0); the flash (24.0).
 - **Camera.** Elevation −2° → −31° (ease-out), slow orbit.
 - **Reads.**
@@ -166,7 +166,7 @@ After the dot lands, and in the cold open (which continues it), the camera runs 
 - **Reads.**
   - 32.00–32.30: **the dot lands** on the hit.
   - 32.68–34.87: VO "And down here, time runs slower." The 1.001× on screen says where "down here" is.
-  - 35.49–38.75: VO "Stay for one minute... and half an hour goes by out there." To a hovering observer here, everything outside runs 31.6× fast (1/√(1 − 1/1.001)): 1 MIN counts up to 32 MIN as the voice says "half an hour".
+  - 35.49–38.75: VO "Stay for one minute... and half an hour goes by out there!" To a hovering observer here, everything outside runs 31.6× fast (1/√(1 − 1/1.001)): 1 MIN counts up to 32 MIN as the voice says "half an hour".
   - 39.26–40.7: VO "All that darkness around it?" THE UNIVERSE labels the dot, so "it" is the universe.
   - 40.87–41.98: VO "That's the black hole." The gold callout's arrows push the eye out into the black around the dot.
   - 41.98–43.33: quiet. The labels hold, then fade (42.58–43.03), and the loop runs into "See this dot? That's the whole universe."
@@ -181,5 +181,5 @@ After the dot lands, and in the cold open (which continues it), the camera runs 
 - **Every seam has a transition, and they vary.** Seamless loop (G→O), inverted match cut as a 0.16 s dissolve (O→A), camera move (A→B→C), braked arrival (C→D), match cut line → circle as a 0.24 s dissolve (D→E), a 0.24 s dissolve after the flash to first person (E→E2), continuous with a whip pull-out (E2→F), continuous (F→G). No hard cut is left: the round-8 note was that the transitions felt "super unnatural and sharp".
 - **The ending rhymes with the opening.** It *is* the opening frame: the dot, now understood.
 - **Every setup pays off on screen.** The dot claim (O) pays off in F–G; the BACK tag in B pays off as the arch; the line in D is explained in E; the counter's "HORIZON = 1×" is approached to 1.001× in F; "hover" (said in D and F) is the condition the dot needs.
-- **On-screen text never restates the image.** REAL PHYSICS SIMULATION, BACK/FRONT, the distance counter, 1.5× PHOTON SPHERE, the BLACK HOLE tag in D, YOU, * DIAGRAM, NOT TO SCALE, * MAGNIFIED ILLUSTRATION, LOOKING UP ↑, 1.001× 0.1% ABOVE THE EDGE, 1 MIN DOWN HERE → 32 MIN OUT THERE, THE UNIVERSE and the BLACK HOLE arrows each add something the picture and VO don't say.
+- **On-screen text never restates the image.** REAL PHYSICS SIMULATION, BACK/FRONT, the distance counter, 1.5× PHOTON SPHERE, the BLACK HOLE tag in D, YOU, * MAGNIFIED ILLUSTRATION, LOOKING UP ↑, 1.001× 0.1% ABOVE THE EDGE, 1 MIN DOWN HERE → 32 MIN OUT THERE, THE UNIVERSE and the BLACK HOLE arrows each add something the picture and VO don't say.
 - **Safe zone.** Captions sit at 60–73% of the height and labels in the upper third; nothing below 80% or in the right-hand button column (checked every 0.1 s by `tools/safezone.py`).

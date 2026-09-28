@@ -134,30 +134,19 @@ def _pop(lay, scale, alpha, center):
     return lay
 
 
-def top_label(text, age=1.0, fade=1.0, plate=False, size=50):
-    """Letter-spaced label near the top, e.g. REAL PHYSICS SIMULATION.  plate: a soft dark backing for bright skies."""
+def top_label(text, age=1.0, fade=1.0, size=50):
+    """Letter-spaced label near the top, e.g. REAL PHYSICS SIMULATION."""
     f = font('Inter-ExtraBold.ttf', size)
     lay = _layer(); d = ImageDraw.Draw(lay)
     spaced = text.upper()
     tw = f.getlength(spaced) + 3.0 * len(spaced)
     x = W / 2 - tw / 2; y = 236
-    if plate:
-        pl = _layer()
-        ImageDraw.Draw(pl).rounded_rectangle([x - 34, y - 18, x + tw + 34, y + size + 46], 40, fill=SHADOW + (190,))
-        lay.alpha_composite(pl.filter(ImageFilter.GaussianBlur(14)))
     for ch in spaced:
         d.text((x, y), ch, font=f, fill=WHITE + (225,))
         x += f.getlength(ch) + 3.0
     d.line([(W / 2 - 70, y + size + 28), (W / 2 + 70, y + size + 28)], fill=ICE + (220,), width=5)
     lay = _shadowed(lay, 6, (0, 3), 0.8)
     return _pop(lay, 1.0, min(1.0, age / 0.25) * fade, (W // 2, y))
-
-
-def corner_tag(text, fade=1.0):
-    f = font('Inter-ExtraBold.ttf', 32)
-    lay = _layer(); d = ImageDraw.Draw(lay)
-    d.text((64, 214), text.upper(), font=f, fill=(210, 214, 224, 200))
-    return _pop(_shadowed(lay, 5, (0, 2), 0.8), 1.0, fade, (0, 0))
 
 
 def big_value(value, sub, age=1.0, fade=1.0, y=262, fade_in=True, unit=''):
@@ -179,13 +168,8 @@ def big_value(value, sub, age=1.0, fade=1.0, y=262, fade_in=True, unit=''):
     x = W / 2 - sw / 2
     for ch in sub.upper():
         d.text((x, y + 70), ch, font=fs, fill=WHITE + (240,)); x += fs.getlength(ch) + 2.0
-    # a soft dark backing so the counter reads over the bright disk too (invisible over black sky)
-    hw = max(sum(adv), sw) / 2 + 44
-    pl = _layer()
-    ImageDraw.Draw(pl).rounded_rectangle([W / 2 - hw, y - 128, W / 2 + hw, y + 138], 70, fill=SHADOW + (115,))
-    pl = pl.filter(ImageFilter.GaussianBlur(34))
-    pl.alpha_composite(_glow(lay, ICE, 22, 0.55))
-    lay = pl
+    # (round 15: no dark backing behind it; the glow and the drop shadow carry it)
+    lay = _glow(lay, ICE, 22, 0.55)
     lay = _shadowed(lay, 10, (0, 5), 0.85)
     k = _ease_out(age / 0.25)
     # a value that lands in place of the live counter settles without fading in (no one-frame dip)

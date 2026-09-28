@@ -53,7 +53,8 @@ LINES = [
     # to a hovering observer at 1.001x, everything outside runs 1/sqrt(1 - 1/1.001) = 31.6x fast: one minute
     # down here is 31.6 minutes out there (said "half an hour", shown as 1 min -> 32 min)
     (0.00, 99, 1.00, "And down here, | time runs *slower."),
-    (0.00, 99, 1.00, "Stay for one *minute... | and half an *hour goes by out there."),
+    # round 15, the user: "something more exciting" -> re-read with an [excited] delivery tag (tools/vo_flow.py)
+    (0.00, 99, 1.00, "Stay for one *minute... | and half an *hour goes by out there!"),
     (0.00, 99, 1.00, "And all this *darkness around the dot? | That's the black hole."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order

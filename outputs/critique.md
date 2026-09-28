@@ -409,3 +409,19 @@ Cut: the line "Even GPS feels this. Up in orbit, clocks run fast, and without a 
 - "And all this darkness around the dot?" now follows "…half an hour goes by out there." after 0.5 s, while the sky's turn in the dot settles. The 32 MIN label goes as it starts.
 - The video is 84.7 s (was 92.7), ending with 1.7 s of quiet into the loop.
 - Only the dot's frames were re-rendered: the cold open and the ending, whose motion is paced to the video's length (742 of 2540 frames). A frame-by-frame comparison of every camera state showed the rest identical.
+
+## Round 16: a livelier time line, and cleaner text (the user: make "stay for one minute and half an hour goes by out there" "more exciting"; "text has a slightly dark background… remove this shadow rectangle"; "remove all these * magnified illustration notes… do not replace them")
+
+**The line.** It is re-read in context, with an eleven_v3 `[excited]` delivery tag, and ends "out there!" (`tools/vo_flow.py` DELIVERY; the tag is performed, not spoken). Twelve takes were auditioned: `[excited]`, `[amazed]` and capitals on HALF AN HOUR, each with seeds 163, 179, 19 and 7. All twelve were word-perfect.
+- **The choice:** seed 19 `[excited]`. Its pitch peaks on "HOUR" (+13 semitones over its median), "half an hour" is 5 dB louder than "stay for one minute", and it falls on "out there". The old take peaked on "half" (+8) with only +1 dB between the halves.
+- **It fits its neighbours:** its median pitch is 140 Hz against their 138, where the old take was 99. It is slower than before (17.9 against 19.2 characters/s).
+- **The runner-up** was `[amazed]` seed 7: slower (14.9 c/s) and awe-struck. The clips are kept in the session scratchpad if you want to swap.
+- **What changed on screen:** the sky's full turn in the dot follows the new "and half an hour" (76.9–79.1). Only those 71 frames were re-rendered, and the video is still 84.7 s.
+
+**The text.** Four dark backings are gone. Every text keeps its own glyph shadow and outline.
+- the soft plate behind the insert titles (the photo, Luminet, Interstellar);
+- the plate behind the big counters (20×, 1.5×, 1 MIN, 32 MIN);
+- the unused top-label plate;
+- the darkening band under the captions over bright areas.
+
+**The notes.** "* DIAGRAM, NOT TO SCALE", "* MAGNIFIED ILLUSTRATION" and "* OUR SIMULATION, REDRAWN IN DOTS HIS WAY" are removed, with nothing in their place. REAL PHYSICS SIMULATION stays: it is not an asterisk note. The pinned comment still says what is simulated.

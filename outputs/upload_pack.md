@@ -49,7 +49,7 @@ YouTube says tags play only a small role, and most of the top reference Shorts h
 | Age restriction | None | |
 | Language / caption language | English / English | |
 | Captions | Upload `outputs/captions_en.srt` | The captions are burned in. The file adds a searchable, accurate text track and saves YouTube guessing. |
-| Altered or synthetic content | **No** | The disclosure is for realistic footage of real people, places or events. This is a labelled simulation ("REAL PHYSICS SIMULATION", "* DIAGRAM, NOT TO SCALE", "* MAGNIFIED ILLUSTRATION"), and the narrator is a stock synthetic voice, not an imitation of a real person. If you'd rather be safe, "Yes" is also accurate; YouTube says the label doesn't affect reach. |
+| Altered or synthetic content | **No** | The disclosure is for realistic footage of real people, places or events. This is a physics simulation, labelled "REAL PHYSICS SIMULATION" on screen and explained in the pinned comment, and the narrator is a stock synthetic voice, not an imitation of a real person. If you'd rather be safe, "Yes" is also accurate; YouTube says the label doesn't affect reach. |
 | Licence | Standard YouTube Licence | |
 | Remixing | Allow | Remixes and Shorts that sample it are free reach. |
 | Comments | On, sorted by Top | |

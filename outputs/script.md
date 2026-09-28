@@ -12,7 +12,7 @@ Round 15 cut the GPS line ("Even GPS feels this…") and its Earth card, at the 
 
 **Voice.** ElevenLabs "Liam" (`TX3LPaxmHKxFdv7VOQHJ`) on `eleven_v3`.
 - **The take:** one continuous read of the whole script, seed 163 at stability 0.0, chosen from three auditioned reads. It was the only one with every line heard exactly and none whispered.
-- **Re-read lines:** after the fresh-eyes critic, three reworded lines were re-read in context with three lines of run-up, choosing each group's take by pitch and pace against its neighbours (seed 19 for the photo lines). They were level-matched and spliced in. A re-read's end is taken where its voice decays, not where its room tone fades (round 14).
+- **Re-read lines:** after the fresh-eyes critic, three reworded lines were re-read in context with three lines of run-up, choosing each group's take by pitch and pace against its neighbours (seed 19 for the photo lines). They were level-matched and spliced in. In round 15, "Stay for one minute... and half an hour goes by out there!" was re-read the same way with an `[excited]` delivery tag (the user: "something more exciting"): twelve takes were auditioned, and seed 19 rises to its peak on "HOUR". A re-read's end is taken where its voice decays, not where its room tone fades (round 14).
 - **Pauses:** 0.14–0.55 s between lines, the read's own. The "..." beats inside lines are capped at 0.45 s. Longer waits only where the picture moves first: the solar-system circle, the rise, the swing down, the dive, the lens, and the dot.
 - **The picture follows the voice:** `bh/warp.json`, computed from the placed words.
 
@@ -58,7 +58,7 @@ Round 15 cut the GPS line ("Even GPS feels this…") and its Earth card, at the 
 >
 > And down here, time runs slower.
 >
-> Stay for one minute... and half an hour goes by out there.
+> Stay for one minute... and half an hour goes by out there!
 >
 > And all this darkness around the dot? That's the black hole.
 >
@@ -90,18 +90,18 @@ Video time on the left. Picture events follow the words (`bh/warp.json`). Labels
 | 29.62–32.90 | "As we go back down, you'd expect it to hide behind the black hole." | the swing down (29.6–33.0) | tags fade | whoosh down | camera move |
 | 33.00 | — | **the ice arch over the hole** | BACK on the arch | deep hit | — |
 | 33.35–37.90 | "But gravity bends its light, up over the top... and under the bottom." | slow push, the lower ice arc | a small BACK on the lower arc on "and under" (36.5) | groove | — |
-| 38.28–43.06 | "In 1979, Jean-Pierre Luminet drew this by hand, dot by dot." | our frame turns into white ink dots on black, denser where brighter; underneath, the ice fades back to gold | 1979 · JEAN-PIERRE LUMINET / THE FIRST PICTURE OF THIS, COMPUTED ON AN IBM 7040 AND DRAWN BY HAND / * OUR SIMULATION, REDRAWN IN DOTS HIS WAY | a soft chime | 0.4 s dissolve in and out of the dots |
+| 38.28–43.06 | "In 1979, Jean-Pierre Luminet drew this by hand, dot by dot." | our frame turns into white ink dots on black, denser where brighter; underneath, the ice fades back to gold | 1979 · JEAN-PIERRE LUMINET / THE FIRST PICTURE OF THIS, COMPUTED ON AN IBM 7040 AND DRAWN BY HAND | a soft chime | 0.4 s dissolve in and out of the dots |
 | 43.25–46.44 | "And Interstellar's black hole used the same physics." | the gold arch (as in the film), no film images | INTERSTELLAR (2014) / ITS BLACK HOLE WAS RENDERED FROM KIP THORNE'S EQUATIONS | low pop | — |
 | 46.72–49.58 | "Now let's fly in closer. Much closer." | the counter fades in (46.7); the dive starts on "fly" (47.5) | 20× counting down live | riser, dive rush | camera move, braked arrival (49.9) |
 | 50.26–54.47 | "If you hover right here, the black hole fills exactly half your sky." | half black, half bright sky, the line between | 1.5× / LIGHT CAN ORBIT HERE; BLACK HOLE in the black half | impact, shimmer | arrival |
-| 54.98–60.61 | "And see this thin line? It's light that goes all the way around the black hole... and comes back to you." | a glow sweeps along the line; the line opens into the diagram's circle (56.3); a pulse runs the lap and **flashes in the visor** on "you" (60.05) | LIGHT (pointer); * DIAGRAM, NOT TO SCALE; YOU | whoosh; slow harp run; chime on the flash | match cut, line → circle (0.34 s dissolve) |
-| 61.16–64.22 | "So in this line, you see the back of your own head." | first person at the line; it opens like an eye onto the back of your own helmet, which turns; it closes | * MAGNIFIED ILLUSTRATION | whoosh; glassy shimmer | 0.35 s dissolve, diagram → first person |
+| 54.98–60.61 | "And see this thin line? It's light that goes all the way around the black hole... and comes back to you." | a glow sweeps along the line; the line opens into the diagram's circle (56.3); a pulse runs the lap and **flashes in the visor** on "you" (60.05) | LIGHT (pointer); YOU | whoosh; slow harp run; chime on the flash | match cut, line → circle (0.34 s dissolve) |
+| 61.16–64.22 | "So in this line, you see the back of your own head." | first person at the line; it opens like an eye onto the back of your own helmet, which turns; it closes | — | whoosh; glassy shimmer | 0.35 s dissolve, diagram → first person |
 | 64.67–68.70 | "Now let's go lower, and hover just above the edge. Then look up." | sinking; the tilt up runs on "Then look up" | the counter returns (65.1) and counts down from 1.5× | long riser | continuous |
 | 68.99–72.74 | "The whole universe shrinks into one small dot above you." | the bright circle shrinks into the dot | the counter (→ 1.001×) | riser peaks; the build ends | — |
 | 72.89 | — | **the dot lands**, as in frame 0 | 1.001× / 0.1% ABOVE THE EDGE | hit; the music drops to one high tone | — |
-| 73.34–79.17 | "And down here, time runs slower. Stay for one minute... and half an hour goes by out there." | the sky in the dot sweeps one full turn as the counter climbs (77.2–79.2) | 1 MIN / DOWN HERE (75.9) → 32 MIN / OUT THERE (77.2) | pops | — |
-| 79.67–83.01 | "And all this darkness around the dot? That's the black hole." | the dot, still turning | 32 MIN goes; THE UNIVERSE (79.7); BLACK HOLE with four arrows out into the black (81.8) | soft hit | — |
-| 83.01–84.67 | *(quiet)* | labels fade; the push-in and turning sky continue | — | shimmer; a reverse swell into the loop | **seamless loop** into frame 0 |
+| 73.34–79.05 | "And down here, time runs slower. Stay for one minute... and half an hour goes by out there!" (read excited, rising to "HOUR") | the sky in the dot sweeps one full turn as the counter climbs (76.9–79.1) | 1 MIN / DOWN HERE (75.8) → 32 MIN / OUT THERE (77.1) | pops | — |
+| 79.60–82.94 | "And all this darkness around the dot? That's the black hole." | the dot, still turning | 32 MIN goes; THE UNIVERSE (79.6); BLACK HOLE with four arrows out into the black (81.7) | soft hit | — |
+| 82.94–84.67 | *(quiet)* | labels fade; the push-in and turning sky continue | — | shimmer; a reverse swell into the loop | **seamless loop** into frame 0 |
 
 ## Captions
 

@@ -71,24 +71,12 @@ def base_frame(t, scale=1.0, spp=SPP4, motion_blur=1):
 
 
 def overlay_frame(img, t):
-    """Caption scrim plus every caption and label for time t, on a base frame of any size."""
+    """Every caption and label for time t, on a base frame of any size (round 15: no dark scrim under the captions)."""
     st = shots.state(t)
     you = diagram.you_px(st['t']) if st['diagram'] is not None else None
     img = inserts.apply(img, t)                 # v2: real imagery and reference cards, under the captions
-    if tov.caption_layer(t) is not None:
-        img = scrim(img)
     img = ov.composite(img, tov.layers(t, you, st))
     return np.clip(img, 0, 1)
-
-
-def scrim(img, y0=0.585, y1=0.745, strength=0.5):
-    """Darken bright backgrounds under the caption band so captions keep contrast (no effect on dark areas)."""
-    h = img.shape[0]
-    yy = np.arange(h, dtype=np.float32) / h
-    band = np.clip(np.minimum((yy - (y0 - 0.05)) / 0.05, ((y1 + 0.05) - yy) / 0.05), 0, 1)
-    lum = img.mean(axis=2)
-    k = strength * band[:, None] * np.clip((lum - 0.12) / 0.5, 0, 1)
-    return img * (1.0 - k[..., None])
 
 
 def line_sweep(hdr, cam, k):

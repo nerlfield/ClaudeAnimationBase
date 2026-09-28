@@ -108,18 +108,14 @@ def _stipple(img, t):
 
 # ---------------------------------------------------------------- text helpers (full-res RGBA layers)
 
-def _text(lines, y, fade=1.0, plate=True):
-    """Centred lines [(text, font, size, colour)] from y; a soft dark plate behind them."""
+def _text(lines, y, fade=1.0):
+    """Centred lines [(text, font, size, colour)] from y, each with its own soft shadow (no plate behind them:
+    round 15, the user didn't like the dark rectangle)."""
     lay = ov._layer(); d = ImageDraw.Draw(lay)
     fonts = [(t, ov.font(f, s), c) for t, f, s, c in lines]
     ys, yy = [], y
     for t, f, c in fonts:
         ys.append(yy); yy += f.size * 1.25
-    if plate:
-        wmax = max(f.getlength(t) for t, f, c in fonts)
-        pl = ov._layer()
-        ImageDraw.Draw(pl).rounded_rectangle([CX - wmax / 2 - 40, y - 26, CX + wmax / 2 + 40, yy + 10], 36, fill=ov.SHADOW + (175,))
-        lay.alpha_composite(pl.filter(ImageFilter.GaussianBlur(12)))
     for (t, f, c), yl in zip(fonts, ys):
         d.text((CX - f.getlength(t) / 2, yl), t, font=f, fill=c + (255,))
     lay = ov._shadowed(lay, 6, (0, 3), 0.8)
@@ -176,8 +172,7 @@ def apply(img, t):
         img = img * (1 - a) + _stipple(img, t) * a
         layers.append(_text([('1979 · JEAN-PIERRE LUMINET', 'Montserrat-Black.ttf', 54, ov.WHITE),
                              ('THE FIRST PICTURE OF THIS, COMPUTED', 'Inter-ExtraBold.ttf', 32, ov.ICE),
-                             ('ON AN IBM 7040 AND DRAWN BY HAND', 'Inter-ExtraBold.ttf', 32, ov.ICE),
-                             ('* OUR SIMULATION, REDRAWN IN DOTS HIS WAY', 'Inter-ExtraBold.ttf', 26, (200, 204, 214))], 200, a))
+                             ('ON AN IBM 7040 AND DRAWN BY HAND', 'Inter-ExtraBold.ttf', 32, ov.ICE)], 200, a))
     # Interstellar
     if T['inter0'] <= t < T['inter1']:
         a = min(ov._smooth(seg(t, T['inter0'], T['inter0'] + 0.3)), 1.0 - ov._smooth(seg(t, T['inter1'] - 0.3, T['inter1'])))

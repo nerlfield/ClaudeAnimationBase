@@ -44,6 +44,12 @@ PIN = (163, 0.0)         # v2 (round 13): the audition winner (s19 read v1; s179
 AUDITION = [(19, 0.5), (179, 0.0), (163, 0.0)]     # v2 (round 13): the three best voices of round 11's audition
 
 
+def untag(text):
+    """A line without its eleven_v3 delivery tags ("[excited] ..."): they steer the voice and are not spoken."""
+    import re
+    return re.sub(r'\[[^\]]*\]\s*', '', text).strip()
+
+
 def tokens(text):
     """Words as compared with Whisper: lower case, no punctuation or apostrophes, hyphens split, digits spelled."""
     import re
@@ -70,7 +76,7 @@ def segment(read, pcm, whisper, idx=None):
     ch, st, en = read['al']['characters'], read['al']['character_start_times_seconds'], read['al']['character_end_times_seconds']
     full = ''.join(ch)
     idx = idx or vo_v3.order()
-    texts = dict(zip(idx, read['text'].split('\n')))
+    texts = {i: untag(t) for i, t in zip(idx, read['text'].split('\n'))}
     y16 = librosa.resample(pcm.astype(np.float64), orig_sr=SR, target_sr=16000).astype(np.float32)
     segs_w, _ = whisper.transcribe(y16, language='en', word_timestamps=True, beam_size=5, vad_filter=False)
     heard = [(w.start, w.end, t) for sw in segs_w for w in sw.words for t in tokens(w.word)]
@@ -219,7 +225,13 @@ def L(opening):
 
 
 # v2 after the fresh-eyes critic (round 13): three lines reworded, re-read in context with the pinned voice
-PATCH = {(L('This is the first real photo'), L("It's as heavy")): [163, 179, 19, 7]}
+PATCH = {(L('This is the first real photo'), L("It's as heavy")): [163, 179, 19, 7],
+         # round 15, the user: make this line "more exciting".  Twelve takes auditioned ([excited], [amazed], caps on
+         # HALF AN HOUR; seeds 163/179/19/7): s19 [excited] peaks on "HOUR" (+13 st, "half an hour" +5 dB over "stay
+         # for one minute"), is slower than the old take (17.9 vs 19.2 c/s) and sits near its neighbours' pitch
+         (L('Stay for one'),): [19]}
+# eleven_v3 delivery tags for a PATCH line's re-read (performed, not spoken; segment() drops them)
+DELIVERY = {L('Stay for one'): '[excited] '}
 
 # where the picture needs time before a line may start (the voice waits for it)
 AFTER = {
@@ -346,7 +358,7 @@ def patch(segs, pcm, whisper):
         # read with three lines of run-up before (closer to the full read's pace) and the next line after
         for seed in seeds:
             ctx = idx[max(0, k0 - 3):k1 + 2]
-            d = vo_v3.fetch(seed, PIN[1], '\n'.join(vo.plain(vo.LINES[j][3]) for j in ctx))
+            d = vo_v3.fetch(seed, PIN[1], '\n'.join(DELIVERY.get(j, '') + vo.plain(vo.LINES[j][3]) for j in ctx))
             pp = vo_v3.decode(d['audio'])
             sp, _ = segment(d, pp, whisper, idx=ctx)
             if sp is None:

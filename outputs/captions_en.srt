@@ -1,9 +1,9 @@
 1
-00:00:00,135 --> 00:00:01,465
+00:00:00,135 --> 00:00:01,475
 See this glowing dot?
 
 2
-00:00:01,465 --> 00:00:02,910
+00:00:01,475 --> 00:00:02,910
 That's the whole universe.
 
 3
@@ -23,7 +23,7 @@ This is the first real photo of a black hole,
 released in 2019.
 
 7
-00:00:08,980 --> 00:00:09,695
+00:00:08,985 --> 00:00:09,695
 It's as heavy as
 
 8
@@ -59,11 +59,11 @@ spinning around it.
 Let's look at it from above.
 
 16
-00:00:23,480 --> 00:00:24,230
+00:00:23,480 --> 00:00:24,235
 See?
 
 17
-00:00:24,230 --> 00:00:25,967
+00:00:24,235 --> 00:00:25,967
 The disk is actually flat.
 
 18
@@ -107,11 +107,11 @@ In 1979,
 Jean-Pierre Luminet drew this by hand,
 
 28
-00:00:41,875 --> 00:00:43,235
+00:00:41,875 --> 00:00:43,240
 dot by dot.
 
 29
-00:00:43,235 --> 00:00:44,995
+00:00:43,240 --> 00:00:44,995
 And Interstellar's black hole
 
 30
@@ -187,21 +187,21 @@ into one small dot above you.
 And down here,
 
 48
-00:01:14,385 --> 00:01:15,809
+00:01:14,385 --> 00:01:15,800
 time runs slower.
 
 49
-00:01:15,905 --> 00:01:17,190
+00:01:15,800 --> 00:01:17,145
 Stay for one minute...
 
 50
-00:01:17,190 --> 00:01:19,519
-and half an hour goes by out there.
+00:01:17,145 --> 00:01:19,399
+and half an hour goes by out there!
 
 51
-00:01:19,660 --> 00:01:21,785
+00:01:19,590 --> 00:01:21,715
 And all this darkness around the dot?
 
 52
-00:01:21,785 --> 00:01:23,359
+00:01:21,715 --> 00:01:23,289
 That's the black hole.
