@@ -7,15 +7,16 @@ Version 1's script is in `outputs/v1/script.md`.
 - **A number with an anchor:** "It's as heavy as six and a half billion Suns. And our whole solar system is this tiny circle." Pluto's orbit is drawn to scale inside the photo.
 - **Expectation, then reversal (Veritasium):** "As we go back down, you'd expect it to hide behind the black hole. But gravity bends its light…"
 - **Named, dated references:** Jean-Pierre Luminet drew the first picture of this by hand in 1979, shown over our frame redrawn in dots. Interstellar's black hole used the same physics.
-- **An everyday stake:** "Even GPS feels this. Up in orbit, clocks run fast, and without a fix, your map would drift ten kilometers a day." This plays over Apollo 17's photo of Earth.
+
+Round 15 cut the GPS line ("Even GPS feels this…") and its Earth card, at the user's request.
 
 **Voice.** ElevenLabs "Liam" (`TX3LPaxmHKxFdv7VOQHJ`) on `eleven_v3`.
 - **The take:** one continuous read of the whole script, seed 163 at stability 0.0, chosen from three auditioned reads. It was the only one with every line heard exactly and none whispered.
-- **Re-read lines:** after the fresh-eyes critic, three reworded lines were re-read in context with three lines of run-up, choosing each group's take by pitch and pace against its neighbours (seed 19 for the photo lines, seed 7 for GPS). They were level-matched and spliced in. A re-read's end is taken where its voice decays, not where its room tone fades: the GPS re-read's tail had put the line 0.8 s long, its captions late and a dead pause after it (round 14).
-- **Pauses:** 0.14–0.55 s between lines, the read's own. The "..." beats inside lines are capped at 0.45 s. Longer waits only where the picture moves first: the solar-system circle, the rise, the swing down, the dive, the lens, the dot, and the Earth card in and out.
+- **Re-read lines:** after the fresh-eyes critic, three reworded lines were re-read in context with three lines of run-up, choosing each group's take by pitch and pace against its neighbours (seed 19 for the photo lines). They were level-matched and spliced in. A re-read's end is taken where its voice decays, not where its room tone fades (round 14).
+- **Pauses:** 0.14–0.55 s between lines, the read's own. The "..." beats inside lines are capped at 0.45 s. Longer waits only where the picture moves first: the solar-system circle, the rise, the swing down, the dive, the lens, and the dot.
 - **The picture follows the voice:** `bh/warp.json`, computed from the placed words.
 
-**Pace.** 256 words in 92.7 s: 2.8 words/s overall, about 3.1 inside a line.
+**Pace.** 234 words in 84.7 s: 2.8 words/s overall, about 3.1 inside a line.
 
 ## Narration
 
@@ -59,21 +60,18 @@ Version 1's script is in `outputs/v1/script.md`.
 >
 > Stay for one minute... and half an hour goes by out there.
 >
-> Even GPS feels this. Up in orbit, clocks run fast, and without a fix, your map would drift ten kilometers a day.
->
 > And all this darkness around the dot? That's the black hole.
 >
-> *(1.8 s of quiet, then the loop)* See this glowing dot?
+> *(1.7 s of quiet, then the loop)* See this glowing dot?
 
-**Facts and references.** 17 facts in 93 s (1.8 per 10 s). The spoken references:
+**Facts and references.** 15 facts in 85 s (1.8 per 10 s). The spoken references:
 - M87*'s photo, released 2019
 - 6.5 billion Suns
 - our solar system
 - Jean-Pierre Luminet, 1979
 - Interstellar
-- GPS, 10 km a day
 
-On-screen-only references: the Event Horizon Telescope, Pluto's orbit, the IBM 7040, Kip Thorne and 2014, Apollo 17 and 1972. That's 11 in all, 1.2 per 10 s.
+On-screen-only references: the Event Horizon Telescope, Pluto's orbit, the IBM 7040, Kip Thorne and 2014. That's 9 in all, 1.1 per 10 s.
 
 ## Beat sheet
 
@@ -102,9 +100,8 @@ Video time on the left. Picture events follow the words (`bh/warp.json`). Labels
 | 68.99–72.74 | "The whole universe shrinks into one small dot above you." | the bright circle shrinks into the dot | the counter (→ 1.001×) | riser peaks; the build ends | — |
 | 72.89 | — | **the dot lands**, as in frame 0 | 1.001× / 0.1% ABOVE THE EDGE | hit; the music drops to one high tone | — |
 | 73.34–79.17 | "And down here, time runs slower. Stay for one minute... and half an hour goes by out there." | the sky in the dot sweeps one full turn as the counter climbs (77.2–79.2) | 1 MIN / DOWN HERE (75.9) → 32 MIN / OUT THERE (77.2) | pops | — |
-| 79.62–87.02 | "Even GPS feels this. Up in orbit, clocks run fast, and without a fix, your map would drift ten kilometers a day." | **Apollo 17's Earth** (1972) with a GPS orbit and a satellite going round | FASTER / WHERE GRAVITY IS WEAKER (82.2), then 10 KM / MAP DRIFT A DAY, IF NOT FIXED (85.7); credit "Earth: NASA, Apollo 17, 1972" | whoosh in; pops | 0.45 s dissolve in and out of the Earth card; it is gone before the next line |
-| 87.57–90.91 | "And all this darkness around the dot? That's the black hole." | the dot again | THE UNIVERSE (87.6); BLACK HOLE with four arrows out into the black (89.7) | soft hit | — |
-| 90.91–92.67 | *(quiet)* | labels fade; the push-in and turning sky continue | — | shimmer; a reverse swell into the loop | **seamless loop** into frame 0 |
+| 79.67–83.01 | "And all this darkness around the dot? That's the black hole." | the dot, still turning | 32 MIN goes; THE UNIVERSE (79.7); BLACK HOLE with four arrows out into the black (81.8) | soft hit | — |
+| 83.01–84.67 | *(quiet)* | labels fade; the push-in and turning sky continue | — | shimmer; a reverse swell into the loop | **seamless loop** into frame 0 |
 
 ## Captions
 

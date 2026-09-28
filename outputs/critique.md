@@ -401,3 +401,11 @@ The voice is a new continuous read (seed 163). The picture was re-timed around i
 - **Whisper can be a word off inside running speech.** It had "ten" on "drift" and "used" on "hole". When its start does not follow a real pause, the aligner now uses a real pause (60 ms or more) within 0.12 s of the script's own time, if there is one. A pause of 120 ms or more inside Whisper's span also counts ("lower, | and hover").
 
 Every moved caption was checked by hand against the voice's energy ("six" 9.67, "and hover" 65.80, "and without a fix" 83.52, "ten" 85.67, "used" 45.0). The checker still flags two captions ("used" +0.31 s, "clocks" −0.27 s). Both are Whisper placing the word on the previous word's tail, and the energy shows the caption on the voice's onset.
+
+## Round 15: the GPS line is cut (the user: "About GPS was weird, let's remove this part and leave everything else")
+
+Cut: the line "Even GPS feels this. Up in orbit, clocks run fast, and without a fix, your map would drift ten kilometers a day.", Apollo 17's Earth card with the GPS orbit, its FASTER and 10 KM labels, and their three sound cues. Nothing else changed. The picture up to the dot landing is frame-for-frame the same, and so are the voice, its timing and the captions before 79 s.
+
+- "And all this darkness around the dot?" now follows "…half an hour goes by out there." after 0.5 s, while the sky's turn in the dot settles. The 32 MIN label goes as it starts.
+- The video is 84.7 s (was 92.7), ending with 1.7 s of quiet into the loop.
+- Only the dot's frames were re-rendered: the cold open and the ending, whose motion is paced to the video's length (742 of 2540 frames). A frame-by-frame comparison of every camera state showed the rest identical.

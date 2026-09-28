@@ -22,7 +22,7 @@ Backup, if you'd rather lead with the real photo: *We Photographed A Black Hole.
 
 > What would you actually see if you hovered right above a black hole?
 >
-> Start with the real thing: the first photo of a black hole, M87*, released by the Event Horizon Telescope in 2019. Our whole solar system would be a tiny circle inside it. Then fly in: gravity bends light so much that you see the back of its disk over the top (Jean-Pierre Luminet drew it by hand in 1979, and Interstellar used the same physics), and even the back of your own head. Go lower, and the whole universe shrinks into one glowing dot above you, while one minute down there is half an hour out here. GPS satellites deal with the same effect every day.
+> Start with the real thing: the first photo of a black hole, M87*, released by the Event Horizon Telescope in 2019. Our whole solar system would be a tiny circle inside it. Then fly in: gravity bends light so much that you see the back of its disk over the top (Jean-Pierre Luminet drew it by hand in 1979, and Interstellar used the same physics), and even the back of your own head. Go lower, and the whole universe shrinks into one glowing dot above you, while one minute down there is half an hour out here.
 >
 > Every simulated frame follows real rays of light through Einstein's curved spacetime.
 >
@@ -36,7 +36,7 @@ This follows the two science channels closest to this video:
 
 ## Tags
 
-> black hole, first photo of a black hole, M87, event horizon telescope, black hole simulation, what you would see near a black hole, photon sphere, event horizon, time dilation, GPS relativity, gravitational lensing, accretion disk, interstellar black hole physics, general relativity, einstein, astrophysics, physics, space, science
+> black hole, first photo of a black hole, M87, event horizon telescope, black hole simulation, what you would see near a black hole, photon sphere, event horizon, time dilation, gravitational lensing, accretion disk, interstellar black hole physics, general relativity, einstein, astrophysics, physics, space, science
 
 YouTube says tags play only a small role, and most of the top reference Shorts have none (Cleo, lingualin, Vsauce). Veritasium adds a few (the channel name, "science", "physics", then the topic), so these are topic words only. Leave out movie names such as Interstellar or Gargantua: the video doesn't use either.
 

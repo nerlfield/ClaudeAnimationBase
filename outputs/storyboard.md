@@ -2,14 +2,13 @@
 
 ## Version 2 (rounds 13–14): the real thing, then the simulation
 
-Version 1's storyboard is in `outputs/v1/storyboard.md`. Version 2 keeps every simulated shot below (O, A–G). Between the dot and the black hole, and at three more places, it adds **inserts**: real imagery and reference cards composited over the render, each timed from the words that introduce it (`bh/inserts.py`):
+Version 1's storyboard is in `outputs/v1/storyboard.md`. Version 2 keeps every simulated shot below (O, A–G). Between the dot and the black hole, and at two more places, it adds **inserts**: real imagery and reference cards composited over the render, each timed from the words that introduce it (`bh/inserts.py`):
 
 | insert | video time | what's seen | why |
 |---|---|---|---|
 | M87*, the first photo of a black hole | 3.8–16.4 | The glowing dot dissolves into the Event Horizon Telescope's photo, its ring laid over the dot at the same size and place. A slow push-in. On "tiny circle", Pluto's orbit pops in gold inside the dark centre, to scale (11% of the ring). The photo then dissolves into our side-on simulation of a black hole like it. | Show the real artefact, with its date, next to the CGI (Cleo Abram's most-used technique), and anchor the size. The dot, the photo's ring and the simulated shadow share one circle, so the motif carries through. |
 | Luminet, 1979 | 38.3–43.3 | Our arch frame turns into white ink dots on black, denser where brighter, the way Jean-Pierre Luminet drew the first picture of this. Labelled "* OUR SIMULATION, REDRAWN IN DOTS HIS WAY". | A named, dated first, shown in its own style without using his drawing. |
 | Interstellar | 43.3–46.7 | Title card over the gold arch (no film images). | A pop-culture link most viewers have seen. |
-| GPS on Earth | 79.7–87.5 | Apollo 17's Earth (1972) with a GPS orbit and a satellite; FASTER / WHERE GRAVITY IS WEAKER, then 10 KM / MAP DRIFT A DAY, IF NOT FIXED. | An everyday stake for time dilation, in the same place as the dot, so the ending returns to it. |
 
 **The time map for version 2** (story clock → video, from `bh/warp.json`):
 
@@ -26,7 +25,7 @@ Version 1's storyboard is in `outputs/v1/storyboard.md`. Version 2 keeps every s
 | E, the diagram | 56.3–61.0 |
 | E2, the back of your head | 61.0–64.9 |
 | F, down to the dot | 64.9–72.9 |
-| G, the time lines, the GPS card, "That's the black hole" and 1.8 s of quiet | 72.9–92.7 |
+| G, the time lines, "That's the black hole" and 1.7 s of quiet | 72.9–84.7 |
 
 The shot sections below keep their story-clock times; script.md's beat sheet gives every beat in video time.
 

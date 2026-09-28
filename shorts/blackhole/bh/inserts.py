@@ -5,10 +5,9 @@ the words that introduce it (build/words.json).
     solar system      "is this tiny circle."   a circle at true scale inside the photo
     Luminet 1979      "In 1979, Jean-Pierre Luminet drew this by hand, dot by dot."   our frame redrawn in dots
     Interstellar      "And Interstellar's black hole used the same physics."   a title card
-    GPS               "It even happens on Earth. ... ten kilometers a day."   Apollo 17's Earth with a GPS orbit
 
-Assets (assets/v2, licences in outputs/sources.md): the Event Horizon Telescope's M87* image (ESO/EHT, CC BY 4.0)
-and NASA's Apollo 17 "Blue Marble" (public domain).
+Assets (assets/v2, licences in outputs/sources.md): the Event Horizon Telescope's M87* image (ESO/EHT, CC BY 4.0).
+(Round 15: the GPS card over Apollo 17's Earth is cut with its line.)
 """
 import json
 import math
@@ -25,7 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, '..', 'assets', 'v2')
 WORDS_JSON = os.path.join(HERE, '..', 'build', 'words.json')
 W, H = ov.W, ov.H
-CX, CY = W // 2, int(round(HOLE_Y * H))        # the dot, the photo's ring and the Earth all sit here
+CX, CY = W // 2, int(round(HOLE_Y * H))        # the dot and the photo's ring sit here
 DOT_R = 282.0                                  # the dot's rim radius in frame 0 (measured)
 RING_R = 495.0                                 # M87*'s ring (brightest ridge, fitted along 72 rays) in the ESO image
 SOLAR = 0.112                                  # Pluto's orbit (79 AU) / the ring (42 uas at 16.8 Mpc = 705 AU)
@@ -66,13 +65,8 @@ def times():
     t_1979 = chunk_at(['In', '1979'], after=30.0, default=40.5) - 0.10
     t_inter = chunk_at(['And', "Interstellar's"], after=30.0, default=45.5)
     t_fly = chunk_at(['Now', "let's", 'fly'], after=30.0, default=48.9)
-    t_earth = chunk_at(['Even', 'GPS'], after=60.0, default=81.2) - 0.10
-    t_fast = chunk_at(['clocks', 'run', 'fast'], after=60.0, default=83.5)
-    t_km = chunk_at(['ten', 'kilometers'], after=60.0, default=88.3)
-    t_dark = chunk_at(['And', 'all', 'this'], after=60.0, default=90.3)
     return dict(photo_in0=t_photo - 0.55, photo_in1=t_photo, photo_out0=t_close, photo_out1=t_close + 0.6,
-                circle=t_circle, stipple0=t_1979, stipple1=t_inter - 0.05, inter0=t_inter, inter1=t_fly - 0.15,
-                earth0=t_earth, earth1=t_dark - 0.30, fast=t_fast if t_fast else t_earth + 2.6, km=t_km)
+                circle=t_circle, stipple0=t_1979, stipple1=t_inter - 0.05, inter0=t_inter, inter1=t_fly - 0.15)
 
 
 # ---------------------------------------------------------------- images
@@ -155,31 +149,6 @@ def _circle(r, age, fade):
     return ov._pop(ov._glow(ov._shadowed(lay, 8, (0, 3), 0.9), ov.GOLD, 10, 0.6), 1.0, fade * ov._smooth(age / 0.2), (CX, CY))
 
 
-def _earth_card(t, t0):
-    """Apollo 17's Earth, small, with a GPS orbit (26,600 km, 4.2 Earth radii) and a satellite going round."""
-    R = 150.0
-    base = np.zeros((H, W, 3), np.float32)          # the Earth goes in between the two halves of the orbit (apply)
-    lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
-    a, b, tilt = 390.0, 110.0, math.radians(-12)                    # drawn smaller than true (4.2 R) to fit
-
-    def pt(th):
-        x, y = a * math.cos(th), b * math.sin(th)
-        return CX + x * math.cos(tilt) - y * math.sin(tilt), CY + x * math.sin(tilt) + y * math.cos(tilt)
-    back = [pt(math.pi + math.pi * k / 90) for k in range(91)]       # the half behind the Earth
-    front = [pt(math.pi * k / 90) for k in range(91)]
-    d.line(back, fill=ov.ICE + (120,), width=3)
-    lay_front = Image.new('RGBA', (W, H), (0, 0, 0, 0)); df = ImageDraw.Draw(lay_front)
-    df.line(front, fill=ov.ICE + (220,), width=3)
-    th = -0.3 + 0.55 * (t - t0)                                      # the satellite, going round
-    sx, sy = pt(th)
-    target = df if math.sin(th) >= 0 else d
-    target.ellipse([sx - 9, sy - 9, sx + 9, sy + 9], fill=ov.WHITE + (255,))
-    target.line([(sx - 26, sy), (sx + 26, sy)], fill=ov.ICE + (255,), width=6)   # solar panels
-    f = ov.font('Inter-ExtraBold.ttf', 30)
-    df.text((sx + 22 if sx < CX else sx - 22 - f.getlength('GPS'), sy - 46), 'GPS', font=f, fill=ov.WHITE + (235,))
-    return base, lay, lay_front
-
-
 # ---------------------------------------------------------------- the pass
 
 def apply(img, t):
@@ -215,31 +184,6 @@ def apply(img, t):
         layers.append(_text([('INTERSTELLAR (2014)', 'Montserrat-Black.ttf', 60, ov.GOLD),
                              ("ITS BLACK HOLE WAS RENDERED", 'Inter-ExtraBold.ttf', 32, ov.WHITE),
                              ("FROM KIP THORNE'S EQUATIONS", 'Inter-ExtraBold.ttf', 32, ov.WHITE)], 200, a))
-    # GPS: Apollo 17's Earth
-    if T['earth0'] <= t < T['earth1']:
-        a = min(ov._smooth(seg(t, T['earth0'], T['earth0'] + 0.45)), 1.0 - ov._smooth(seg(t, T['earth1'] - 0.45, T['earth1'])))
-        base, back, front = _earth_card(t, T['earth0'])
-        card = np.asarray(back, np.float32) / 255.0
-        base = base * (1 - card[..., 3:4]) + card[..., :3] * card[..., 3:4]
-        # the Earth goes over the back half of the orbit, the front half over the Earth
-        e = _img('earth_apollo17_1972.jpg')
-        R = 150.0
-        er = cv2.resize(e, (int(2 * R), int(2 * R)), interpolation=cv2.INTER_AREA)
-        yy, xx = np.mgrid[0:er.shape[0], 0:er.shape[1]]
-        m = np.clip((R - np.hypot(xx - R, yy - R)) / 2.0, 0, 1)[..., None]
-        y0, x0 = int(CY - R), int(CX - R)
-        reg = base[y0:y0 + er.shape[0], x0:x0 + er.shape[1]]
-        base[y0:y0 + er.shape[0], x0:x0 + er.shape[1]] = reg * (1 - m) + er * m * 1.1
-        fr = np.asarray(front, np.float32) / 255.0
-        base = base * (1 - fr[..., 3:4]) + fr[..., :3] * fr[..., 3:4]
-        if (w, h) != (W, H):
-            base = cv2.resize(base, (w, h), interpolation=cv2.INTER_AREA)
-        img = img * (1 - a) + (img * 0.15 + base) * a
-        if t >= T['fast'] and (T['km'] is None or t < T['km']):
-            layers.append(ov.big_value('FASTER', 'where gravity is weaker', t - T['fast'], a))
-        if T['km'] is not None and t >= T['km']:
-            layers.append(ov.big_value('10', 'map drift a day, if not fixed', t - T['km'], a, unit='KM'))
-        layers.append(_credit('Earth: NASA, Apollo 17, 1972', a))
     if layers:
         img = ov.composite(img, layers)
     return img
@@ -249,5 +193,4 @@ def cue_times():
     """Moments for sound effects (tools/mix.py)."""
     T = times()
     return dict(PHOTO_IN=T['photo_in1'] - 0.15, PHOTO_OUT=T['photo_out0'] + 0.3, CIRCLE=T['circle'],
-                STIPPLE=T['stipple0'] + 0.2, INTERSTELLAR=T['inter0'], EARTH_IN=T['earth0'] + 0.25,
-                GPS_FAST=T['fast'], GPS_KM=T['km'] if T['km'] else T['earth1'] - 1.5)
+                STIPPLE=T['stipple0'] + 0.2, INTERSTELLAR=T['inter0'])

@@ -199,33 +199,9 @@ Stay for one minute...
 and half an hour goes by out there.
 
 51
-00:01:19,615 --> 00:01:21,455
-Even GPS feels this.
-
-52
-00:01:21,455 --> 00:01:22,175
-Up in orbit,
-
-53
-00:01:22,175 --> 00:01:23,515
-clocks run fast,
-
-54
-00:01:23,515 --> 00:01:24,520
-and without a fix,
-
-55
-00:01:24,520 --> 00:01:25,685
-your map would drift
-
-56
-00:01:25,685 --> 00:01:27,369
-ten kilometers a day.
-
-57
-00:01:27,560 --> 00:01:29,685
+00:01:19,660 --> 00:01:21,785
 And all this darkness around the dot?
 
-58
-00:01:29,685 --> 00:01:31,259
+52
+00:01:21,785 --> 00:01:23,359
 That's the black hole.

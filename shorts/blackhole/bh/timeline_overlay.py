@@ -116,7 +116,7 @@ def minute_times():
     """When 1 MIN pops ("Stay for one minute"), when it counts up to 32 ("and half an hour"), and when it goes."""
     t_min = chunk_time(['Stay', 'for'], default=65.4)
     t_hour = chunk_time(['and', 'half'], default=67.3)
-    return t_min, t_hour, chunk_time(['Even', 'GPS'], after=60.0, default=81.2) - 0.1     # v2: GPS comes next
+    return t_min, t_hour, chunk_time(['And', 'all', 'this'], after=60.0, default=81.2) - 0.1   # the last line comes next
 
 
 def black_hole_time():

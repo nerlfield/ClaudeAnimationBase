@@ -105,12 +105,9 @@ CUES = [
     (TG, 'sfx2/syn_shimmer_long', -21, dict(fade_out=(TG + 4.4, TG + 5.0))),
     (TG + 4.3, 'sfx2/syn_shimmer_long', -21, dict(fade_in=0.7, fade_out=(TG + 8.7, TG + 9.3))),
     (TG + 8.6, 'sfx2/syn_shimmer_long', -22, dict(fade_in=0.8, fade_out=(DUR - 0.9, DUR - 0.3))),
-    # v2 references: Luminet's dots, Interstellar, the Earth and GPS
+    # v2 references: Luminet's dots, Interstellar
     ('STIPPLE', 'sfx2/syn_chime', -25, {}),
     ('INTERSTELLAR', 'sfx2/syn_pop_low2', -20, {}),
-    ('EARTH_IN', 'el/whoosh_0', -21, dict(align='peak', fade_in=0.03)),
-    ('GPS_FAST', 'el/pop_1', -20, {}),
-    ('GPS_KM', 'sfx2/syn_pop_low2', -20, {}),
     ('MINUTE', 'sfx2/syn_pop_low2', -21, {}),
     ('HOUR', 'el/pop_1', -19, {}),
     ('BLACK_HOLE', 'el/boom_2', -19, dict(align='peak', trim_pre=0.1)),

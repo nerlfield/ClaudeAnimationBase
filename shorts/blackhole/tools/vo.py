@@ -28,8 +28,9 @@ LINES = [
     # Version 2 (round 13, the user: "it feels like there's not too much content… Cleo Abram usually gives you lots
     # of interesting facts, references… mb we can insert some mentions"): the plain, pointing narration of v1 plus
     # the real photo (M87*, EHT, released 2019), a true-scale anchor, a named first (Luminet, 1979), a pop-culture
-    # link (Interstellar), an expectation-then-reversal (Veritasium), and an everyday stake (GPS).  Lines follow one
-    # another at the read's own pace; tools/vo_flow.py AFTER says where the picture needs time first.
+    # link (Interstellar) and an expectation-then-reversal (Veritasium).  (Round 15, the user: the GPS line "was
+    # weird", so it is out.)  Lines follow one another at the read's own pace; tools/vo_flow.py AFTER says where the
+    # picture needs time first.
     (0.00, 99, 1.00, "See this glowing *dot? | That's the whole *universe."),
     (0.00, 99, 1.00, "To see why, | look at *this."),
     (0.00, 99, 1.00, "This is the first real *photo of a black hole, | released in *2019."),
@@ -53,9 +54,6 @@ LINES = [
     # down here is 31.6 minutes out there (said "half an hour", shown as 1 min -> 32 min)
     (0.00, 99, 1.00, "And down here, | time runs *slower."),
     (0.00, 99, 1.00, "Stay for one *minute... | and half an *hour goes by out there."),
-    # GPS: +45 us/day from weaker gravity in orbit, -7 us/day from orbital speed, net +38 us/day; uncorrected, fixes
-    # drift about 10 km a day (Ashby 2003; sources.md)
-    (0.00, 99, 1.00, "Even *GPS feels this. | Up in orbit, | clocks run *fast, | and without a fix, | your map would drift | *ten kilometers a day."),
     (0.00, 99, 1.00, "And all this *darkness around the dot? | That's the black hole."),
 ]
 ORDER = sorted(range(len(LINES)), key=lambda i: LINES[i][0])     # lines in time order

@@ -132,8 +132,8 @@ def segment(read, pcm, whisper, idx=None):
 def trim_tail(g, pcm):
     """A re-read line's true end: its last frame within 26 dB of its peak plus the voice's own decay after it (while
     within 38 dB, at most 0.25 s).  segment()'s end is the last frame within 38 dB anywhere in the line's slot, which a
-    noisier re-read's room tone can reach: the GPS line's re-read ran 0.8 s past its "day", putting its captions late
-    and a dead pause after it.  The letter times are rescaled onto the corrected span."""
+    noisier re-read's room tone can reach: a re-read of the (since cut) GPS line ran 0.8 s past its last word,
+    putting its captions late and a dead pause after it.  The letter times are rescaled onto the corrected span."""
     hop = int(0.01 * SR)
     x = pcm[int(g['s0'] * SR):int(g['s1'] * SR)].astype(np.float64)
     r = np.sqrt(np.convolve(x ** 2, np.ones(hop) / hop, 'same'))[::hop]
@@ -219,7 +219,7 @@ def L(opening):
 
 
 # v2 after the fresh-eyes critic (round 13): three lines reworded, re-read in context with the pinned voice
-PATCH = {(L('This is the first real photo'), L("It's as heavy")): [163, 179, 19, 7], (L('Even GPS'),): [163, 179, 19, 7]}
+PATCH = {(L('This is the first real photo'), L("It's as heavy")): [163, 179, 19, 7]}
 
 # where the picture needs time before a line may start (the voice waits for it)
 AFTER = {
@@ -230,8 +230,7 @@ AFTER = {
     L('So in this line'): lambda P: P.word(L('And see this thin'), 'you') + 0.85,   # the visor flash, then first person
     L("Now let's go lower"): lambda P: P.end(L('So in this line')) + 0.45,       # the lens closes, the view pulls out
     L('And down here'): lambda P: P.end(L('The whole universe')) + 0.60,        # the dot lands, then a beat
-    L('Even GPS'): lambda P: P.end(L('Stay for one')) + 0.45,                  # the Earth card comes in
-    L('And all this darkness'): lambda P: P.end(L('Even GPS')) + 0.50,          # back to the dot
+    L('And all this darkness'): lambda P: P.end(L('Stay for one')) + 0.45,      # the sky's turn settles
 }
 # the real photo (bh/inserts.py) covers the cut from the dot to the black hole: fully in from PHOTO_IN
 PHOTO_IN = lambda P: P.word(L('To see why'), 'this') + 0.35
